@@ -1,0 +1,48 @@
+name: Security Audit
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Каждый понедельник в 2:00
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Run security audit
+      run: composer audit
+
+    - name: Run PHPStan
+      run: |
+        composer require --dev phpstan/phpstan
+        vendor/bin/phpstan analyse --level=5 app/
+
+    - name: Check for sensitive data
+      run: |
+        if grep -r "password\|secret\|key" .env.example; then
+          echo "❌ Sensitive data found in .env.example"
+          exit 1
+        fi
+        echo "✅ No sensitive data in .env.example"
+
+    - name: Check file permissions
+      run: |
+        if [ -f .env ]; then
+          echo "❌ .env file should not be committed"
+          exit 1
+        fi
+        echo "✅ No .env file in repository"

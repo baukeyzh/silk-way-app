@@ -1,0 +1,165 @@
+@extends('layouts.app')
+
+@section('title', 'Редактировать машину')
+
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="flex items-center mb-6">
+            <button type="button" 
+                    onclick="history.back()"
+                    class="text-gray-600 hover:text-gray-900 mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <h1 class="text-3xl font-bold text-gray-900">Редактировать машину</h1>
+        </div>
+
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <form action="{{ route('cars.update', $car) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Марка -->
+                    <div>
+                        <label for="brand" class="block text-sm font-medium text-gray-700 mb-2">
+                            Марка автомобиля *
+                        </label>
+                        <input type="text" name="brand" id="brand" value="{{ old('brand', $car->brand) }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Модель -->
+                    <div>
+                        <label for="model" class="block text-sm font-medium text-gray-700 mb-2">
+                            Модель автомобиля *
+                        </label>
+                        <input type="text" name="model" id="model" value="{{ old('model', $car->model) }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Гос. номер -->
+                    <div>
+                        <label for="license_plate" class="block text-sm font-medium text-gray-700 mb-2">
+                            Государственный номер *
+                        </label>
+                        <input type="text" name="license_plate" id="license_plate" value="{{ old('license_plate', $car->license_plate) }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="А123БВ77">
+                    </div>
+
+                    <!-- Максимальный вес -->
+                    <div>
+                        <label for="max_weight" class="block text-sm font-medium text-gray-700 mb-2">
+                            Максимальный вес (тонны) *
+                        </label>
+                        <input type="number" name="max_weight" id="max_weight" value="{{ old('max_weight', $car->max_weight) }}" required
+                               step="0.1" min="0.1" max="100"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Длина прицепа -->
+                    <div>
+                        <label for="trailer_length" class="block text-sm font-medium text-gray-700 mb-2">
+                            Длина прицепа (метры) *
+                        </label>
+                        <input type="number" name="trailer_length" id="trailer_length" value="{{ old('trailer_length', $car->trailer_length) }}" required
+                               step="0.1" min="0.1" max="50"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Ширина прицепа -->
+                    <div>
+                        <label for="trailer_width" class="block text-sm font-medium text-gray-700 mb-2">
+                            Ширина прицепа (метры) *
+                        </label>
+                        <input type="number" name="trailer_width" id="trailer_width" value="{{ old('trailer_width', $car->trailer_width) }}" required
+                               step="0.1" min="0.1" max="10"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Высота прицепа -->
+                    <div>
+                        <label for="trailer_height" class="block text-sm font-medium text-gray-700 mb-2">
+                            Высота прицепа (метры) *
+                        </label>
+                        <input type="number" name="trailer_height" id="trailer_height" value="{{ old('trailer_height', $car->trailer_height) }}" required
+                               step="0.1" min="0.1" max="10"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Тип прицепа -->
+                    <div>
+                        <label for="trailer_type" class="block text-sm font-medium text-gray-700 mb-2">
+                            Тип прицепа *
+                        </label>
+                        <select name="trailer_type" id="trailer_type" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Выберите тип прицепа</option>
+                            @foreach($trailerTypes as $key => $value)
+                                <option value="{{ $key }}" {{ old('trailer_type', $car->trailer_type) == $key ? 'selected' : '' }}>
+                                    {{ $value }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Документ ПДД -->
+                <div class="mt-6">
+                    <label for="vehicle_document" class="block text-sm font-medium text-gray-700 mb-2">
+                        Документ ПДД (PDF)
+                    </label>
+                    
+                    @if($car->vehicle_document)
+                        <div class="mb-3 p-3 bg-gray-50 rounded border">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm text-gray-900">Текущий документ: {{ basename($car->vehicle_document) }}</p>
+                                    <a href="{{ Storage::url($car->vehicle_document) }}" target="_blank" 
+                                       class="text-sm text-blue-600 hover:text-blue-800">
+                                        Просмотреть
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    <input type="file" name="vehicle_document" id="vehicle_document" accept=".pdf"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-sm text-gray-500 mt-1">
+                        {{ $car->vehicle_document ? 'Оставьте пустым, чтобы сохранить текущий документ' : 'Максимальный размер: 10 МБ' }}
+                    </p>
+                </div>
+
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" 
+                            onclick="history.back()"
+                            class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Отмена
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
