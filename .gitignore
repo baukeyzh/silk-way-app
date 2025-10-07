@@ -1,18 +1,24 @@
-# Laravel
+# Laravel - Environment files (keep .env.example for Plesk setup)
 *.log
 .env
 .env.backup
 .env.production
 .env.local
 .env.testing
+!.env.example
+
+# Laravel - Cache & Temp
 .phpactor.json
 .phpunit.result.cache
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+
+# Laravel - Database (SQLite)
+/database/database.sqlite
+*.sqlite
+!database/.gitkeep
 
 # IDE
 /.fleet
@@ -29,11 +35,11 @@ Homestead.yaml
 .DS_Store
 Thumbs.db
 
-# Node.js
-/node_modules
+# Node.js - Logs only (node_modules and public/build are committed for Plesk)
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+package-lock.json
 
 # Docker
 .docker/
