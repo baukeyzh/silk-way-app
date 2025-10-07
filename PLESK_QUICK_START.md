@@ -1,12 +1,13 @@
-# ⚡ Быстрый старт для Plesk
+# ⚡ Быстрый старт для Plesk (БЕЗ SSH)
 
 ## 🎯 Основная информация
 
 - **Репозиторий**: https://github.com/baukeyzh/silk-way-app.git
 - **Ветка**: main
-- **Document Root**: `/httpdocs/public` (не `/httpdocs`!)
+- **Document Root**: `/httpdocs/public` ⚠️ (не `/httpdocs`!)
 - **PHP**: 8.2 или выше
 - **База данных**: SQLite (включена)
+- **SSH**: НЕ требуется! Все через веб-интерфейс Plesk
 
 ## 🚀 Быстрое развертывание через Plesk Git
 
@@ -51,15 +52,12 @@ php artisan view:cache
 2. **Настройки PHP** → **Версия**: PHP 8.2+
 3. **SSL/TLS** → Установить Let's Encrypt
 
-### 3. Редактировать .env (SSH)
+### 3. Редактировать .env через File Manager
 
-```bash
-ssh username@fruck.kz
-cd /var/www/vhosts/fruck.kz/httpdocs
-nano .env
-```
+1. **В Plesk:** "Файлы" → `httpdocs` → Найти `.env`
+2. **Правый клик** → "Редактировать"
+3. **Изменить:**
 
-Изменить:
 ```env
 APP_URL=https://fruck.kz
 APP_ENV=production
@@ -67,11 +65,11 @@ APP_DEBUG=false
 DB_DATABASE=/var/www/vhosts/fruck.kz/httpdocs/database/database.sqlite
 ```
 
-Сохранить: `Ctrl+O`, `Enter`, `Ctrl+X`
-
-```bash
-php artisan config:cache
-```
+4. **Сохранить файл**
+5. **Очистить кэш** через "Планировщик заданий":
+   - Создать задание
+   - Команда: `cd /var/www/vhosts/fruck.kz/httpdocs && php artisan config:cache`
+   - Запустить сейчас
 
 ### 4. Готово! ✅
 
@@ -79,46 +77,48 @@ php artisan config:cache
 
 ## 🔄 Обновление
 
-### Через Plesk
-Git → **Обновить из репозитория**
+### Через Plesk (основной метод)
+1. Git → **"Pull"** или **"Обновить из репозитория"**
+2. Скрипт выполнится автоматически
 
-### Через SSH
+### Если нужны дополнительные команды
+1. **Планировщик заданий** → Создать задание
+2. **Команда:**
 ```bash
-cd /var/www/vhosts/fruck.kz/httpdocs
-git pull origin main
-php artisan migrate --force
-php artisan config:cache
+cd /var/www/vhosts/fruck.kz/httpdocs && php artisan migrate --force && php artisan config:cache
 ```
+3. **Запустить сейчас**
 
 ## 🐛 Если что-то не работает
 
 ### Ошибка 500
-```bash
-chmod -R 775 storage bootstrap/cache
-php artisan config:clear
-php artisan cache:clear
-```
+1. **File Manager** → папки `storage` и `bootstrap/cache`
+2. **Правый клик** → Изменить права → **775**
+3. **Применить рекурсивно**
+4. **Планировщик** → команда:
+   ```bash
+   cd /var/www/vhosts/fruck.kz/httpdocs && php artisan config:clear && php artisan cache:clear
+   ```
 
 ### БД не работает
-```bash
-chmod 664 database/database.sqlite
-php artisan migrate:fresh --seed --force
-```
+1. **File Manager** → `database/database.sqlite`
+2. **Правый клик** → Изменить права → **664**
+3. Или удалить файл и Git → **Pull** (пересоздаст БД)
 
 ### Стили не отображаются
-```bash
-php artisan storage:link
-```
+1. Проверить `public/storage` через **File Manager**
+2. Проверить **APP_URL** в `.env`
+3. Очистить кэш браузера (Ctrl+Shift+R)
 
-## 📝 Логи
+## 📝 Логи (через Plesk)
 
-```bash
-# Laravel
-tail -f /var/www/vhosts/fruck.kz/httpdocs/storage/logs/laravel.log
+### Laravel логи
+1. **"Файлы"** → `httpdocs/storage/logs/laravel.log`
+2. Или скачать и открыть
 
-# Сервер
-tail -f /var/www/vhosts/system/fruck.kz/logs/error_log
-```
+### Логи сервера
+1. **"Сайты и домены"** → ваш домен → **"Логи"**
+2. Просмотреть **error_log**
 
 ## ⚠️ Важно!
 
