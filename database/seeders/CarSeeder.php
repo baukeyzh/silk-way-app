@@ -47,7 +47,7 @@ class CarSeeder extends Seeder
                     'trailer_height' => $trailerHeight,
                     'trailer_volume' => round($trailerLength * $trailerWidth * $trailerHeight, 2),
                     'trailer_type' => $trailerType,
-                    'trailer_type_ru' => $trailerTypes[$trailerType],
+                    'trailer_type_rus' => $trailerTypes[$trailerType], // Исправлено: было trailer_type_ru
                     'is_active' => rand(0, 10) > 1, // 90% машин активны
                 ]);
             }
