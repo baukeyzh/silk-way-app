@@ -55,32 +55,42 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 
 CREATE TABLE `cargo` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `weight` decimal(8,2) NOT NULL,
+  `from_location` varchar(255) NOT NULL,
+  `to_location` varchar(255) NOT NULL,
+  `cargo_type` varchar(255) NOT NULL,
   `volume` decimal(8,2) NOT NULL,
-  `pickup_location` varchar(255) NOT NULL,
-  `delivery_location` varchar(255) NOT NULL,
-  `pickup_date` date NOT NULL,
-  `delivery_date` date NOT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
-  `price` decimal(10,2) NOT NULL,
+  `weight` decimal(8,2) NOT NULL,
+  `ready_date` datetime NOT NULL,
+  `comment` text,
+  `status` varchar(255) NOT NULL DEFAULT 'available',
   `created_by` bigint unsigned NOT NULL,
-  `picked_by` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `title_ru` varchar(255) DEFAULT NULL,
-  `title_kz` varchar(255) DEFAULT NULL,
-  `title_cn` varchar(255) DEFAULT NULL,
-  `description_ru` text,
-  `description_kz` text,
-  `description_cn` text,
+  `picked_by` bigint unsigned DEFAULT NULL,
+  `from_location_rus` varchar(255) DEFAULT NULL,
+  `from_location_kaz` varchar(255) DEFAULT NULL,
+  `from_location_chn` varchar(255) DEFAULT NULL,
+  `to_location_rus` varchar(255) DEFAULT NULL,
+  `to_location_kaz` varchar(255) DEFAULT NULL,
+  `to_location_chn` varchar(255) DEFAULT NULL,
+  `cargo_type_rus` varchar(255) DEFAULT NULL,
+  `cargo_type_kaz` varchar(255) DEFAULT NULL,
+  `cargo_type_chn` varchar(255) DEFAULT NULL,
+  `comment_rus` text,
+  `comment_kaz` text,
+  `comment_chn` text,
   PRIMARY KEY (`id`),
   KEY `cargo_created_by_foreign` (`created_by`),
   KEY `cargo_picked_by_foreign` (`picked_by`),
-  CONSTRAINT `cargo_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `cargo_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
   CONSTRAINT `cargo_picked_by_foreign` FOREIGN KEY (`picked_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Тестовые грузы
+INSERT INTO `cargo` (`id`, `from_location`, `to_location`, `cargo_type`, `volume`, `weight`, `ready_date`, `comment`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Алматы', 'Астана', 'Электроника', 2.50, 150.00, NOW(), 'Хрупкий груз, требует осторожной перевозки', 'available', 2, NOW(), NOW()),
+(2, 'Шымкент', 'Караганда', 'Продукты питания', 15.00, 1200.00, NOW(), 'Скоропортящийся груз', 'available', 2, NOW(), NOW()),
+(3, 'Актобе', 'Алматы', 'Стройматериалы', 45.00, 3500.00, NOW(), 'Тяжелый груз', 'available', 2, NOW(), NOW());
 
 -- ============================================
 -- Таблица: cars
@@ -109,6 +119,12 @@ CREATE TABLE `cars` (
   KEY `cars_user_id_foreign` (`user_id`),
   CONSTRAINT `cars_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Тестовые машины
+INSERT INTO `cars` (`id`, `user_id`, `brand`, `model`, `license_plate`, `max_weight`, `trailer_length`, `trailer_width`, `trailer_height`, `trailer_volume`, `trailer_type`, `trailer_type_rus`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 3, 'Mercedes-Benz', 'Actros', 'А123ВС77', 20.0, 13.6, 2.45, 2.7, 89.96, 'tent', 'Тентованный', 1, NOW(), NOW()),
+(2, 3, 'Volvo', 'FH', 'К456ЕР01', 25.0, 15.0, 2.5, 3.0, 112.50, 'refrigerator', 'Рефрижератор', 1, NOW(), NOW()),
+(3, 3, 'КамАЗ', '5320', 'Т789УМ186', 18.0, 12.0, 2.4, 2.5, 72.00, 'closed', 'Закрытый', 1, NOW(), NOW());
 
 -- ============================================
 -- Таблица: cargo_applications
@@ -147,6 +163,23 @@ CREATE TABLE `translations` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `translations_key_unique` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Основные переводы (базовые - остальные загрузятся через сидер)
+INSERT INTO `translations` (`key`, `ru`, `kz`, `cn`) VALUES
+('welcome', 'Добро пожаловать', 'Қош келдіңіз', '欢迎'),
+('login', 'Войти', 'Кіру', '登录'),
+('register', 'Регистрация', 'Тіркелу', '注册'),
+('logout', 'Выход', 'Шығу', '登出'),
+('dashboard', 'Панель управления', 'Басқару тақтасы', '仪表板'),
+('cargo', 'Грузы', 'Жүктер', '货物'),
+('cars', 'Машины', 'Машиналар', '车辆'),
+('users', 'Пользователи', 'Пайдаланушылар', '用户'),
+('admin', 'Администратор', 'Әкімші', '管理员'),
+('driver', 'Водитель', 'Жүргізуші', '司机'),
+('warehouse_employee', 'Сотрудник склада', 'Қойма қызметкері', '仓库员工');
+
+-- ПРИМЕЧАНИЕ: Для загрузки всех 347 переводов запустите:
+-- php artisan db:seed --class=TranslationSeeder
 
 -- ============================================
 -- Служебные таблицы Laravel
@@ -235,6 +268,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ============================================
 -- Готово!
 -- ============================================
--- После импорта этого файла запустите сидеры для генерации дополнительных данных:
--- php artisan db:seed --force
+-- Этот дамп содержит:
+-- ✅ Полную структуру таблиц
+-- ✅ 3 тестовых пользователя (пароль: password)
+-- ✅ 3 тестовых груза
+-- ✅ 3 тестовые машины
+-- ✅ 11 базовых переводов
+--
+-- Для загрузки всех 347 переводов запустите:
+-- php artisan db:seed --class=TranslationSeeder
 -- ============================================
