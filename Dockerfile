@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     sqlite3 \
     libsqlite3-dev \
-    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd
+    netcat-openbsd \
+    default-mysql-client \
+    && docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
 
 # Устанавливаем Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -37,9 +39,6 @@ RUN composer install --no-dev --optimize-autoloader
 
 # Устанавливаем зависимости Node.js и собираем фронтенд
 RUN npm install && npm run build
-
-# Создаем базу данных SQLite
-RUN touch database/database.sqlite
 
 # Настраиваем Apache
 RUN a2enmod rewrite

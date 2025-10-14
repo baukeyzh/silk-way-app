@@ -4,10 +4,19 @@ set -e
 # Ждем пока база данных будет готова
 echo "Waiting for database to be ready..."
 
-# Создаем базу данных если её нет
-if [ ! -f /var/www/html/database/database.sqlite ]; then
-    echo "Creating SQLite database..."
-    touch /var/www/html/database/database.sqlite
+# Если используется MySQL, ждем пока он будет доступен
+if [ "${DB_CONNECTION}" = "mysql" ]; then
+    echo "Waiting for MySQL to be ready..."
+    while ! nc -z ${DB_HOST} ${DB_PORT}; do
+        sleep 1
+    done
+    echo "MySQL is ready!"
+else
+    # Создаем SQLite базу данных если её нет и используется SQLite
+    if [ ! -f /var/www/html/database/database.sqlite ]; then
+        echo "Creating SQLite database..."
+        touch /var/www/html/database/database.sqlite
+    fi
 fi
 
 # Генерируем ключ приложения если его нет
@@ -20,9 +29,9 @@ fi
 echo "Running database migrations..."
 php artisan migrate --force
 
-# Запускаем сидеры
+# Запускаем сидеры (только если база пустая)
 echo "Running database seeders..."
-php artisan db:seed --force
+php artisan db:seed --force || echo "Seeding failed or database already seeded, continuing..."
 
 # Очищаем кэш
 echo "Clearing application cache..."

@@ -14,14 +14,10 @@ return new class extends Migration
         Schema::create('translations', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique()->comment('Ключ перевода');
-            $table->text('rus')->comment('Перевод на русском');
-            $table->text('kaz')->comment('Перевод на казахском');
-            $table->text('chn')->comment('Перевод на китайском');
-            $table->string('group')->default('general')->comment('Группа переводов');
-            $table->text('description')->nullable()->comment('Описание для чего используется');
+            $table->text('ru')->nullable()->comment('Перевод на русском');
+            $table->text('kz')->nullable()->comment('Перевод на казахском');
+            $table->text('cn')->nullable()->comment('Перевод на китайском');
             $table->timestamps();
-            
-            $table->index(['key', 'group']);
         });
     }
 

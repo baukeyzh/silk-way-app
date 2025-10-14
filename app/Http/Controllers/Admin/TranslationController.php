@@ -24,20 +24,14 @@ class TranslationController extends Controller
     {
         $query = Translation::query();
         
-        // Фильтрация по группе
-        if ($request->has('group') && $request->group !== '') {
-            $query->where('group', $request->group);
-        }
-        
         // Поиск по ключу
         if ($request->has('search') && $request->search !== '') {
             $query->where('key', 'like', '%' . $request->search . '%');
         }
         
-        $translations = $query->orderBy('group')->orderBy('key')->paginate(20);
-        $groups = Translation::distinct()->pluck('group')->sort();
+        $translations = $query->orderBy('key')->paginate(20);
         
-        return view('admin.translations.index', compact('translations', 'groups'));
+        return view('admin.translations.index', compact('translations'));
     }
 
     /**
@@ -45,10 +39,9 @@ class TranslationController extends Controller
      */
     public function create(): View
     {
-        $groups = Translation::distinct()->pluck('group')->sort();
         $locales = $this->localizationService->getAvailableLocales();
         
-        return view('admin.translations.create', compact('groups', 'locales'));
+        return view('admin.translations.create', compact('locales'));
     }
 
     /**
@@ -58,17 +51,10 @@ class TranslationController extends Controller
     {
         $validated = $request->validate([
             'key' => 'required|string|max:255|unique:translations',
-            'rus' => 'required|string|max:1000',
-            'kaz' => 'required|string|max:1000',
-            'chn' => 'required|string|max:1000',
-            'group' => 'required|string|max:100',
-            'description' => 'nullable|string|max:1000',
+            'ru' => 'nullable|string|max:1000',
+            'kz' => 'nullable|string|max:1000',
+            'cn' => 'nullable|string|max:1000',
         ]);
-
-        // Обработка новой группы
-        if ($validated['group'] === 'new_group' && $request->has('new_group_name')) {
-            $validated['group'] = $request->input('new_group_name');
-        }
 
         $translation = $this->localizationService->createTranslation($validated);
 
@@ -82,10 +68,9 @@ class TranslationController extends Controller
      */
     public function edit(Translation $translation): View
     {
-        $groups = Translation::distinct()->pluck('group')->sort();
         $locales = $this->localizationService->getAvailableLocales();
         
-        return view('admin.translations.edit', compact('translation', 'groups', 'locales'));
+        return view('admin.translations.edit', compact('translation', 'locales'));
     }
 
     /**
@@ -94,17 +79,10 @@ class TranslationController extends Controller
     public function update(Request $request, Translation $translation): RedirectResponse
     {
         $validated = $request->validate([
-            'rus' => 'required|string|max:1000',
-            'kaz' => 'required|string|max:1000',
-            'chn' => 'required|string|max:1000',
-            'group' => 'required|string|max:100',
-            'description' => 'nullable|string|max:1000',
+            'ru' => 'nullable|string|max:1000',
+            'kz' => 'nullable|string|max:1000',
+            'cn' => 'nullable|string|max:1000',
         ]);
-
-        // Обработка новой группы
-        if ($validated['group'] === 'new_group' && $request->has('new_group_name')) {
-            $validated['group'] = $request->input('new_group_name');
-        }
 
         $updated = $this->localizationService->updateTranslation($translation->key, $validated);
 
@@ -144,14 +122,12 @@ class TranslationController extends Controller
      */
     public function export(): \Symfony\Component\HttpFoundation\Response
     {
-        $translations = Translation::all()->groupBy('group')->map(function ($group) {
-            return $group->keyBy('key')->map(function ($translation) {
-                return [
-                    'rus' => $translation->rus,
-                    'kaz' => $translation->kaz,
-                    'chn' => $translation->chn,
-                ];
-            });
+        $translations = Translation::all()->keyBy('key')->map(function ($translation) {
+            return [
+                'ru' => $translation->ru,
+                'kz' => $translation->kz,
+                'cn' => $translation->cn,
+            ];
         });
 
         $content = json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

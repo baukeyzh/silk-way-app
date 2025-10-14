@@ -32,7 +32,7 @@ class LocalizationService
             return $key;
         }
         
-        return $translations[$key][$locale] ?? $translations[$key]['rus'] ?? $key;
+        return $translations[$key][$locale] ?? $translations[$key]['ru'] ?? $key;
     }
 
     /**
@@ -59,28 +59,19 @@ class LocalizationService
         $result = [];
         
         foreach ($translations as $key => $values) {
-            $result[$key] = $values[$locale] ?? $values['rus'] ?? $key;
+            $result[$key] = $values[$locale] ?? $values['ru'] ?? $key;
         }
         
         return $result;
     }
 
     /**
-     * Получить переводы по группе
+     * Получить переводы по группе (deprecated - group column removed)
      */
     public function getByGroup(string $group, ?string $locale = null): array
     {
-        $locale = $locale ?: App::getLocale();
-        $translations = $this->getCachedTranslations();
-        $result = [];
-        
-        foreach ($translations as $key => $values) {
-            if (($values['group'] ?? 'general') === $group) {
-                $result[$key] = $values[$locale] ?? $values['rus'] ?? $key;
-            }
-        }
-        
-        return $result;
+        // Группировка больше не поддерживается
+        return $this->getAllForLocale($locale);
     }
 
     /**
@@ -91,10 +82,9 @@ class LocalizationService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
             $translations = Translation::all()->keyBy('key')->map(function ($translation) {
                 return [
-                    'rus' => $translation->rus,
-                    'kaz' => $translation->kaz,
-                    'chn' => $translation->chn,
-                    'group' => $translation->group,
+                    'ru' => $translation->ru,
+                    'kz' => $translation->kz,
+                    'cn' => $translation->cn,
                 ];
             })->toArray();
             
@@ -153,9 +143,9 @@ class LocalizationService
     public function getAvailableLocales(): array
     {
         return [
-            'rus' => 'Русский',
-            'kaz' => 'Қазақша',
-            'chn' => '中文'
+            'ru' => 'Русский',
+            'kz' => 'Қазақша',
+            'cn' => '中文'
         ];
     }
 

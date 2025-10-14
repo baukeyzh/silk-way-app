@@ -19,112 +19,128 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Добро пожаловать',
                 'kz' => 'Қош келдіңіз',
                 'cn' => '欢迎',
-
+                'group' => 'general',
+                'description' => 'Приветственное сообщение'
             ],
             [
                 'key' => 'login',
                 'ru' => 'Войти',
                 'kz' => 'Кіру',
                 'cn' => '登录',
-
+                'group' => 'auth',
+                'description' => 'Кнопка входа'
             ],
             [
                 'key' => 'logout',
                 'ru' => 'Выйти',
                 'kz' => 'Шығу',
                 'cn' => '退出',
-
+                'group' => 'auth',
+                'description' => 'Кнопка выхода'
             ],
             [
                 'key' => 'email',
                 'ru' => 'Email',
                 'kz' => 'Email',
                 'cn' => '邮箱',
-
+                'group' => 'auth',
+                'description' => 'Поле email'
             ],
             [
                 'key' => 'password',
                 'ru' => 'Пароль',
                 'kz' => 'Құпия сөз',
                 'cn' => '密码',
-
+                'group' => 'auth',
+                'description' => 'Поле пароля'
             ],
             [
                 'key' => 'save',
                 'ru' => 'Сохранить',
                 'kz' => 'Сақтау',
                 'cn' => '保存',
-
+                'group' => 'general',
+                'description' => 'Кнопка сохранения'
             ],
             [
                 'key' => 'edit',
                 'ru' => 'Редактировать',
                 'kz' => 'Өңдеу',
                 'cn' => '编辑',
-
+                'group' => 'general',
+                'description' => 'Кнопка редактирования'
             ],
             [
                 'key' => 'delete',
                 'ru' => 'Удалить',
                 'kz' => 'Жою',
                 'cn' => '删除',
-
+                'group' => 'general',
+                'description' => 'Кнопка удаления'
             ],
             [
                 'key' => 'cancel',
                 'ru' => 'Отмена',
                 'kz' => 'Бас тарту',
                 'cn' => '取消',
-
+                'group' => 'general',
+                'description' => 'Кнопка отмены'
             ],
             [
                 'key' => 'back',
                 'ru' => 'Назад',
                 'kz' => 'Артқа',
                 'cn' => '返回',
-
+                'group' => 'general',
+                'description' => 'Кнопка назад'
             ],
             [
                 'key' => 'next',
                 'ru' => 'Далее',
                 'kz' => 'Келесі',
                 'cn' => '下一步',
-
+                'group' => 'general',
+                'description' => 'Кнопка далее'
             ],
             [
                 'key' => 'previous',
                 'ru' => 'Предыдущий',
                 'kz' => 'Алдыңғы',
                 'cn' => '上一个',
-
+                'group' => 'general',
+                'description' => 'Кнопка предыдущий'
             ],
             [
                 'key' => 'search',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
                 'cn' => '搜索',
-
+                'group' => 'general',
+                'description' => 'Поле поиска'
             ],
             [
                 'key' => 'search_placeholder',
                 'ru' => 'Поиск по марке, модели или номеру...',
                 'kz' => 'Марка, модель немесе нөмір бойынша іздеу...',
                 'cn' => '按品牌、型号或车牌号搜索...',
-
+                'group' => 'general',
+                'description' => 'Плейсхолдер поиска машин'
             ],
             [
                 'key' => 'filter',
                 'ru' => 'Фильтр',
                 'kz' => 'Сүзгі',
                 'cn' => '筛选',
-
+                'group' => 'general',
+                'description' => 'Кнопка фильтра'
             ],
             [
                 'key' => 'clear',
                 'ru' => 'Очистить',
                 'kz' => 'Тазалау',
                 'cn' => '清除',
-
+                'group' => 'general',
+                'description' => 'Кнопка очистки'
             ],
             
             // Переводы для грузов
@@ -133,84 +149,96 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Груз',
                 'kz' => 'Жүк',
                 'cn' => '货物',
-
+                'group' => 'cargo',
+                'description' => 'Название груза'
             ],
             [
                 'key' => 'cargo_type',
                 'ru' => 'Тип груза',
                 'kz' => 'Жүк түрі',
                 'cn' => '货物类型',
-
+                'group' => 'cargo',
+                'description' => 'Поле типа груза'
             ],
             [
                 'key' => 'from_location',
                 'ru' => 'Откуда',
                 'kz' => 'Қайдан',
                 'cn' => '从哪里',
-
+                'group' => 'cargo',
+                'description' => 'Поле места отправления'
             ],
             [
                 'key' => 'to_location',
                 'ru' => 'Куда',
                 'kz' => 'Қайда',
                 'cn' => '到哪里',
-
+                'group' => 'cargo',
+                'description' => 'Поле места назначения'
             ],
             [
                 'key' => 'volume',
                 'ru' => 'Объем',
                 'kz' => 'Көлем',
                 'cn' => '体积',
-
+                'group' => 'cargo',
+                'description' => 'Поле объема груза'
             ],
             [
                 'key' => 'weight',
                 'ru' => 'Вес',
                 'kz' => 'Салмақ',
                 'cn' => '重量',
-
+                'group' => 'cargo',
+                'description' => 'Поле веса груза'
             ],
             [
                 'key' => 'ready_date',
                 'ru' => 'Дата готовности',
                 'kz' => 'Дайындық күні',
                 'cn' => '准备日期',
-
+                'group' => 'cargo',
+                'description' => 'Поле даты готовности'
             ],
             [
                 'key' => 'comment',
                 'ru' => 'Комментарий',
                 'kz' => 'Түсініктеме',
                 'cn' => '评论',
-
+                'group' => 'cargo',
+                'description' => 'Поле комментария'
             ],
             [
                 'key' => 'status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'cargo',
+                'description' => 'Поле статуса'
             ],
             [
                 'key' => 'available',
                 'ru' => 'Доступен',
                 'kz' => 'Қолжетімді',
                 'cn' => '可用',
-
+                'group' => 'cargo',
+                'description' => 'Статус доступности'
             ],
             [
                 'key' => 'in_progress',
                 'ru' => 'В работе',
                 'kz' => 'Жұмыс істеп тұр',
                 'cn' => '进行中',
-
+                'group' => 'cargo',
+                'description' => 'Статус в работе'
             ],
             [
                 'key' => 'delivered',
                 'ru' => 'Доставлен',
                 'kz' => 'Жеткізілді',
                 'cn' => '已交付',
-
+                'group' => 'cargo',
+                'description' => 'Статус доставки'
             ],
             
             // Переводы для машин
@@ -219,133 +247,152 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Машина',
                 'kz' => 'Машина',
                 'cn' => '汽车',
-
+                'group' => 'car',
+                'description' => 'Название машины'
             ],
             [
                 'key' => 'cars.all_cars',
                 'ru' => 'Все машины',
                 'kz' => 'Барлық машиналар',
                 'cn' => '所有车辆',
-
+                'group' => 'car',
+                'description' => 'Заголовок страницы всех машин'
             ],
             [
                 'key' => 'cars.all_cars_description',
                 'ru' => 'Список всех зарегистрированных машин в системе',
                 'kz' => 'Жүйеде тіркелген барлық машиналар тізімі',
                 'cn' => '系统中所有注册车辆的列表',
-
+                'group' => 'car',
+                'description' => 'Описание страницы всех машин'
             ],
             [
                 'key' => 'cars.add_car',
                 'ru' => 'Добавить машину',
                 'kz' => 'Машина қосу',
                 'cn' => '添加车辆',
-
+                'group' => 'car',
+                'description' => 'Кнопка добавления машины'
             ],
             [
                 'key' => 'cars.all_statuses',
                 'ru' => 'Все статусы',
                 'kz' => 'Барлық күйлер',
                 'cn' => '所有状态',
-
+                'group' => 'car',
+                'description' => 'Фильтр всех статусов'
             ],
             [
                 'key' => 'cars.filter',
                 'ru' => 'Фильтровать',
                 'kz' => 'Сүзгі',
                 'cn' => '筛选',
-
+                'group' => 'car',
+                'description' => 'Кнопка фильтрации'
             ],
             [
                 'key' => 'cars.table_car',
                 'ru' => 'Машина',
                 'kz' => 'Машина',
                 'cn' => '车辆',
-
+                'group' => 'car',
+                'description' => 'Заголовок колонки машины'
             ],
             [
                 'key' => 'cars.table_driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'car',
+                'description' => 'Заголовок колонки водителя'
             ],
             [
                 'key' => 'cars.table_trailer',
                 'ru' => 'Прицеп',
                 'kz' => 'Тіркеме',
                 'cn' => '拖车',
-
+                'group' => 'car',
+                'description' => 'Заголовок колонки прицепа'
             ],
             [
                 'key' => 'cars.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'car',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'cars.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'car',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'cars.status_active',
                 'ru' => 'Активна',
                 'kz' => 'Белсенді',
                 'cn' => '活跃',
-
+                'group' => 'car',
+                'description' => 'Статус активной машины'
             ],
             [
                 'key' => 'cars.status_inactive',
                 'ru' => 'Неактивна',
                 'kz' => 'Белсенді емес',
                 'cn' => '不活跃',
-
+                'group' => 'car',
+                'description' => 'Статус неактивной машины'
             ],
             [
                 'key' => 'cars.driver',
                 'ru' => 'Водитель:',
                 'kz' => 'Жүргізуші:',
                 'cn' => '司机:',
-
+                'group' => 'car',
+                'description' => 'Поле водителя'
             ],
             [
                 'key' => 'cars.email',
                 'ru' => 'Email:',
                 'kz' => 'Email:',
                 'cn' => '邮箱:',
-
+                'group' => 'car',
+                'description' => 'Поле email'
             ],
             [
                 'key' => 'cars.trailer',
                 'ru' => 'Прицеп:',
                 'kz' => 'Тіркеме:',
                 'cn' => '拖车:',
-
+                'group' => 'car',
+                'description' => 'Поле прицепа'
             ],
             [
                 'key' => 'cars.dimensions',
                 'ru' => 'Габариты:',
                 'kz' => 'Өлшемдер:',
                 'cn' => '尺寸:',
-
+                'group' => 'car',
+                'description' => 'Поле габаритов'
             ],
             [
                 'key' => 'cars.view',
                 'ru' => 'Просмотр',
                 'kz' => 'Көру',
                 'cn' => '查看',
-
+                'group' => 'car',
+                'description' => 'Кнопка просмотра'
             ],
             [
                 'key' => 'cars.edit',
                 'ru' => 'Редактировать',
                 'kz' => 'Өңдеу',
                 'cn' => '编辑',
-
+                'group' => 'car',
+                'description' => 'Кнопка редактирования'
             ],
             
             // Главная страница
@@ -354,140 +401,160 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Silk Way - Система управления грузоперевозками',
                 'kz' => 'Silk Way - Жүк тасымалдау басқару жүйесі',
                 'cn' => 'Silk Way - 货运管理系统',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок главной страницы'
             ],
             [
                 'key' => 'welcome.system_title',
                 'ru' => 'Система управления грузоперевозками',
                 'kz' => 'Жүк тасымалдау басқару жүйесі',
                 'cn' => '货运管理系统',
-
+                'group' => 'welcome',
+                'description' => 'Подзаголовок системы'
             ],
             [
                 'key' => 'welcome.cargo_management',
                 'ru' => 'Управление грузами',
                 'kz' => 'Жүктерді басқару',
                 'cn' => '货物管理',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок блока управления грузами'
             ],
             [
                 'key' => 'welcome.cargo_management_desc',
                 'ru' => 'Создание, редактирование и отслеживание грузов',
                 'kz' => 'Жүктерді құру, өңдеу және қадағалау',
                 'cn' => '创建、编辑和跟踪货物',
-
+                'group' => 'welcome',
+                'description' => 'Описание управления грузами'
             ],
             [
                 'key' => 'welcome.create_applications',
                 'ru' => 'Создание заявок на перевозку',
                 'kz' => 'Тасымалдауға өтініштер құру',
                 'cn' => '创建运输申请',
-
+                'group' => 'welcome',
+                'description' => 'Функция создания заявок'
             ],
             [
                 'key' => 'welcome.track_delivery',
                 'ru' => 'Отслеживание статуса доставки',
                 'kz' => 'Жеткізу күйін қадағалау',
                 'cn' => '跟踪交付状态',
-
+                'group' => 'welcome',
+                'description' => 'Функция отслеживания'
             ],
             [
                 'key' => 'welcome.route_management',
                 'ru' => 'Управление маршрутами',
                 'kz' => 'Маршруттарды басқару',
                 'cn' => '路线管理',
-
+                'group' => 'welcome',
+                'description' => 'Функция управления маршрутами'
             ],
             [
                 'key' => 'welcome.car_management',
                 'ru' => 'Управление машинами',
                 'kz' => 'Машиналарды басқару',
                 'cn' => '车辆管理',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок блока управления машинами'
             ],
             [
                 'key' => 'welcome.car_management_desc',
                 'ru' => 'Регистрация и управление автопарком водителей',
                 'kz' => 'Жүргізушілер автопаркін тіркеу және басқару',
                 'cn' => '司机车队注册和管理',
-
+                'group' => 'welcome',
+                'description' => 'Описание управления машинами'
             ],
             [
                 'key' => 'welcome.register_cars',
                 'ru' => 'Регистрация машин и прицепов',
                 'kz' => 'Машиналар мен тіркемелерді тіркеу',
                 'cn' => '车辆和拖车注册',
-
+                'group' => 'welcome',
+                'description' => 'Функция регистрации машин'
             ],
             [
                 'key' => 'welcome.technical_specs',
                 'ru' => 'Учет технических характеристик',
                 'kz' => 'Техникалық сипаттамаларды есепке алу',
                 'cn' => '技术规格记录',
-
+                'group' => 'welcome',
+                'description' => 'Функция учета характеристик'
             ],
             [
                 'key' => 'welcome.upload_docs',
                 'ru' => 'Загрузка документов ПДД',
                 'kz' => 'Жол қауіпсіздігі қағидалары құжаттарын жүктеу',
                 'cn' => '上传交通规则文件',
-
+                'group' => 'welcome',
+                'description' => 'Функция загрузки документов'
             ],
             [
                 'key' => 'welcome.user_management',
                 'ru' => 'Управление пользователями',
                 'kz' => 'Пайдаланушыларды басқару',
                 'cn' => '用户管理',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок блока управления пользователями'
             ],
             [
                 'key' => 'welcome.user_management_desc',
                 'ru' => 'Роли и права доступа в системе',
                 'kz' => 'Жүйедегі рөлдер мен қол жеткізу құқықтары',
                 'cn' => '系统中的角色和访问权限',
-
+                'group' => 'welcome',
+                'description' => 'Описание управления пользователями'
             ],
             [
                 'key' => 'welcome.admins',
                 'ru' => 'Администраторы',
                 'kz' => 'Әкімшілер',
                 'cn' => '管理员',
-
+                'group' => 'welcome',
+                'description' => 'Роль администратора'
             ],
             [
                 'key' => 'welcome.warehouse_workers',
                 'ru' => 'Складские работники',
                 'kz' => 'Қойма жұмысшылары',
                 'cn' => '仓库工人',
-
+                'group' => 'welcome',
+                'description' => 'Роль складского работника'
             ],
             [
                 'key' => 'welcome.drivers',
                 'ru' => 'Водители',
                 'kz' => 'Жүргізушілер',
                 'cn' => '司机',
-
+                'group' => 'welcome',
+                'description' => 'Роль водителя'
             ],
             [
                 'key' => 'welcome.demo_title',
                 'ru' => 'Демонстрация системы',
                 'kz' => 'Жүйені көрсету',
                 'cn' => '系统演示',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок демонстрации'
             ],
             [
                 'key' => 'welcome.demo_description',
                 'ru' => 'Для тестирования системы используйте следующие учетные данные:',
                 'kz' => 'Жүйені сынау үшін келесі есептік деректерді пайдаланыңыз:',
                 'cn' => '要测试系统，请使用以下凭据：',
-
+                'group' => 'welcome',
+                'description' => 'Описание демонстрации'
             ],
             [
                 'key' => 'welcome.test_drivers',
                 'ru' => 'Тестовые водители:',
                 'kz' => 'Сынақ жүргізушілері:',
                 'cn' => '测试司机：',
-
+                'group' => 'welcome',
+                'description' => 'Заголовок тестовых водителей'
             ],
             
             // Аутентификация
@@ -496,119 +563,136 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Вход - Silk Way',
                 'kz' => 'Кіру - Silk Way',
                 'cn' => '登录 - Silk Way',
-
+                'group' => 'auth',
+                'description' => 'Заголовок страницы входа'
             ],
             [
                 'key' => 'auth.email_placeholder',
                 'ru' => 'Email адрес',
                 'kz' => 'Email мекенжайы',
                 'cn' => '邮箱地址',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер email'
             ],
             [
                 'key' => 'auth.password_placeholder',
                 'ru' => 'Пароль',
                 'kz' => 'Құпия сөз',
                 'cn' => '密码',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер пароля'
             ],
             [
                 'key' => 'auth.login_button',
                 'ru' => 'Войти',
                 'kz' => 'Кіру',
                 'cn' => '登录',
-
+                'group' => 'auth',
+                'description' => 'Кнопка входа'
             ],
             [
                 'key' => 'auth.no_account',
                 'ru' => 'Нет аккаунта?',
                 'kz' => 'Есептік жазба жоқ па?',
                 'cn' => '没有账户？',
-
+                'group' => 'auth',
+                'description' => 'Текст о отсутствии аккаунта'
             ],
             [
                 'key' => 'auth.register_link',
                 'ru' => 'Зарегистрироваться',
                 'kz' => 'Тіркелу',
                 'cn' => '注册',
-
+                'group' => 'auth',
+                'description' => 'Ссылка на регистрацию'
             ],
             [
                 'key' => 'auth.register_title',
                 'ru' => 'Регистрация - Silk Way',
                 'kz' => 'Тіркеу - Silk Way',
                 'cn' => '注册 - Silk Way',
-
+                'group' => 'auth',
+                'description' => 'Заголовок страницы регистрации'
             ],
             [
                 'key' => 'auth.register_heading',
                 'ru' => 'Регистрация',
                 'kz' => 'Тіркеу',
                 'cn' => '注册',
-
+                'group' => 'auth',
+                'description' => 'Заголовок формы регистрации'
             ],
             [
                 'key' => 'auth.register_desc',
                 'ru' => 'Создайте аккаунт для работы в системе',
                 'kz' => 'Жүйеде жұмыс істеу үшін есептік жазба құрыңыз',
                 'cn' => '创建账户以在系统中工作',
-
+                'group' => 'auth',
+                'description' => 'Описание формы регистрации'
             ],
             [
                 'key' => 'auth.full_name',
                 'ru' => 'Полное имя',
                 'kz' => 'Толық аты',
                 'cn' => '全名',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер полного имени'
             ],
             [
                 'key' => 'auth.password_confirmation',
                 'ru' => 'Подтвердите пароль',
                 'kz' => 'Құпия сөзді растаңыз',
                 'cn' => '确认密码',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер подтверждения пароля'
             ],
             [
                 'key' => 'auth.select_role',
                 'ru' => 'Выберите роль',
                 'kz' => 'Рөлді таңдаңыз',
                 'cn' => '选择角色',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер выбора роли'
             ],
             [
                 'key' => 'auth.warehouse_employee',
                 'ru' => 'Сотрудник склада',
                 'kz' => 'Қойма қызметкері',
                 'cn' => '仓库员工',
-
+                'group' => 'auth',
+                'description' => 'Роль сотрудника склада'
             ],
             [
                 'key' => 'auth.driver_role',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'auth',
+                'description' => 'Роль водителя'
             ],
             [
                 'key' => 'auth.register_button',
                 'ru' => 'Зарегистрироваться',
                 'kz' => 'Тіркелу',
                 'cn' => '注册',
-
+                'group' => 'auth',
+                'description' => 'Кнопка регистрации'
             ],
             [
                 'key' => 'auth.have_account',
                 'ru' => 'Уже есть аккаунт?',
                 'kz' => 'Есептік жазба бар ма?',
                 'cn' => '已有账户？',
-
+                'group' => 'auth',
+                'description' => 'Текст о наличии аккаунта'
             ],
             [
                 'key' => 'auth.login_link',
                 'ru' => 'Войти',
                 'kz' => 'Кіру',
                 'cn' => '登录',
-
+                'group' => 'auth',
+                'description' => 'Ссылка на вход'
             ],
             
             // Страницы грузов
@@ -617,126 +701,144 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Доступные грузы',
                 'kz' => 'Қолжетімді жүктер',
                 'cn' => '可用货物',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок страницы доступных грузов'
             ],
             [
                 'key' => 'cargo.available_cargo_desc',
                 'ru' => 'Список всех доступных для перевозки грузов',
                 'kz' => 'Тасымалдауға қолжетімді барлық жүктер тізімі',
                 'cn' => '所有可用于运输的货物列表',
-
+                'group' => 'cargo',
+                'description' => 'Описание страницы доступных грузов'
             ],
             [
                 'key' => 'cargo.add_cargo',
                 'ru' => 'Добавить груз',
                 'kz' => 'Жүк қосу',
                 'cn' => '添加货物',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка добавления груза'
             ],
             [
                 'key' => 'cargo.search_placeholder',
                 'ru' => 'Поиск по маршруту или типу груза...',
                 'kz' => 'Маршрут немесе жүк түрі бойынша іздеу...',
                 'cn' => '按路线或货物类型搜索...',
-
+                'group' => 'cargo',
+                'description' => 'Плейсхолдер поиска грузов'
             ],
             [
                 'key' => 'cargo.all_statuses',
                 'ru' => 'Все статусы',
                 'kz' => 'Барлық күйлер',
                 'cn' => '所有状态',
-
+                'group' => 'cargo',
+                'description' => 'Фильтр всех статусов грузов'
             ],
             [
                 'key' => 'cargo.status_available',
                 'ru' => 'Доступен',
                 'kz' => 'Қолжетімді',
                 'cn' => '可用',
-
+                'group' => 'cargo',
+                'description' => 'Статус доступности груза'
             ],
             [
                 'key' => 'cargo.status_picked_up',
                 'ru' => 'Забран',
                 'kz' => 'Алынды',
                 'cn' => '已取',
-
+                'group' => 'cargo',
+                'description' => 'Статус забранного груза'
             ],
             [
                 'key' => 'cargo.status_delivered',
                 'ru' => 'Доставлен',
                 'kz' => 'Жеткізілді',
                 'cn' => '已交付',
-
+                'group' => 'cargo',
+                'description' => 'Статус доставленного груза'
             ],
             [
                 'key' => 'cargo.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'cargo.table_cargo',
                 'ru' => 'Груз',
                 'kz' => 'Жүк',
                 'cn' => '货物',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки груза'
             ],
             [
                 'key' => 'cargo.table_readiness',
                 'ru' => 'Готовность',
                 'kz' => 'Дайындық',
                 'cn' => '准备就绪',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки готовности'
             ],
             [
                 'key' => 'cargo.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'cargo.table_created',
                 'ru' => 'Создан',
                 'kz' => 'Құрылды',
                 'cn' => '已创建',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки создания'
             ],
             [
                 'key' => 'cargo.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'cargo.no_cargo_found',
                 'ru' => 'Грузы не найдены',
                 'kz' => 'Жүктер табылмады',
                 'cn' => '未找到货物',
-
+                'group' => 'cargo',
+                'description' => 'Сообщение об отсутствии грузов'
             ],
             [
                 'key' => 'cargo.no_cargo_desc',
                 'ru' => 'В данный момент нет доступных для перевозки грузов',
                 'kz' => 'Қазіргі уақытта тасымалдауға қолжетімді жүктер жоқ',
                 'cn' => '目前没有可用于运输的货物',
-
+                'group' => 'cargo',
+                'description' => 'Описание отсутствия грузов'
             ],
             [
                 'key' => 'cargo.change_search',
                 'ru' => 'Попробуйте изменить параметры поиска',
                 'kz' => 'Іздеу параметрлерін өзгертуге тырысыңыз',
                 'cn' => '尝试更改搜索参数',
-
+                'group' => 'cargo',
+                'description' => 'Совет по изменению поиска'
             ],
             [
                 'key' => 'cargo.reset_filters',
                 'ru' => 'Сбросить фильтры',
                 'kz' => 'Сүзгілерді қалпына келтіру',
                 'cn' => '重置筛选器',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка сброса фильтров'
             ],
             
             // Админ панель
@@ -745,994 +847,1136 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Админ-панель',
                 'kz' => 'Әкімші панелі',
                 'cn' => '管理面板',
-
+                'group' => 'admin',
+                'description' => 'Заголовок админ панели'
             ],
             [
                 'key' => 'admin.dashboard_desc',
                 'ru' => 'Управление системой и пользователями',
                 'kz' => 'Жүйе мен пайдаланушыларды басқару',
                 'cn' => '系统和用户管理',
-
+                'group' => 'admin',
+                'description' => 'Описание админ панели'
             ],
             [
                 'key' => 'admin.total_cargo',
                 'ru' => 'Всего грузов',
                 'kz' => 'Барлығы жүктер',
                 'cn' => '货物总数',
-
+                'group' => 'admin',
+                'description' => 'Статистика общего количества грузов'
             ],
             [
                 'key' => 'admin.available_cargo',
                 'ru' => 'Доступные грузы',
                 'kz' => 'Қолжетімді жүктер',
                 'cn' => '可用货物',
-
+                'group' => 'admin',
+                'description' => 'Статистика доступных грузов'
             ],
             [
                 'key' => 'admin.picked_up_cargo',
                 'ru' => 'Забранные грузы',
                 'kz' => 'Алынған жүктер',
                 'cn' => '已取货物',
-
+                'group' => 'admin',
+                'description' => 'Статистика забранных грузов'
             ],
             [
                 'key' => 'admin.pending_users',
                 'ru' => 'Пользователи на подтверждение',
                 'kz' => 'Бекіту күтудегі пайдаланушылар',
                 'cn' => '等待确认的用户',
-
+                'group' => 'admin',
+                'description' => 'Заголовок блока ожидающих пользователей'
             ],
             [
                 'key' => 'admin.pending_users_desc',
                 'ru' => 'Подтвердите или отклоните заявки на регистрацию',
                 'kz' => 'Тіркеу өтініштерін бекітіңіз немесе бас тартыңыз',
                 'cn' => '确认或拒绝注册申请',
-
+                'group' => 'admin',
+                'description' => 'Описание блока ожидающих пользователей'
             ],
             [
                 'key' => 'admin.approved_users',
                 'ru' => 'Подтвержденные пользователи',
                 'kz' => 'Бекітілген пайдаланушылар',
                 'cn' => '已确认用户',
-
+                'group' => 'admin',
+                'description' => 'Заголовок блока подтвержденных пользователей'
             ],
             [
                 'key' => 'admin.approved_users_desc',
                 'ru' => 'Активные пользователи системы',
                 'kz' => 'Жүйенің белсенді пайдаланушылары',
                 'cn' => '系统的活跃用户',
-
+                'group' => 'admin',
+                'description' => 'Описание блока подтвержденных пользователей'
             ],
             [
                 'key' => 'admin.approve',
                 'ru' => 'Подтвердить',
                 'kz' => 'Бекіту',
                 'cn' => '确认',
-
+                'group' => 'admin',
+                'description' => 'Кнопка подтверждения пользователя'
             ],
             [
                 'key' => 'admin.reject',
                 'ru' => 'Отклонить',
                 'kz' => 'Бас тарту',
                 'cn' => '拒绝',
-
+                'group' => 'admin',
+                'description' => 'Кнопка отклонения пользователя'
             ],
             [
                 'key' => 'admin.toggle_approval',
                 'ru' => 'Отозвать доступ',
                 'kz' => 'Қол жеткізуді алып тастау',
                 'cn' => '撤销访问权限',
-
+                'group' => 'admin',
+                'description' => 'Кнопка отзыва доступа'
             ],
             [
                 'key' => 'admin.translations_button',
                 'ru' => 'Переводы',
                 'kz' => 'Аудармалар',
                 'cn' => '翻译',
-
+                'group' => 'admin',
+                'description' => 'Кнопка управления переводами'
             ],
             [
                 'key' => 'admin.user_name',
                 'ru' => 'Имя',
                 'kz' => 'Аты',
                 'cn' => '姓名',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки имени пользователя'
             ],
             [
                 'key' => 'admin.user_email',
                 'ru' => 'Email',
                 'kz' => 'Email',
                 'cn' => '邮箱',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки email пользователя'
             ],
             [
                 'key' => 'admin.user_role',
                 'ru' => 'Роль',
                 'kz' => 'Рөл',
                 'cn' => '角色',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки роли пользователя'
             ],
             [
                 'key' => 'admin.user_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'admin.administrator',
                 'ru' => 'Администратор',
                 'kz' => 'Әкімші',
                 'cn' => '管理员',
-
+                'group' => 'admin',
+                'description' => 'Роль администратора'
             ],
             [
                 'key' => 'admin.registered_at',
                 'ru' => 'Зарегистрирован',
                 'kz' => 'Тіркелген',
                 'cn' => '已注册',
-
+                'group' => 'admin',
+                'description' => 'Текст о времени регистрации'
             ],
             [
                 'key' => 'admin.approved_at',
                 'ru' => 'Подтвержден',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'admin',
+                'description' => 'Текст о времени подтверждения'
             ],
             [
                 'key' => 'admin.confirm_reject_user',
                 'ru' => 'Отклонить этого пользователя?',
                 'kz' => 'Бұл пайдаланушыны бас тарту керек пе?',
                 'cn' => '拒绝这个用户？',
-
+                'group' => 'admin',
+                'description' => 'Подтверждение отклонения пользователя'
             ],
             [
                 'key' => 'admin.confirm_delete_user',
                 'ru' => 'Удалить этого пользователя?',
                 'kz' => 'Бұл пайдаланушыны жою керек пе?',
                 'cn' => '删除这个用户？',
-
+                'group' => 'admin',
+                'description' => 'Подтверждение удаления пользователя'
             ],
             [
                 'key' => 'admin.users_management_title',
                 'ru' => 'Управление пользователями - Silk Way',
                 'kz' => 'Пайдаланушыларды басқару - Silk Way',
                 'cn' => '用户管理 - Silk Way',
-
+                'group' => 'admin',
+                'description' => 'Заголовок страницы управления пользователями'
             ],
             [
                 'key' => 'admin.users_management_heading',
                 'ru' => 'Управление пользователями',
                 'kz' => 'Пайдаланушыларды басқару',
                 'cn' => '用户管理',
-
+                'group' => 'admin',
+                'description' => 'Заголовок страницы управления пользователями'
             ],
             [
                 'key' => 'admin.users_management_desc',
                 'ru' => 'Просмотр и управление всеми пользователями системы',
                 'kz' => 'Жүйедегі барлық пайдаланушыларды көру және басқару',
                 'cn' => '查看和管理系统中的所有用户',
-
+                'group' => 'admin',
+                'description' => 'Описание страницы управления пользователями'
             ],
             [
                 'key' => 'admin.table_user',
                 'ru' => 'Пользователь',
                 'kz' => 'Пайдаланушы',
                 'cn' => '用户',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки пользователя'
             ],
             [
                 'key' => 'admin.table_role',
                 'ru' => 'Роль',
                 'kz' => 'Рөл',
                 'cn' => '角色',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки роли'
             ],
             [
                 'key' => 'admin.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'admin.table_registration_date',
                 'ru' => 'Дата регистрации',
                 'kz' => 'Тіркелу күні',
                 'cn' => '注册日期',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки даты регистрации'
             ],
             [
                 'key' => 'admin.status_approved',
                 'ru' => 'Подтвержден',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'admin',
+                'description' => 'Статус подтвержденного пользователя'
             ],
             [
                 'key' => 'admin.status_pending',
                 'ru' => 'Ожидает подтверждения',
                 'kz' => 'Бекітуді күтуде',
                 'cn' => '等待确认',
-
+                'group' => 'admin',
+                'description' => 'Статус пользователя, ожидающего подтверждения'
             ],
             [
                 'key' => 'admin.toggle_access_title',
                 'ru' => 'Отозвать доступ',
                 'kz' => 'Қол жеткізуді алып тастау',
                 'cn' => '撤销访问权限',
-
+                'group' => 'admin',
+                'description' => 'Тултип кнопки отзыва доступа'
             ],
             [
                 'key' => 'admin.delete_user_title',
                 'ru' => 'Удалить пользователя',
                 'kz' => 'Пайдаланушыны жою',
                 'cn' => '删除用户',
-
+                'group' => 'admin',
+                'description' => 'Тултип кнопки удаления пользователя'
             ],
             [
                 'key' => 'cargo.add_cargo_button',
                 'ru' => 'Добавить груз',
                 'kz' => 'Жүк қосу',
                 'cn' => '添加货物',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка добавления груза'
             ],
             [
                 'key' => 'cargo.search_placeholder',
                 'ru' => 'Поиск по маршруту или типу груза...',
                 'kz' => 'Маршрут немесе жүк түрі бойынша іздеу...',
                 'cn' => '按路线或货物类型搜索...',
-
+                'group' => 'cargo',
+                'description' => 'Плейсхолдер поиска грузов'
             ],
             [
                 'key' => 'cargo.all_statuses',
                 'ru' => 'Все статусы',
                 'kz' => 'Барлық күйлер',
                 'cn' => '所有状态',
-
+                'group' => 'cargo',
+                'description' => 'Фильтр всех статусов грузов'
             ],
             [
                 'key' => 'cargo.status_available',
                 'ru' => 'Доступен',
                 'kz' => 'Қолжетімді',
                 'cn' => '可用',
-
+                'group' => 'cargo',
+                'description' => 'Статус доступности груза'
             ],
             [
                 'key' => 'cargo.status_picked_up',
                 'ru' => 'Забран',
                 'kz' => 'Алынған',
                 'cn' => '已取',
-
+                'group' => 'cargo',
+                'description' => 'Статус забранного груза'
             ],
             [
                 'key' => 'cargo.status_delivered',
                 'ru' => 'Доставлен',
                 'kz' => 'Жеткізілген',
                 'cn' => '已送达',
-
+                'group' => 'cargo',
+                'description' => 'Статус доставленного груза'
             ],
             [
                 'key' => 'cargo.filter_button',
                 'ru' => 'Фильтровать',
                 'kz' => 'Сүзгілеу',
                 'cn' => '筛选',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка фильтрации'
             ],
             [
                 'key' => 'cargo.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'cargo.table_cargo',
                 'ru' => 'Груз',
                 'kz' => 'Жүк',
                 'cn' => '货物',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки груза'
             ],
             [
                 'key' => 'cargo.table_readiness',
                 'ru' => 'Готовность',
                 'kz' => 'Дайындық',
                 'cn' => '准备状态',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки готовности'
             ],
             [
                 'key' => 'cargo.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'cargo.table_created',
                 'ru' => 'Создан',
                 'kz' => 'Құрылған',
                 'cn' => '创建时间',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок колонки создания'
             ],
             [
                 'key' => 'cargo.volume_weight',
                 'ru' => 'м³, кг',
                 'kz' => 'м³, кг',
                 'cn' => '立方米, 公斤',
-
+                'group' => 'cargo',
+                'description' => 'Единицы измерения объема и веса'
             ],
             [
                 'key' => 'cargo.view_button',
                 'ru' => 'Просмотр',
                 'kz' => 'Көру',
                 'cn' => '查看',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка просмотра груза'
             ],
             [
                 'key' => 'cargo.no_cargo_found',
                 'ru' => 'Грузы не найдены',
                 'kz' => 'Жүктер табылмады',
                 'cn' => '未找到货物',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок при отсутствии грузов'
             ],
             [
                 'key' => 'cargo.no_cargo_desc',
                 'ru' => 'В данный момент нет доступных грузов для перевозки',
                 'kz' => 'Қазіргі уақытта тасымалдауға қолжетімді жүктер жоқ',
                 'cn' => '目前没有可运输的货物',
-
+                'group' => 'cargo',
+                'description' => 'Описание при отсутствии грузов'
             ],
             [
                 'key' => 'cargo.try_change_search',
                 'ru' => 'Попробуйте изменить параметры поиска',
                 'kz' => 'Іздеу параметрлерін өзгертуге тырысыңыз',
                 'cn' => '尝试更改搜索参数',
-
+                'group' => 'cargo',
+                'description' => 'Совет при неудачном поиске'
             ],
             [
                 'key' => 'cargo.reset_filters',
                 'ru' => 'Сбросить фильтры',
                 'kz' => 'Сүзгілерді қалпына келтіру',
                 'cn' => '重置筛选器',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка сброса фильтров'
             ],
             [
                 'key' => 'cargo.confirm_delete',
                 'ru' => 'Удалить этот груз?',
                 'kz' => 'Бұл жүкті жою керек пе?',
                 'cn' => '删除这个货物？',
-
+                'group' => 'cargo',
+                'description' => 'Подтверждение удаления груза'
             ],
             [
                 'key' => 'cargo.volume_label',
                 'ru' => 'Объем:',
                 'kz' => 'Көлемі:',
                 'cn' => '体积：',
-
+                'group' => 'cargo',
+                'description' => 'Метка объема в мобильной карточке'
             ],
             [
                 'key' => 'cargo.weight_label',
                 'ru' => 'Вес:',
                 'kz' => 'Салмағы:',
                 'cn' => '重量：',
-
+                'group' => 'cargo',
+                'description' => 'Метка веса в мобильной карточке'
             ],
             [
                 'key' => 'cargo.readiness_label',
                 'ru' => 'Готовность:',
                 'kz' => 'Дайындық:',
                 'cn' => '准备状态：',
-
+                'group' => 'cargo',
+                'description' => 'Метка готовности в мобильной карточке'
             ],
             [
                 'key' => 'cargo.created_label',
                 'ru' => 'Создан:',
                 'kz' => 'Құрылған:',
                 'cn' => '创建时间：',
-
+                'group' => 'cargo',
+                'description' => 'Метка создания в мобильной карточке'
             ],
             [
                 'key' => 'applications.title',
                 'ru' => 'Заявки на грузы',
                 'kz' => 'Жүктерге өтініштер',
                 'cn' => '货物申请',
-
+                'group' => 'applications',
+                'description' => 'Заголовок страницы заявок'
             ],
             [
                 'key' => 'applications.heading',
                 'ru' => 'Заявки на грузы',
                 'kz' => 'Жүктерге өтініштер',
                 'cn' => '货物申请',
-
+                'group' => 'applications',
+                'description' => 'Основной заголовок страницы заявок'
             ],
             [
                 'key' => 'applications.admin_desc',
                 'ru' => 'Все заявки в системе',
                 'kz' => 'Жүйедегі барлық өтініштер',
                 'cn' => '系统中的所有申请',
-
+                'group' => 'applications',
+                'description' => 'Описание для администраторов'
             ],
             [
                 'key' => 'applications.driver_desc',
                 'ru' => 'Заявки на ваши грузы',
                 'kz' => 'Сіздің жүктеріңізге өтініштер',
                 'cn' => '您货物的申请',
-
+                'group' => 'applications',
+                'description' => 'Описание для водителей'
             ],
             [
                 'key' => 'applications.status_label',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'applications',
+                'description' => 'Метка поля статуса'
             ],
             [
                 'key' => 'applications.all_statuses',
                 'ru' => 'Все статусы',
                 'kz' => 'Барлық күйлер',
                 'cn' => '所有状态',
-
+                'group' => 'applications',
+                'description' => 'Фильтр всех статусов'
             ],
             [
                 'key' => 'applications.status_pending',
                 'ru' => 'Ожидает рассмотрения',
                 'kz' => 'Қарастыруды күтуде',
                 'cn' => '等待审核',
-
+                'group' => 'applications',
+                'description' => 'Статус ожидания рассмотрения'
             ],
             [
                 'key' => 'applications.status_approved',
                 'ru' => 'Подтверждена',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'applications',
+                'description' => 'Статус подтверждения'
             ],
             [
                 'key' => 'applications.status_rejected',
                 'ru' => 'Отклонена',
                 'kz' => 'Бас тартылған',
                 'cn' => '已拒绝',
-
+                'group' => 'applications',
+                'description' => 'Статус отклонения'
             ],
             [
                 'key' => 'applications.search_label',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
                 'cn' => '搜索',
-
+                'group' => 'applications',
+                'description' => 'Метка поля поиска'
             ],
             [
                 'key' => 'applications.search_placeholder',
                 'ru' => 'Поиск по маршруту или водителю',
                 'kz' => 'Маршрут немесе жүргізуші бойынша іздеу',
                 'cn' => '按路线或司机搜索',
-
+                'group' => 'applications',
+                'description' => 'Плейсхолдер поиска'
             ],
             [
                 'key' => 'applications.search_button',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
                 'cn' => '搜索',
-
+                'group' => 'applications',
+                'description' => 'Кнопка поиска'
             ],
             [
                 'key' => 'applications.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'applications.table_driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки водителя'
             ],
             [
                 'key' => 'applications.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'applications.table_submitted',
                 'ru' => 'Подана',
                 'kz' => 'Берілген',
                 'cn' => '提交时间',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки подачи'
             ],
             [
                 'key' => 'applications.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'applications.status_pending_short',
                 'ru' => 'Ожидает',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'applications',
+                'description' => 'Короткий статус ожидания'
             ],
             [
                 'key' => 'applications.status_approved_short',
                 'ru' => 'Подтверждена',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'applications',
+                'description' => 'Короткий статус подтверждения'
             ],
             [
                 'key' => 'applications.status_rejected_short',
                 'ru' => 'Отклонена',
                 'kz' => 'Бас тартылған',
                 'cn' => '已拒绝',
-
+                'group' => 'applications',
+                'description' => 'Короткий статус отклонения'
             ],
             [
                 'key' => 'applications.view_details',
                 'ru' => 'Подробнее',
                 'kz' => 'Толығырақ',
                 'cn' => '详情',
-
+                'group' => 'applications',
+                'description' => 'Кнопка просмотра деталей'
             ],
             [
                 'key' => 'applications.approve_button',
                 'ru' => 'Подтвердить',
                 'kz' => 'Бекіту',
                 'cn' => '确认',
-
+                'group' => 'applications',
+                'description' => 'Кнопка подтверждения'
             ],
             [
                 'key' => 'applications.reject_button',
                 'ru' => 'Отклонить',
                 'kz' => 'Бас тарту',
                 'cn' => '拒绝',
-
+                'group' => 'applications',
+                'description' => 'Кнопка отклонения'
             ],
             [
                 'key' => 'applications.driver_label',
                 'ru' => 'Водитель:',
                 'kz' => 'Жүргізуші:',
                 'cn' => '司机：',
-
+                'group' => 'applications',
+                'description' => 'Метка водителя в мобильной карточке'
             ],
             [
                 'key' => 'applications.submitted_label',
                 'ru' => 'Подана:',
                 'kz' => 'Берілген:',
                 'cn' => '提交时间：',
-
+                'group' => 'applications',
+                'description' => 'Метка времени подачи'
             ],
             [
                 'key' => 'applications.confirm_approve',
                 'ru' => 'Подтвердить заявку этого водителя?',
                 'kz' => 'Бұл жүргізушінің өтінішін бекіту керек пе?',
                 'cn' => '确认这个司机的申请？',
-
+                'group' => 'applications',
+                'description' => 'Подтверждение заявки водителя'
             ],
             [
                 'key' => 'applications.confirm_reject',
                 'ru' => 'Отклонить заявку этого водителя?',
                 'kz' => 'Бұл жүргізушінің өтінішін бас тарту керек пе?',
                 'cn' => '拒绝这个司机的申请？',
-
+                'group' => 'applications',
+                'description' => 'Подтверждение отклонения заявки'
             ],
             [
                 'key' => 'applications.no_applications',
                 'ru' => 'Заявок пока нет',
                 'kz' => 'Әзірше өтініштер жоқ',
                 'cn' => '暂无申请',
-
+                'group' => 'applications',
+                'description' => 'Заголовок при отсутствии заявок'
             ],
             [
                 'key' => 'applications.no_applications_desc',
                 'ru' => 'Когда водители будут подавать заявки на грузы, они появятся здесь',
                 'kz' => 'Жүргізушілер жүктерге өтініш бергенде, олар осында пайда болады',
                 'cn' => '当司机申请货物时，它们将出现在这里',
-
+                'group' => 'applications',
+                'description' => 'Описание при отсутствии заявок'
             ],
             [
                 'key' => 'applications.back_button',
                 'ru' => 'Назад',
                 'kz' => 'Артқа',
                 'cn' => '返回',
-
+                'group' => 'applications',
+                'description' => 'Кнопка возврата'
             ],
             [
                 'key' => 'my_cargo.title',
                 'ru' => 'Мои грузы',
                 'kz' => 'Менің жүктерім',
                 'cn' => '我的货物',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок страницы моих грузов'
             ],
             [
                 'key' => 'my_cargo.heading',
                 'ru' => 'Мои грузы',
                 'kz' => 'Менің жүктерім',
                 'cn' => '我的货物',
-
+                'group' => 'my_cargo',
+                'description' => 'Основной заголовок страницы моих грузов'
             ],
             [
                 'key' => 'my_cargo.description',
                 'ru' => 'Грузы, которые вы забрали для доставки',
                 'kz' => 'Сіз жеткізу үшін алған жүктер',
                 'cn' => '您已取走用于交付的货物',
-
+                'group' => 'my_cargo',
+                'description' => 'Описание страницы моих грузов'
             ],
             [
                 'key' => 'my_cargo.back_button',
                 'ru' => 'Назад',
                 'kz' => 'Артқа',
                 'cn' => '返回',
-
+                'group' => 'my_cargo',
+                'description' => 'Кнопка возврата'
             ],
             [
                 'key' => 'my_cargo.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'my_cargo.table_cargo',
                 'ru' => 'Груз',
                 'kz' => 'Жүк',
                 'cn' => '货物',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок колонки груза'
             ],
             [
                 'key' => 'my_cargo.table_picked',
                 'ru' => 'Забран',
                 'kz' => 'Алынған',
                 'cn' => '已取',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок колонки времени забора'
             ],
             [
                 'key' => 'my_cargo.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'my_cargo.status_in_delivery',
                 'ru' => 'В доставке',
                 'kz' => 'Жеткізуде',
                 'cn' => '运输中',
-
+                'group' => 'my_cargo',
+                'description' => 'Статус груза в доставке'
             ],
             [
                 'key' => 'my_cargo.status_delivered',
                 'ru' => 'Доставлен',
                 'kz' => 'Жеткізілген',
                 'cn' => '已送达',
-
+                'group' => 'my_cargo',
+                'description' => 'Статус доставленного груза'
             ],
             [
                 'key' => 'my_cargo.mark_delivered',
                 'ru' => 'Доставлен',
                 'kz' => 'Жеткізілген',
                 'cn' => '已送达',
-
+                'group' => 'my_cargo',
+                'description' => 'Кнопка отметки доставки'
             ],
             [
                 'key' => 'my_cargo.confirm_mark_delivered',
                 'ru' => 'Отметить груз как доставленный?',
                 'kz' => 'Жүкті жеткізілген деп белгілеу керек пе?',
                 'cn' => '将货物标记为已送达？',
-
+                'group' => 'my_cargo',
+                'description' => 'Подтверждение отметки доставки'
             ],
             [
                 'key' => 'my_cargo.view_button',
                 'ru' => 'Просмотр',
                 'kz' => 'Көру',
                 'cn' => '查看',
-
+                'group' => 'my_cargo',
+                'description' => 'Кнопка просмотра груза'
             ],
             [
                 'key' => 'my_cargo.volume_label',
                 'ru' => 'Объем:',
                 'kz' => 'Көлемі:',
                 'cn' => '体积：',
-
+                'group' => 'my_cargo',
+                'description' => 'Метка объема в мобильной карточке'
             ],
             [
                 'key' => 'my_cargo.weight_label',
                 'ru' => 'Вес:',
                 'kz' => 'Салмағы:',
                 'cn' => '重量：',
-
+                'group' => 'my_cargo',
+                'description' => 'Метка веса в мобильной карточке'
             ],
             [
                 'key' => 'my_cargo.picked_label',
                 'ru' => 'Забран:',
                 'kz' => 'Алынған:',
                 'cn' => '已取：',
-
+                'group' => 'my_cargo',
+                'description' => 'Метка времени забора'
             ],
             [
                 'key' => 'my_cargo.no_cargo_title',
                 'ru' => 'У вас пока нет забранных грузов',
                 'kz' => 'Сізде әзірше алынған жүктер жоқ',
                 'cn' => '您目前没有已取的货物',
-
+                'group' => 'my_cargo',
+                'description' => 'Заголовок при отсутствии грузов'
             ],
             [
                 'key' => 'my_cargo.no_cargo_desc',
                 'ru' => 'Заберите груз для доставки, чтобы он появился в этом списке',
                 'kz' => 'Жеткізуге жүк алыңыз, ол осы тізімде пайда болады',
                 'cn' => '取走货物进行交付，它将出现在此列表中',
-
+                'group' => 'my_cargo',
+                'description' => 'Описание при отсутствии грузов'
             ],
             [
                 'key' => 'my_cargo.stats_total_picked',
                 'ru' => 'Всего забрано',
                 'kz' => 'Барлығы алынған',
                 'cn' => '总共已取',
-
+                'group' => 'my_cargo',
+                'description' => 'Статистика: общее количество забранных грузов'
             ],
             [
                 'key' => 'my_cargo.stats_in_delivery',
                 'ru' => 'В доставке',
                 'kz' => 'Жеткізуде',
                 'cn' => '运输中',
-
+                'group' => 'my_cargo',
+                'description' => 'Статистика: грузы в доставке'
             ],
             [
                 'key' => 'my_cargo.stats_delivered',
                 'ru' => 'Доставлено',
                 'kz' => 'Жеткізілген',
                 'cn' => '已送达',
-
+                'group' => 'my_cargo',
+                'description' => 'Статистика: доставленные грузы'
             ],
             [
                 'key' => 'my_applications.title',
                 'ru' => 'Мои заявки',
                 'kz' => 'Менің өтініштерім',
                 'cn' => '我的申请',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок страницы моих заявок'
             ],
             [
                 'key' => 'my_applications.heading',
                 'ru' => 'Мои заявки',
                 'kz' => 'Менің өтініштерім',
                 'cn' => '我的申请',
-
+                'group' => 'my_applications',
+                'description' => 'Основной заголовок страницы моих заявок'
             ],
             [
                 'key' => 'my_applications.description',
                 'ru' => 'Отслеживайте статус ваших заявок на перевозку грузов',
                 'kz' => 'Жүктерді тасымалдауға арналған өтініштеріңіздің күйін қадағалаңыз',
                 'cn' => '跟踪您货物运输申请的状态',
-
+                'group' => 'my_applications',
+                'description' => 'Описание страницы моих заявок'
             ],
             [
                 'key' => 'my_applications.view_cargo_button',
                 'ru' => 'Посмотреть грузы',
                 'kz' => 'Жүктерді көру',
                 'cn' => '查看货物',
-
+                'group' => 'my_applications',
+                'description' => 'Кнопка просмотра грузов'
             ],
             [
                 'key' => 'my_applications.stats_pending',
                 'ru' => 'Ожидают',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'my_applications',
+                'description' => 'Статистика: ожидающие заявки'
             ],
             [
                 'key' => 'my_applications.stats_approved',
                 'ru' => 'Подтверждены',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'my_applications',
+                'description' => 'Статистика: подтвержденные заявки'
             ],
             [
                 'key' => 'my_applications.stats_rejected',
                 'ru' => 'Отклонены',
                 'kz' => 'Бас тартылған',
                 'cn' => '已拒绝',
-
+                'group' => 'my_applications',
+                'description' => 'Статистика: отклоненные заявки'
             ],
             [
                 'key' => 'my_applications.pending_title',
                 'ru' => 'Ожидающие заявки',
                 'kz' => 'Күтудегі өтініштер',
                 'cn' => '等待中的申请',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок секции ожидающих заявок'
             ],
             [
                 'key' => 'my_applications.approved_title',
                 'ru' => 'Подтвержденные заявки',
                 'kz' => 'Бекітілген өтініштер',
                 'cn' => '已确认的申请',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок секции подтвержденных заявок'
             ],
             [
                 'key' => 'my_applications.rejected_title',
                 'ru' => 'Отклоненные заявки',
                 'kz' => 'Бас тартылған өтініштер',
                 'cn' => '已拒绝的申请',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок секции отклоненных заявок'
             ],
             [
                 'key' => 'my_applications.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'my_applications.table_cargo',
                 'ru' => 'Груз',
                 'kz' => 'Жүк',
                 'cn' => '货物',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок колонки груза'
             ],
             [
                 'key' => 'my_applications.table_submitted',
                 'ru' => 'Подана',
                 'kz' => 'Берілген',
                 'cn' => '提交时间',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок колонки подачи'
             ],
             [
                 'key' => 'my_applications.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'my_applications.status_pending',
                 'ru' => 'Ожидает',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'my_applications',
+                'description' => 'Статус ожидающей заявки'
             ],
             [
                 'key' => 'my_applications.status_approved',
                 'ru' => 'Подтверждено',
                 'kz' => 'Бекітілген',
                 'cn' => '已确认',
-
+                'group' => 'my_applications',
+                'description' => 'Статус подтвержденной заявки'
             ],
             [
                 'key' => 'my_applications.status_rejected',
                 'ru' => 'Отклонено',
                 'kz' => 'Бас тартылған',
                 'cn' => '已拒绝',
-
+                'group' => 'my_applications',
+                'description' => 'Статус отклоненной заявки'
             ],
             [
                 'key' => 'my_applications.view_details',
                 'ru' => 'Подробнее',
                 'kz' => 'Толығырақ',
                 'cn' => '详情',
-
+                'group' => 'my_applications',
+                'description' => 'Кнопка просмотра деталей'
             ],
             [
                 'key' => 'my_applications.volume_weight',
                 'ru' => 'м³, кг',
                 'kz' => 'м³, кг',
                 'cn' => '立方米, 公斤',
-
+                'group' => 'my_applications',
+                'description' => 'Единицы измерения объема и веса'
             ],
             [
                 'key' => 'my_applications.volume_label',
                 'ru' => 'Объем:',
                 'kz' => 'Көлемі:',
                 'cn' => '体积：',
-
+                'group' => 'my_applications',
+                'description' => 'Метка объема в мобильной карточке'
             ],
             [
                 'key' => 'my_applications.weight_label',
                 'ru' => 'Вес:',
                 'kz' => 'Салмағы:',
                 'cn' => '重量：',
-
+                'group' => 'my_applications',
+                'description' => 'Метка веса в мобильной карточке'
             ],
             [
                 'key' => 'my_applications.submitted_label',
                 'ru' => 'Подана:',
                 'kz' => 'Берілген:',
                 'cn' => '提交时间：',
-
+                'group' => 'my_applications',
+                'description' => 'Метка времени подачи'
             ],
             [
                 'key' => 'my_applications.driver_notes_label',
                 'ru' => 'Ваши заметки:',
                 'kz' => 'Сіздің ескертпелеріңіз:',
                 'cn' => '您的备注：',
-
+                'group' => 'my_applications',
+                'description' => 'Метка заметок водителя'
             ],
             [
                 'key' => 'my_applications.no_applications_title',
                 'ru' => 'У вас пока нет заявок',
                 'kz' => 'Сізде әзірше өтініштер жоқ',
                 'cn' => '您目前没有申请',
-
+                'group' => 'my_applications',
+                'description' => 'Заголовок при отсутствии заявок'
             ],
             [
                 'key' => 'my_applications.no_applications_desc',
                 'ru' => 'Подайте заявку на любой доступный груз, чтобы начать работу',
                 'kz' => 'Жұмысты бастау үшін кез келген қолжетімді жүкке өтініш беріңіз',
                 'cn' => '申请任何可用的货物开始工作',
-
+                'group' => 'my_applications',
+                'description' => 'Описание при отсутствии заявок'
             ],
             [
                 'key' => 'my_applications.view_available_cargo',
                 'ru' => 'Посмотреть доступные грузы',
                 'kz' => 'Қолжетімді жүктерді көру',
                 'cn' => '查看可用货物',
-
+                'group' => 'my_applications',
+                'description' => 'Кнопка просмотра доступных грузов'
             ],
             [
                 'key' => 'my_applications.back_button',
                 'ru' => 'Назад',
                 'kz' => 'Артқа',
                 'cn' => '返回',
-
+                'group' => 'my_applications',
+                'description' => 'Кнопка возврата'
             ],
             [
                 'key' => 'admin.delete_user',
                 'ru' => 'Удалить',
                 'kz' => 'Жою',
                 'cn' => '删除',
-
+                'group' => 'admin',
+                'description' => 'Кнопка удаления пользователя'
             ],
             [
                 'key' => 'admin.confirm_delete',
                 'ru' => 'Удалить этого пользователя?',
                 'kz' => 'Бұл пайдаланушыны жою керек пе?',
                 'cn' => '删除此用户？',
-
+                'group' => 'admin',
+                'description' => 'Подтверждение удаления пользователя'
             ],
             [
                 'key' => 'admin.confirm_reject',
                 'ru' => 'Отклонить этого пользователя?',
                 'kz' => 'Бұл пайдаланушыны бас тарту керек пе?',
                 'cn' => '拒绝此用户？',
-
+                'group' => 'admin',
+                'description' => 'Подтверждение отклонения пользователя'
             ],
             [
                 'key' => 'admin.warehouse_employee',
                 'ru' => 'Сотрудник склада',
                 'kz' => 'Қойма қызметкері',
                 'cn' => '仓库员工',
-
+                'group' => 'admin',
+                'description' => 'Роль сотрудника склада'
             ],
             [
                 'key' => 'admin.driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'admin',
+                'description' => 'Роль водителя'
             ],
             [
                 'key' => 'admin.administrator',
                 'ru' => 'Администратор',
                 'kz' => 'Әкімші',
                 'cn' => '管理员',
-
+                'group' => 'admin',
+                'description' => 'Роль администратора'
             ],
             [
                 'key' => 'admin.registered',
                 'ru' => 'Зарегистрирован:',
                 'kz' => 'Тіркелген:',
                 'cn' => '已注册：',
-
+                'group' => 'admin',
+                'description' => 'Дата регистрации'
             ],
             [
                 'key' => 'admin.approved',
                 'ru' => 'Подтвержден:',
                 'kz' => 'Бекітілген:',
                 'cn' => '已确认：',
-
+                'group' => 'admin',
+                'description' => 'Дата подтверждения'
             ],
             
             // Страницы заявок
@@ -1741,119 +1985,136 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Заявки на грузы',
                 'kz' => 'Жүктерге өтініштер',
                 'cn' => '货物申请',
-
+                'group' => 'applications',
+                'description' => 'Заголовок страницы заявок'
             ],
             [
                 'key' => 'applications.all_applications',
                 'ru' => 'Все заявки в системе',
                 'kz' => 'Жүйедегі барлық өтініштер',
                 'cn' => '系统中的所有申请',
-
+                'group' => 'applications',
+                'description' => 'Описание для администраторов'
             ],
             [
                 'key' => 'applications.your_cargo_applications',
                 'ru' => 'Заявки на ваши грузы',
                 'kz' => 'Сіздің жүктеріңізге өтініштер',
                 'cn' => '您货物的申请',
-
+                'group' => 'applications',
+                'description' => 'Описание для владельцев грузов'
             ],
             [
                 'key' => 'applications.status_label',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'applications',
+                'description' => 'Метка поля статуса'
             ],
             [
                 'key' => 'applications.search_label',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
                 'cn' => '搜索',
-
+                'group' => 'applications',
+                'description' => 'Метка поля поиска'
             ],
             [
                 'key' => 'applications.search_placeholder',
                 'ru' => 'Поиск по маршруту или водителю',
                 'kz' => 'Маршрут немесе жүргізуші бойынша іздеу',
                 'cn' => '按路线或司机搜索',
-
+                'group' => 'applications',
+                'description' => 'Плейсхолдер поиска заявок'
             ],
             [
                 'key' => 'applications.search_button',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
                 'cn' => '搜索',
-
+                'group' => 'applications',
+                'description' => 'Кнопка поиска'
             ],
             [
                 'key' => 'applications.table_route',
                 'ru' => 'Маршрут',
                 'kz' => 'Маршрут',
                 'cn' => '路线',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки маршрута'
             ],
             [
                 'key' => 'applications.table_driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки водителя'
             ],
             [
                 'key' => 'applications.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'applications.table_submitted',
                 'ru' => 'Подана',
                 'kz' => 'Ұсынылды',
                 'cn' => '已提交',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки подачи'
             ],
             [
                 'key' => 'applications.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'applications',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'applications.status_pending',
                 'ru' => 'Ожидает',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'applications',
+                'description' => 'Статус ожидания заявки'
             ],
             [
                 'key' => 'applications.status_approved',
                 'ru' => 'Подтверждена',
                 'kz' => 'Бекітілді',
                 'cn' => '已确认',
-
+                'group' => 'applications',
+                'description' => 'Статус подтвержденной заявки'
             ],
             [
                 'key' => 'applications.status_rejected',
                 'ru' => 'Отклонена',
                 'kz' => 'Қабылданбады',
                 'cn' => '已拒绝',
-
+                'group' => 'applications',
+                'description' => 'Статус отклоненной заявки'
             ],
             [
                 'key' => 'applications.no_applications',
                 'ru' => 'Заявки не найдены',
                 'kz' => 'Өтініштер табылмады',
                 'cn' => '未找到申请',
-
+                'group' => 'applications',
+                'description' => 'Сообщение об отсутствии заявок'
             ],
             [
                 'key' => 'applications.no_applications_desc',
                 'ru' => 'В данный момент нет заявок на перевозку',
                 'kz' => 'Қазіргі уақытта тасымалдауға өтініштер жоқ',
                 'cn' => '目前没有运输申请',
-
+                'group' => 'applications',
+                'description' => 'Описание отсутствия заявок'
             ],
             
             // Формы создания и редактирования грузов
@@ -1862,112 +2123,128 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Добавить груз - Silk Way',
                 'kz' => 'Жүк қосу - Silk Way',
                 'cn' => '添加货物 - Silk Way',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок страницы создания груза'
             ],
             [
                 'key' => 'cargo.new_cargo',
                 'ru' => 'Новый груз',
                 'kz' => 'Жаңа жүк',
                 'cn' => '新货物',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок формы нового груза'
             ],
             [
                 'key' => 'cargo.create_desc',
                 'ru' => 'Заполните информацию о грузе для отправки',
                 'kz' => 'Жіберуге арналған жүк туралы ақпаратты толтырыңыз',
                 'cn' => '填写要发送的货物信息',
-
+                'group' => 'cargo',
+                'description' => 'Описание формы создания груза'
             ],
             [
                 'key' => 'cargo.from_location',
                 'ru' => 'Откуда',
                 'kz' => 'Қайдан',
                 'cn' => '从哪里',
-
+                'group' => 'cargo',
+                'description' => 'Поле места отправления'
             ],
             [
                 'key' => 'cargo.to_location',
                 'ru' => 'Куда',
                 'kz' => 'Қайда',
                 'cn' => '到哪里',
-
+                'group' => 'cargo',
+                'description' => 'Поле места назначения'
             ],
             [
                 'key' => 'cargo.cargo_type',
                 'ru' => 'Тип груза',
                 'kz' => 'Жүк түрі',
                 'cn' => '货物类型',
-
+                'group' => 'cargo',
+                'description' => 'Поле типа груза'
             ],
             [
                 'key' => 'cargo.volume',
                 'ru' => 'Объем (м³)',
                 'kz' => 'Көлем (м³)',
                 'cn' => '体积 (m³)',
-
+                'group' => 'cargo',
+                'description' => 'Поле объема груза'
             ],
             [
                 'key' => 'cargo.weight',
                 'ru' => 'Вес (кг)',
                 'kz' => 'Салмақ (кг)',
                 'cn' => '重量 (kg)',
-
+                'group' => 'cargo',
+                'description' => 'Поле веса груза'
             ],
             [
                 'key' => 'cargo.ready_date',
                 'ru' => 'Дата и время готовности',
                 'kz' => 'Дайындық күні мен уақыты',
                 'cn' => '准备就绪的日期和时间',
-
+                'group' => 'cargo',
+                'description' => 'Поле даты готовности'
             ],
             [
                 'key' => 'cargo.comment',
                 'ru' => 'Комментарий / контакт',
                 'kz' => 'Түсініктеме / байланыс',
                 'cn' => '评论/联系',
-
+                'group' => 'cargo',
+                'description' => 'Поле комментария'
             ],
             [
                 'key' => 'cargo.comment_placeholder',
                 'ru' => 'Дополнительная информация, контактные данные...',
                 'kz' => 'Қосымша ақпарат, байланыс деректері...',
                 'cn' => '附加信息、联系信息...',
-
+                'group' => 'cargo',
+                'description' => 'Плейсхолдер комментария'
             ],
             [
                 'key' => 'cargo.cancel',
                 'ru' => 'Отмена',
                 'kz' => 'Бас тарту',
                 'cn' => '取消',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка отмены'
             ],
             [
                 'key' => 'cargo.create_cargo',
                 'ru' => 'Создать груз',
                 'kz' => 'Жүк құру',
                 'cn' => '创建货物',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка создания груза'
             ],
             [
                 'key' => 'cargo.edit_title',
                 'ru' => 'Редактировать груз - Silk Way',
                 'kz' => 'Жүкті өңдеу - Silk Way',
                 'cn' => '编辑货物 - Silk Way',
-
+                'group' => 'cargo',
+                'description' => 'Заголовок страницы редактирования груза'
             ],
             [
                 'key' => 'cargo.edit_cargo',
                 'ru' => 'Редактировать груз',
                 'kz' => 'Жүкті өңдеу',
                 'cn' => '编辑货物',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка редактирования груза'
             ],
             [
                 'key' => 'cargo.update_cargo',
                 'ru' => 'Обновить груз',
                 'kz' => 'Жүкті жаңарту',
                 'cn' => '更新货物',
-
+                'group' => 'cargo',
+                'description' => 'Кнопка обновления груза'
             ],
             
             // Формы создания и редактирования машин
@@ -1976,105 +2253,120 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Добавить машину - Silk Way',
                 'kz' => 'Машина қосу - Silk Way',
                 'cn' => '添加车辆 - Silk Way',
-
+                'group' => 'car',
+                'description' => 'Заголовок страницы создания машины'
             ],
             [
                 'key' => 'cars.new_car',
                 'ru' => 'Новая машина',
                 'kz' => 'Жаңа машина',
                 'cn' => '新车辆',
-
+                'group' => 'car',
+                'description' => 'Заголовок формы новой машины'
             ],
             [
                 'key' => 'cars.create_desc',
                 'ru' => 'Заполните информацию о машине и прицепе',
                 'kz' => 'Машина мен тіркеме туралы ақпаратты толтырыңыз',
                 'cn' => '填写车辆和拖车信息',
-
+                'group' => 'car',
+                'description' => 'Описание формы создания машины'
             ],
             [
                 'key' => 'cars.brand',
                 'ru' => 'Марка',
                 'kz' => 'Марка',
                 'cn' => '品牌',
-
+                'group' => 'car',
+                'description' => 'Поле марки автомобиля'
             ],
             [
                 'key' => 'cars.model',
                 'ru' => 'Модель',
                 'kz' => 'Модель',
                 'cn' => '型号',
-
+                'group' => 'car',
+                'description' => 'Поле модели автомобиля'
             ],
             [
                 'key' => 'cars.license_plate',
                 'ru' => 'Гос. номер',
                 'kz' => 'Мемлекеттік нөмір',
                 'cn' => '车牌号',
-
+                'group' => 'car',
+                'description' => 'Поле государственного номера'
             ],
             [
                 'key' => 'cars.max_weight',
                 'ru' => 'Макс. вес (т)',
                 'kz' => 'Макс. салмақ (т)',
                 'cn' => '最大重量 (t)',
-
+                'group' => 'car',
+                'description' => 'Поле максимального веса'
             ],
             [
                 'key' => 'cars.trailer_type',
                 'ru' => 'Тип прицепа',
                 'kz' => 'Тіркеме түрі',
                 'cn' => '拖车类型',
-
+                'group' => 'car',
+                'description' => 'Поле типа прицепа'
             ],
             [
                 'key' => 'cars.trailer_length',
                 'ru' => 'Длина прицепа (м)',
                 'kz' => 'Тіркеме ұзындығы (м)',
                 'cn' => '拖车长度 (m)',
-
+                'group' => 'car',
+                'description' => 'Поле длины прицепа'
             ],
             [
                 'key' => 'cars.trailer_width',
                 'ru' => 'Ширина прицепа (м)',
                 'kz' => 'Тіркеме ені (м)',
                 'cn' => '拖车宽度 (m)',
-
+                'group' => 'car',
+                'description' => 'Поле ширины прицепа'
             ],
             [
                 'key' => 'cars.trailer_height',
                 'ru' => 'Высота прицепа (м)',
                 'kz' => 'Тіркеме биіктігі (м)',
                 'cn' => '拖车高度 (m)',
-
+                'group' => 'car',
+                'description' => 'Поле высоты прицепа'
             ],
             [
                 'key' => 'cars.vehicle_document',
                 'ru' => 'Документ ПДД (PDF)',
                 'kz' => 'Жол қауіпсіздігі қағидалары құжаты (PDF)',
                 'cn' => '交通规则文件 (PDF)',
-
+                'group' => 'car',
+                'description' => 'Поле документа ПДД'
             ],
             [
                 'key' => 'cars.create_car',
                 'ru' => 'Создать машину',
                 'kz' => 'Машина құру',
                 'cn' => '创建车辆',
-
+                'group' => 'car',
+                'description' => 'Кнопка создания машины'
             ],
             [
                 'key' => 'cars.edit_title',
                 'ru' => 'Редактировать машину - Silk Way',
                 'kz' => 'Машинаны өңдеу - Silk Way',
                 'cn' => '编辑车辆 - Silk Way',
-
+                'group' => 'car',
+                'description' => 'Заголовок страницы редактирования машины'
             ],
             [
                 'key' => 'cars.update_car',
                 'ru' => 'Обновить машину',
                 'kz' => 'Машинаны жаңарту',
                 'cn' => '更新车辆',
-
+                'group' => 'car',
+                'description' => 'Кнопка обновления машины'
             ],
             
             // Общие элементы и сообщения
@@ -2083,168 +2375,192 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Успешно!',
                 'kz' => 'Сәтті!',
                 'cn' => '成功！',
-
+                'group' => 'common',
+                'description' => 'Сообщение об успехе'
             ],
             [
                 'key' => 'common.error',
                 'ru' => 'Ошибка!',
                 'kz' => 'Қате!',
                 'cn' => '错误！',
-
+                'group' => 'common',
+                'description' => 'Сообщение об ошибке'
             ],
             [
                 'key' => 'common.warning',
                 'ru' => 'Внимание!',
                 'kz' => 'Назар аударыңыз!',
                 'cn' => '注意！',
-
+                'group' => 'common',
+                'description' => 'Предупреждение'
             ],
             [
                 'key' => 'common.info',
                 'ru' => 'Информация',
                 'kz' => 'Ақпарат',
                 'cn' => '信息',
-
+                'group' => 'common',
+                'description' => 'Информационное сообщение'
             ],
             [
                 'key' => 'common.confirm',
                 'ru' => 'Подтверждение',
                 'kz' => 'Растау',
                 'cn' => '确认',
-
+                'group' => 'common',
+                'description' => 'Заголовок подтверждения'
             ],
             [
                 'key' => 'common.yes',
                 'ru' => 'Да',
                 'kz' => 'Иә',
                 'cn' => '是',
-
+                'group' => 'common',
+                'description' => 'Кнопка подтверждения'
             ],
             [
                 'key' => 'common.no',
                 'ru' => 'Нет',
                 'kz' => 'Жоқ',
                 'cn' => '否',
-
+                'group' => 'common',
+                'description' => 'Кнопка отказа'
             ],
             [
                 'key' => 'common.loading',
                 'ru' => 'Загрузка...',
                 'kz' => 'Жүктелуде...',
                 'cn' => '加载中...',
-
+                'group' => 'common',
+                'description' => 'Сообщение о загрузке'
             ],
             [
                 'key' => 'common.no_data',
                 'ru' => 'Нет данных',
                 'kz' => 'Деректер жоқ',
                 'cn' => '无数据',
-
+                'group' => 'common',
+                'description' => 'Сообщение об отсутствии данных'
             ],
             [
                 'key' => 'common.actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'common',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'common.view',
                 'ru' => 'Просмотр',
                 'kz' => 'Көру',
                 'cn' => '查看',
-
+                'group' => 'common',
+                'description' => 'Кнопка просмотра'
             ],
             [
                 'key' => 'common.edit',
                 'ru' => 'Редактировать',
                 'kz' => 'Өңдеу',
                 'cn' => '编辑',
-
+                'group' => 'common',
+                'description' => 'Кнопка редактирования'
             ],
             [
                 'key' => 'common.delete',
                 'ru' => 'Удалить',
                 'kz' => 'Жою',
                 'cn' => '删除',
-
+                'group' => 'common',
+                'description' => 'Кнопка удаления'
             ],
             [
                 'key' => 'common.back',
                 'ru' => 'Назад',
                 'kz' => 'Артқа',
                 'cn' => '返回',
-
+                'group' => 'common',
+                'description' => 'Кнопка назад'
             ],
             [
                 'key' => 'common.close',
                 'ru' => 'Закрыть',
                 'kz' => 'Жабу',
                 'cn' => '关闭',
-
+                'group' => 'common',
+                'description' => 'Кнопка закрытия'
             ],
             [
                 'key' => 'brand',
                 'ru' => 'Марка',
                 'kz' => 'Марка',
                 'cn' => '品牌',
-
+                'group' => 'car',
+                'description' => 'Поле марки автомобиля'
             ],
             [
                 'key' => 'model',
                 'ru' => 'Модель',
                 'kz' => 'Модель',
                 'cn' => '型号',
-
+                'group' => 'car',
+                'description' => 'Поле модели автомобиля'
             ],
             [
                 'key' => 'license_plate',
                 'ru' => 'Гос. номер',
                 'kz' => 'Мемлекеттік нөмір',
                 'cn' => '车牌号',
-
+                'group' => 'car',
+                'description' => 'Поле государственного номера'
             ],
             [
                 'key' => 'max_weight',
                 'ru' => 'Макс. вес',
                 'kz' => 'Макс. салмақ',
                 'cn' => '最大重量',
-
+                'group' => 'car',
+                'description' => 'Поле максимального веса'
             ],
             [
                 'key' => 'trailer_type',
                 'ru' => 'Тип прицепа',
                 'kz' => 'Тіркеме түрі',
                 'cn' => '拖车类型',
-
+                'group' => 'car',
+                'description' => 'Поле типа прицепа'
             ],
             [
                 'key' => 'trailer_length',
                 'ru' => 'Длина прицепа',
                 'kz' => 'Тіркеме ұзындығы',
                 'cn' => '拖车长度',
-
+                'group' => 'car',
+                'description' => 'Поле длины прицепа'
             ],
             [
                 'key' => 'trailer_width',
                 'ru' => 'Ширина прицепа',
                 'kz' => 'Тіркеме ені',
                 'cn' => '拖车宽度',
-
+                'group' => 'car',
+                'description' => 'Поле ширины прицепа'
             ],
             [
                 'key' => 'trailer_height',
                 'ru' => 'Высота прицепа',
                 'kz' => 'Тіркеме биіктігі',
                 'cn' => '拖车高度',
-
+                'group' => 'car',
+                'description' => 'Поле высоты прицепа'
             ],
             [
                 'key' => 'trailer_volume',
                 'ru' => 'Объем прицепа',
                 'kz' => 'Тіркеме көлемі',
                 'cn' => '拖车体积',
-
+                'group' => 'car',
+                'description' => 'Поле объема прицепа'
             ],
             
             // Переводы для пользователей
@@ -2253,56 +2569,64 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Пользователь',
                 'kz' => 'Пайдаланушы',
                 'cn' => '用户',
-
+                'group' => 'user',
+                'description' => 'Название пользователя'
             ],
             [
                 'key' => 'name',
                 'ru' => 'Имя',
                 'kz' => 'Аты',
                 'cn' => '姓名',
-
+                'group' => 'user',
+                'description' => 'Поле имени'
             ],
             [
                 'key' => 'role',
                 'ru' => 'Роль',
                 'kz' => 'Рөл',
                 'cn' => '角色',
-
+                'group' => 'user',
+                'description' => 'Поле роли'
             ],
             [
                 'key' => 'admin',
                 'ru' => 'Администратор',
                 'kz' => 'Әкімші',
                 'cn' => '管理员',
-
+                'group' => 'user',
+                'description' => 'Роль администратора'
             ],
             [
                 'key' => 'driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'user',
+                'description' => 'Роль водителя'
             ],
             [
                 'key' => 'warehouse_employee',
                 'ru' => 'Сотрудник склада',
                 'kz' => 'Қойма қызметкері',
                 'cn' => '仓库员工',
-
+                'group' => 'user',
+                'description' => 'Роль сотрудника склада'
             ],
             [
                 'key' => 'approved',
                 'ru' => 'Одобрен',
                 'kz' => 'Бекітілді',
                 'cn' => '已批准',
-
+                'group' => 'user',
+                'description' => 'Статус одобрения'
             ],
             [
                 'key' => 'pending_approval',
                 'ru' => 'Ожидает одобрения',
                 'kz' => 'Бекіту күтуде',
                 'cn' => '等待批准',
-
+                'group' => 'user',
+                'description' => 'Статус ожидания одобрения'
             ],
             
             // Переводы для заявок
@@ -2311,28 +2635,32 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Заявка',
                 'kz' => 'Өтініш',
                 'cn' => '申请',
-
+                'group' => 'application',
+                'description' => 'Название заявки'
             ],
             [
                 'key' => 'pending',
                 'ru' => 'Ожидает',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'application',
+                'description' => 'Статус ожидания'
             ],
             [
                 'key' => 'approved',
                 'ru' => 'Одобрено',
                 'kz' => 'Бекітілді',
                 'cn' => '已批准',
-
+                'group' => 'application',
+                'description' => 'Статус одобрения'
             ],
             [
                 'key' => 'rejected',
                 'ru' => 'Отклонено',
                 'kz' => 'Қабылданбады',
                 'cn' => '已拒绝',
-
+                'group' => 'application',
+                'description' => 'Статус отклонения'
             ],
             
             // Переводы для админки
@@ -2341,77 +2669,88 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Панель управления',
                 'kz' => 'Басқару панелі',
                 'cn' => '控制面板',
-
+                'group' => 'admin',
+                'description' => 'Название панели управления'
             ],
             [
                 'key' => 'translations',
                 'ru' => 'Переводы',
                 'kz' => 'Аудармалар',
                 'cn' => '翻译',
-
+                'group' => 'admin',
+                'description' => 'Название раздела переводов'
             ],
             [
                 'key' => 'manage_translations',
                 'ru' => 'Управление переводами',
                 'kz' => 'Аудармаларды басқару',
                 'cn' => '管理翻译',
-
+                'group' => 'admin',
+                'description' => 'Название страницы управления переводами'
             ],
             [
                 'key' => 'add_translation',
                 'ru' => 'Добавить перевод',
                 'kz' => 'Аударма қосу',
                 'cn' => '添加翻译',
-
+                'group' => 'admin',
+                'description' => 'Кнопка добавления перевода'
             ],
             [
                 'key' => 'edit_translation',
                 'ru' => 'Редактировать перевод',
                 'kz' => 'Аударманы өңдеу',
                 'cn' => '编辑翻译',
-
+                'group' => 'admin',
+                'description' => 'Кнопка редактирования перевода'
             ],
             [
                 'key' => 'translation_key',
                 'ru' => 'Ключ перевода',
                 'kz' => 'Аударма кілті',
                 'cn' => '翻译键',
-
+                'group' => 'admin',
+                'description' => 'Поле ключа перевода'
             ],
             [
                 'key' => 'translation_group',
                 'ru' => 'Группа',
                 'kz' => 'Топ',
                 'cn' => '组',
-
+                'group' => 'admin',
+                'description' => 'Поле группы переводов'
             ],
             [
                 'key' => 'translation_description',
                 'ru' => 'Описание',
                 'kz' => 'Сипаттама',
                 'cn' => '描述',
-
+                'group' => 'admin',
+                'description' => 'Поле описания перевода'
             ],
             [
                 'key' => 'russian',
                 'ru' => 'Русский',
                 'kz' => 'Орысша',
                 'cn' => '俄语',
-
+                'group' => 'admin',
+                'description' => 'Название русского языка'
             ],
             [
                 'key' => 'kazakh',
                 'ru' => 'Казахский',
                 'kz' => 'Қазақша',
                 'cn' => '哈萨克语',
-
+                'group' => 'admin',
+                'description' => 'Название казахского языка'
             ],
             [
                 'key' => 'chinese',
                 'ru' => 'Китайский',
                 'kz' => 'Қытайша',
                 'cn' => '中文',
-
+                'group' => 'admin',
+                'description' => 'Название китайского языка'
             ],
 
             // Переводы для хедера и навигации
@@ -2420,112 +2759,128 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Админ-панель',
                 'kz' => 'Админ панель',
                 'cn' => '管理面板',
-
+                'group' => 'header',
+                'description' => 'Ссылка на админ-панель в хедере'
             ],
             [
                 'key' => 'header.users',
                 'ru' => 'Пользователи',
                 'kz' => 'Пайдаланушылар',
                 'cn' => '用户',
-
+                'group' => 'header',
+                'description' => 'Ссылка на пользователей в хедере'
             ],
             [
                 'key' => 'header.cargo',
                 'ru' => 'Грузы',
                 'kz' => 'Жүктер',
                 'cn' => '货物',
-
+                'group' => 'header',
+                'description' => 'Ссылка на грузы в хедере'
             ],
             [
                 'key' => 'header.add_cargo',
                 'ru' => 'Добавить груз',
                 'kz' => 'Жүк қосу',
                 'cn' => '添加货物',
-
+                'group' => 'header',
+                'description' => 'Ссылка на добавление груза в хедере'
             ],
             [
                 'key' => 'header.applications',
                 'ru' => 'Заявки',
                 'kz' => 'Өтініштер',
                 'cn' => '申请',
-
+                'group' => 'header',
+                'description' => 'Ссылка на заявки в хедере'
             ],
             [
                 'key' => 'header.all_cars',
                 'ru' => 'Все машины',
                 'kz' => 'Барлық көліктер',
                 'cn' => '所有车辆',
-
+                'group' => 'header',
+                'description' => 'Ссылка на все машины в хедере'
             ],
             [
                 'key' => 'header.my_cargo',
                 'ru' => 'Мои грузы',
                 'kz' => 'Менің жүктерім',
                 'cn' => '我的货物',
-
+                'group' => 'header',
+                'description' => 'Ссылка на мои грузы в хедере'
             ],
             [
                 'key' => 'header.my_applications',
                 'ru' => 'Мои заявки',
                 'kz' => 'Менің өтініштерім',
                 'cn' => '我的申请',
-
+                'group' => 'header',
+                'description' => 'Ссылка на мои заявки в хедере'
             ],
             [
                 'key' => 'header.my_cars',
                 'ru' => 'Мои машины',
                 'kz' => 'Менің көліктерім',
                 'cn' => '我的车辆',
-
+                'group' => 'header',
+                'description' => 'Ссылка на мои машины в хедере'
             ],
             [
                 'key' => 'header.logout',
                 'ru' => 'Выйти',
                 'kz' => 'Шығу',
                 'cn' => '退出',
-
+                'group' => 'header',
+                'description' => 'Кнопка выхода в хедере'
             ],
             [
                 'key' => 'header.role_admin',
                 'ru' => 'Админ',
                 'kz' => 'Админ',
                 'cn' => '管理员',
-
+                'group' => 'header',
+                'description' => 'Роль администратора в хедере'
             ],
             [
                 'key' => 'header.role_warehouse',
                 'ru' => 'Склад',
                 'kz' => 'Қойма',
                 'cn' => '仓库',
-
+                'group' => 'header',
+                'description' => 'Роль складского работника в хедере'
             ],
             [
                 'key' => 'header.role_driver',
                 'ru' => 'Водитель',
                 'kz' => 'Жүргізуші',
                 'cn' => '司机',
-
+                'group' => 'header',
+                'description' => 'Роль водителя в хедере'
             ],
             [
                 'key' => 'header.profile',
                 'ru' => 'Профиль',
                 'kz' => 'Профиль',
                 'cn' => '个人资料',
-
+                'group' => 'header',
+                'description' => 'Ссылка на профиль в мобильной навигации'
             ],
             [
                 'key' => 'header.cars',
                 'ru' => 'Машины',
                 'kz' => 'Көліктер',
                 'cn' => '车辆',
-
+                'group' => 'header',
+                'description' => 'Ссылка на машины в мобильной навигации'
             ],
             [
                 'key' => 'header.footer_text',
                 'ru' => 'Система управления грузоперевозками.',
                 'kz' => 'Жүк тасымалдау басқару жүйесі.',
                 'cn' => '货运管理系统。',
-
+                'group' => 'header',
+                'description' => 'Текст в футере'
             ],
             
             // Дополнительные переводы для аутентификации
@@ -2534,42 +2889,48 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Email',
                 'kz' => 'Email',
                 'cn' => '邮箱',
-
+                'group' => 'auth',
+                'description' => 'Поле email в формах'
             ],
             [
                 'key' => 'auth.password',
                 'ru' => 'Пароль',
                 'kz' => 'Құпия сөз',
                 'cn' => '密码',
-
+                'group' => 'auth',
+                'description' => 'Поле пароля в формах'
             ],
             [
                 'key' => 'auth.full_name_placeholder',
                 'ru' => 'Введите ваше полное имя',
                 'kz' => 'Толық атыңызды енгізіңіз',
                 'cn' => '请输入您的全名',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер для поля полного имени'
             ],
             [
                 'key' => 'auth.password_confirmation',
                 'ru' => 'Подтверждение пароля',
                 'kz' => 'Құпия сөзді растау',
                 'cn' => '确认密码',
-
+                'group' => 'auth',
+                'description' => 'Поле подтверждения пароля'
             ],
             [
                 'key' => 'auth.password_confirmation_placeholder',
                 'ru' => 'Подтвердите пароль',
                 'kz' => 'Құпия сөзді растаңыз',
                 'cn' => '请确认密码',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер для подтверждения пароля'
             ],
             [
                 'key' => 'auth.select_role',
                 'ru' => 'Выберите роль',
                 'kz' => 'Рөлді таңдаңыз',
                 'cn' => '选择角色',
-
+                'group' => 'auth',
+                'description' => 'Плейсхолдер для выбора роли'
             ],
             
             // Дополнительные переводы для админ-панели
@@ -2578,210 +2939,240 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Добавить перевод',
                 'kz' => 'Аударма қосу',
                 'cn' => '添加翻译',
-
+                'group' => 'admin',
+                'description' => 'Кнопка добавления перевода'
             ],
             [
                 'key' => 'admin.export',
                 'ru' => 'Экспорт',
                 'kz' => 'Экспорт',
                 'cn' => '导出',
-
+                'group' => 'admin',
+                'description' => 'Кнопка экспорта'
             ],
             [
                 'key' => 'admin.clear_cache',
                 'ru' => 'Очистить кэш',
                 'kz' => 'Кэшті тазалау',
                 'cn' => '清除缓存',
-
+                'group' => 'admin',
+                'description' => 'Кнопка очистки кэша'
             ],
             [
                 'key' => 'admin.search_by_key',
                 'ru' => 'Поиск по ключу',
                 'kz' => 'Кілт бойынша іздеу',
                 'cn' => '按键搜索',
-
+                'group' => 'admin',
+                'description' => 'Лейбл поиска по ключу'
             ],
             [
                 'key' => 'admin.search_placeholder',
                 'ru' => 'Введите ключ перевода...',
                 'kz' => 'Аударма кілтін енгізіңіз...',
                 'cn' => '输入翻译键...',
-
+                'group' => 'admin',
+                'description' => 'Плейсхолдер поиска переводов'
             ],
             [
                 'key' => 'admin.all_groups',
                 'ru' => 'Все группы',
                 'kz' => 'Барлық топтар',
                 'cn' => '所有组',
-
+                'group' => 'admin',
+                'description' => 'Опция всех групп в фильтре'
             ],
             [
                 'key' => 'admin.filter',
                 'ru' => 'Фильтр',
                 'kz' => 'Сүзгі',
                 'cn' => '过滤',
-
+                'group' => 'admin',
+                'description' => 'Кнопка фильтрации'
             ],
             [
                 'key' => 'admin.clear_filters',
                 'ru' => 'Сбросить фильтры',
                 'kz' => 'Сүзгілерді тазалау',
                 'cn' => '清除过滤器',
-
+                'group' => 'admin',
+                'description' => 'Кнопка сброса фильтров'
             ],
             [
                 'key' => 'admin.table_key',
                 'ru' => 'Ключ',
                 'kz' => 'Кілт',
                 'cn' => '键',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки ключа'
             ],
             [
                 'key' => 'admin.table_russian',
                 'ru' => 'Русский',
                 'kz' => 'Орысша',
                 'cn' => '俄语',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки русского языка'
             ],
             [
                 'key' => 'admin.table_kazakh',
                 'ru' => 'Қазақша',
                 'kz' => 'Қазақша',
                 'cn' => '哈萨克语',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки казахского языка'
             ],
             [
                 'key' => 'admin.table_chinese',
                 'ru' => '中文',
                 'kz' => 'Қытайша',
                 'cn' => '中文',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки китайского языка'
             ],
             [
                 'key' => 'admin.table_group',
                 'ru' => 'Группа',
                 'kz' => 'Топ',
                 'cn' => '组',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки группы'
             ],
             [
                 'key' => 'admin.table_actions',
                 'ru' => 'Действия',
                 'kz' => 'Әрекеттер',
                 'cn' => '操作',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки действий'
             ],
             [
                 'key' => 'admin.no_translations_found',
                 'ru' => 'Переводы не найдены',
                 'kz' => 'Аудармалар табылмады',
                 'cn' => '未找到翻译',
-
+                'group' => 'admin',
+                'description' => 'Сообщение об отсутствии переводов'
             ],
             [
                 'key' => 'admin.try_change_search',
                 'ru' => 'Попробуйте изменить параметры поиска',
                 'kz' => 'Іздеу параметрлерін өзгертіп көріңіз',
                 'cn' => '尝试更改搜索参数',
-
+                'group' => 'admin',
+                'description' => 'Подсказка по изменению поиска'
             ],
             [
                 'key' => 'admin.no_translations_desc',
                 'ru' => 'В данный момент нет переводов в системе',
                 'kz' => 'Қазіргі уақытта жүйеде аудармалар жоқ',
                 'cn' => '目前系统中没有翻译',
-
+                'group' => 'admin',
+                'description' => 'Описание отсутствия переводов'
             ],
             [
                 'key' => 'admin.reset_filters',
                 'ru' => 'Сбросить фильтры',
                 'kz' => 'Сүзгілерді тазалау',
                 'cn' => '重置过滤器',
-
+                'group' => 'admin',
+                'description' => 'Кнопка сброса фильтров'
             ],
             [
                 'key' => 'admin.users_management_title',
                 'ru' => 'Управление пользователями',
                 'kz' => 'Пайдаланушыларды басқару',
                 'cn' => '用户管理',
-
+                'group' => 'admin',
+                'description' => 'Заголовок страницы управления пользователями'
             ],
             [
                 'key' => 'admin.users_management_heading',
                 'ru' => 'Управление пользователями',
                 'kz' => 'Пайдаланушыларды басқару',
                 'cn' => '用户管理',
-
+                'group' => 'admin',
+                'description' => 'Заголовок раздела управления пользователями'
             ],
             [
                 'key' => 'admin.users_management_desc',
                 'ru' => 'Управление пользователями системы и их правами доступа',
                 'kz' => 'Жүйе пайдаланушыларын және олардың қол жетімділік құқықтарын басқару',
                 'cn' => '管理系统用户及其访问权限',
-
+                'group' => 'admin',
+                'description' => 'Описание раздела управления пользователями'
             ],
             [
                 'key' => 'admin.table_user',
                 'ru' => 'Пользователь',
                 'kz' => 'Пайдаланушы',
                 'cn' => '用户',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки пользователя'
             ],
             [
                 'key' => 'admin.table_role',
                 'ru' => 'Роль',
                 'kz' => 'Рөл',
                 'cn' => '角色',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки роли'
             ],
             [
                 'key' => 'admin.table_status',
                 'ru' => 'Статус',
                 'kz' => 'Күй',
                 'cn' => '状态',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки статуса'
             ],
             [
                 'key' => 'admin.table_registration_date',
                 'ru' => 'Дата регистрации',
                 'kz' => 'Тіркелу күні',
                 'cn' => '注册日期',
-
+                'group' => 'admin',
+                'description' => 'Заголовок колонки даты регистрации'
             ],
             [
                 'key' => 'admin.administrator',
                 'ru' => 'Администратор',
                 'kz' => 'Әкімші',
                 'cn' => '管理员',
-
+                'group' => 'admin',
+                'description' => 'Роль администратора'
             ],
             [
                 'key' => 'admin.status_approved',
                 'ru' => 'Подтвержден',
                 'kz' => 'Расталды',
                 'cn' => '已确认',
-
+                'group' => 'admin',
+                'description' => 'Статус подтвержденного пользователя'
             ],
             [
                 'key' => 'admin.status_pending',
                 'ru' => 'Ожидает',
                 'kz' => 'Күтуде',
                 'cn' => '等待中',
-
+                'group' => 'admin',
+                'description' => 'Статус ожидающего пользователя'
             ],
             [
                 'key' => 'admin.toggle_access_title',
                 'ru' => 'Переключить доступ',
                 'kz' => 'Қол жетімділікті ауыстыру',
                 'cn' => '切换访问权限',
-
+                'group' => 'admin',
+                'description' => 'Подсказка для кнопки переключения доступа'
             ],
             [
                 'key' => 'admin.delete_user_title',
                 'ru' => 'Удалить пользователя',
                 'kz' => 'Пайдаланушыны жою',
                 'cn' => '删除用户',
-
+                'group' => 'admin',
+                'description' => 'Подсказка для кнопки удаления пользователя'
             ],
         ];
 
