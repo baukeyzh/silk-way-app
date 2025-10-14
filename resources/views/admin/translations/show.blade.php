@@ -45,7 +45,7 @@
                             <h3 class="text-lg font-medium text-gray-900">Русский</h3>
                         </div>
                         <div class="bg-white rounded border p-3 min-h-[100px]">
-                            <p class="text-gray-800">{{ $translation->rus }}</p>
+                            <p class="text-gray-800">{{ $translation->ru }}</p>
                         </div>
                     </div>
 
@@ -58,7 +58,7 @@
                             <h3 class="text-lg font-medium text-gray-900">Қазақша</h3>
                         </div>
                         <div class="bg-white rounded border p-3 min-h-[100px]">
-                            <p class="text-gray-800">{{ $translation->kaz }}</p>
+                            <p class="text-gray-800">{{ $translation->kz }}</p>
                         </div>
                     </div>
 
@@ -71,7 +71,7 @@
                             <h3 class="text-lg font-medium text-gray-900">中文</h3>
                         </div>
                         <div class="bg-white rounded border p-3 min-h-[100px]">
-                            <p class="text-gray-800">{{ $translation->chn }}</p>
+                            <p class="text-gray-800">{{ $translation->cn }}</p>
                         </div>
                     </div>
                 </div>

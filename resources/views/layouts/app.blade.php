@@ -74,16 +74,16 @@
                 <!-- Переключатель языков -->
                 <div class="flex items-center mr-4">
                     <div class="flex items-center space-x-2">
-                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'rus']) }}" 
-                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'rus' ? 'bg-blue-800' : '' }}">
+                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'ru']) }}" 
+                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'ru' ? 'bg-blue-800' : '' }}">
                             RU
                         </a>
-                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'kaz']) }}" 
-                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'kaz' ? 'bg-blue-800' : '' }}">
+                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'kz']) }}" 
+                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'kz' ? 'bg-blue-800' : '' }}">
                             KK
                         </a>
-                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'chn']) }}" 
-                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'chn' ? 'bg-blue-800' : '' }}">
+                        <a href="{{ request()->fullUrlWithQuery(['lang' => 'cn']) }}" 
+                           class="text-white hover:bg-blue-700 px-2 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'cn' ? 'bg-blue-800' : '' }}">
                             中
                         </a>
                     </div>

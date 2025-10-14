@@ -19,16 +19,16 @@
             <!-- Переключатель языков -->
             <div class="mt-4 flex justify-center">
                 <div class="flex items-center space-x-2">
-                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'rus']) }}" 
-                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'rus' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'ru']) }}" 
+                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'ru' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         RU
                     </a>
-                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'kaz']) }}" 
-                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'kaz' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'kz']) }}" 
+                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'kz' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         KK
                     </a>
-                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'chn']) }}" 
-                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'chn' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                    <a href="{{ request()->fullUrlWithQuery(['lang' => 'cn']) }}" 
+                       class="px-3 py-1 rounded text-sm font-medium transition duration-200 {{ app()->getLocale() === 'cn' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         中
                     </a>
                 </div>

@@ -49,7 +49,7 @@ class LocalizationHelper
      */
     public static function rus(string $key, array $params = []): string
     {
-        return self::t($key, $params, 'rus');
+        return self::t($key, $params, 'ru');
     }
 
     /**
@@ -57,7 +57,7 @@ class LocalizationHelper
      */
     public static function kaz(string $key, array $params = []): string
     {
-        return self::t($key, $params, 'kaz');
+        return self::t($key, $params, 'kz');
     }
 
     /**
@@ -65,7 +65,7 @@ class LocalizationHelper
      */
     public static function chn(string $key, array $params = []): string
     {
-        return self::t($key, $params, 'chn');
+        return self::t($key, $params, 'cn');
     }
 
     /**
@@ -82,9 +82,9 @@ class LocalizationHelper
     public static function getCurrentLocaleName(): string
     {
         $locales = [
-            'rus' => 'Русский',
-            'kaz' => 'Қазақша',
-            'chn' => '中文'
+            'ru' => 'Русский',
+            'kz' => 'Қазақша',
+            'cn' => '中文'
         ];
         
         return $locales[app()->getLocale()] ?? 'Русский';
@@ -103,7 +103,7 @@ class LocalizationHelper
      */
     public static function isRussian(): bool
     {
-        return app()->getLocale() === 'rus';
+        return app()->getLocale() === 'ru';
     }
 
     /**
@@ -111,7 +111,7 @@ class LocalizationHelper
      */
     public static function isKazakh(): bool
     {
-        return app()->getLocale() === 'kaz';
+        return app()->getLocale() === 'kz';
     }
 
     /**
@@ -119,7 +119,7 @@ class LocalizationHelper
      */
     public static function isChinese(): bool
     {
-        return app()->getLocale() === 'chn';
+        return app()->getLocale() === 'cn';
     }
 
     /**

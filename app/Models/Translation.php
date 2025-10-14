@@ -11,9 +11,9 @@ class Translation extends Model
 
     protected $fillable = [
         'key',
-        'rus',
-        'kaz',
-        'chn',
+        'ru',
+        'kz',
+        'cn',
         'group',
         'description'
     ];
@@ -26,10 +26,10 @@ class Translation extends Model
         $locale = $locale ?: app()->getLocale();
         
         return match($locale) {
-            'rus' => $this->rus,
-            'kaz' => $this->kaz,
-            'chn' => $this->chn,
-            default => $this->rus ?: $this->kaz ?: $this->chn ?: $this->key
+            'ru', 'rus' => $this->ru,
+            'kz', 'kaz' => $this->kz,
+            'cn', 'chn' => $this->cn,
+            default => $this->ru ?: $this->kz ?: $this->cn ?: $this->key
         };
     }
 
@@ -55,9 +55,9 @@ class Translation extends Model
     public function getAllTranslations(): array
     {
         return [
-            'rus' => $this->rus,
-            'kaz' => $this->kaz,
-            'chn' => $this->chn,
+            'ru' => $this->ru,
+            'kz' => $this->kz,
+            'cn' => $this->cn,
         ];
     }
 

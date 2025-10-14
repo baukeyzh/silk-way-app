@@ -85,45 +85,45 @@
 
                     <!-- Русский перевод -->
                     <div>
-                        <label for="rus" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="ru" class="block text-sm font-medium text-gray-700 mb-2">
                             Русский *
                         </label>
-                        <textarea id="rus" 
-                                  name="rus" 
+                        <textarea id="ru" 
+                                  name="ru" 
                                   rows="4"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('rus') border-red-500 @enderror"
-                                  placeholder="Введите перевод на русском языке">{{ old('rus') }}</textarea>
-                        @error('rus')
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('ru') border-red-500 @enderror"
+                                  placeholder="Введите перевод на русском языке">{{ old('ru') }}</textarea>
+                        @error('ru')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Казахский перевод -->
                     <div>
-                        <label for="kaz" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="kz" class="block text-sm font-medium text-gray-700 mb-2">
                             Қазақша *
                         </label>
-                        <textarea id="kaz" 
-                                  name="kaz" 
+                        <textarea id="kz" 
+                                  name="kz" 
                                   rows="4"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('kaz') border-red-500 @enderror"
-                                  placeholder="Введите перевод на казахском языке">{{ old('kaz') }}</textarea>
-                        @error('kaz')
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('kz') border-red-500 @enderror"
+                                  placeholder="Введите перевод на казахском языке">{{ old('kz') }}</textarea>
+                        @error('kz')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Китайский перевод -->
                     <div class="md:col-span-2">
-                        <label for="chn" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="cn" class="block text-sm font-medium text-gray-700 mb-2">
                             中文 *
                         </label>
-                        <textarea id="chn" 
-                                  name="chn" 
+                        <textarea id="cn" 
+                                  name="cn" 
                                   rows="4"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('chn') border-red-500 @enderror"
-                                  placeholder="Введите перевод на китайском языке">{{ old('chn') }}</textarea>
-                        @error('chn')
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cn') border-red-500 @enderror"
+                                  placeholder="Введите перевод на китайском языке">{{ old('cn') }}</textarea>
+                        @error('cn')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

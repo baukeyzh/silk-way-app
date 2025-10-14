@@ -23,14 +23,26 @@ class SetLocale
         // 3. Из заголовка Accept-Language
         // 4. По умолчанию русский
         
-        $locale = $request->get('lang') 
+        $localeRaw = $request->get('lang') 
             ?: Session::get('locale') 
             ?: $this->getLocaleFromHeader($request) 
-            ?: 'rus';
-        
+            ?: 'ru';
+
+        // Нормализуем код языка: поддерживаем старые коды (rus/kaz/chn)
+        $map = [
+            'rus' => 'ru',
+            'kaz' => 'kz',
+            'chn' => 'cn',
+            'ru' => 'ru',
+            'kz' => 'kz',
+            'cn' => 'cn',
+        ];
+
+        $locale = $map[$localeRaw] ?? 'ru';
+
         // Проверяем, поддерживается ли язык
-        if (!in_array($locale, ['rus', 'kaz', 'chn'])) {
-            $locale = 'rus';
+        if (!in_array($locale, ['ru', 'kz', 'cn'])) {
+            $locale = 'ru';
         }
         
         // Устанавливаем язык
@@ -57,16 +69,16 @@ class SetLocale
         foreach ($languages as $language) {
             $locale = trim(explode(';', $language)[0]);
             
-            // Маппинг языков
-            $localeMap = [
-                'ru' => 'rus',
-                'ru-RU' => 'rus',
-                'kk' => 'kaz',
-                'kk-KZ' => 'kaz',
-                'zh' => 'chn',
-                'zh-CN' => 'chn',
-                'zh-TW' => 'chn',
-            ];
+        // Маппинг языков
+        $localeMap = [
+            'ru' => 'ru',
+            'ru-RU' => 'ru',
+            'kk' => 'kz',
+            'kk-KZ' => 'kz',
+            'zh' => 'cn',
+            'zh-CN' => 'cn',
+            'zh-TW' => 'cn',
+        ];
             
             if (isset($localeMap[$locale])) {
                 return $localeMap[$locale];
@@ -74,15 +86,15 @@ class SetLocale
             
             // Проверяем префикс языка
             if (str_starts_with($locale, 'ru')) {
-                return 'rus';
+                return 'ru';
             }
             
             if (str_starts_with($locale, 'kk')) {
-                return 'kaz';
+                return 'kz';
             }
             
             if (str_starts_with($locale, 'zh')) {
-                return 'chn';
+                return 'cn';
             }
         }
         

@@ -66,12 +66,21 @@ class LocalizationService
     }
 
     /**
-     * Получить переводы по группе (deprecated - group column removed)
+     * Получить переводы по группе
      */
     public function getByGroup(string $group, ?string $locale = null): array
     {
-        // Группировка больше не поддерживается
-        return $this->getAllForLocale($locale);
+        $locale = $locale ?: App::getLocale();
+        $translations = $this->getCachedTranslations();
+        $result = [];
+        
+        foreach ($translations as $key => $values) {
+            if (($values['group'] ?? 'general') === $group) {
+                $result[$key] = $values[$locale] ?? $values['ru'] ?? $key;
+            }
+        }
+        
+        return $result;
     }
 
     /**
@@ -85,6 +94,8 @@ class LocalizationService
                     'ru' => $translation->ru,
                     'kz' => $translation->kz,
                     'cn' => $translation->cn,
+                    'group' => $translation->group,
+                    'description' => $translation->description,
                 ];
             })->toArray();
             

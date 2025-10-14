@@ -24,14 +24,20 @@ class TranslationController extends Controller
     {
         $query = Translation::query();
         
+        // Фильтрация по группе
+        if ($request->has('group') && $request->group !== '') {
+            $query->where('group', $request->group);
+        }
+        
         // Поиск по ключу
         if ($request->has('search') && $request->search !== '') {
             $query->where('key', 'like', '%' . $request->search . '%');
         }
         
-        $translations = $query->orderBy('key')->paginate(20);
+        $translations = $query->orderBy('group')->orderBy('key')->paginate(20);
+        $groups = Translation::distinct()->pluck('group')->sort();
         
-        return view('admin.translations.index', compact('translations'));
+        return view('admin.translations.index', compact('translations', 'groups'));
     }
 
     /**
@@ -39,9 +45,10 @@ class TranslationController extends Controller
      */
     public function create(): View
     {
+        $groups = Translation::distinct()->pluck('group')->sort();
         $locales = $this->localizationService->getAvailableLocales();
         
-        return view('admin.translations.create', compact('locales'));
+        return view('admin.translations.create', compact('groups', 'locales'));
     }
 
     /**
@@ -54,7 +61,14 @@ class TranslationController extends Controller
             'ru' => 'nullable|string|max:1000',
             'kz' => 'nullable|string|max:1000',
             'cn' => 'nullable|string|max:1000',
+            'group' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:1000',
         ]);
+
+        // Обработка новой группы
+        if (($validated['group'] ?? '') === 'new_group' && $request->has('new_group_name')) {
+            $validated['group'] = $request->input('new_group_name');
+        }
 
         $translation = $this->localizationService->createTranslation($validated);
 
@@ -68,9 +82,10 @@ class TranslationController extends Controller
      */
     public function edit(Translation $translation): View
     {
+        $groups = Translation::distinct()->pluck('group')->sort();
         $locales = $this->localizationService->getAvailableLocales();
         
-        return view('admin.translations.edit', compact('translation', 'locales'));
+        return view('admin.translations.edit', compact('translation', 'groups', 'locales'));
     }
 
     /**
@@ -82,7 +97,14 @@ class TranslationController extends Controller
             'ru' => 'nullable|string|max:1000',
             'kz' => 'nullable|string|max:1000',
             'cn' => 'nullable|string|max:1000',
+            'group' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:1000',
         ]);
+
+        // Обработка новой группы
+        if (($validated['group'] ?? '') === 'new_group' && $request->has('new_group_name')) {
+            $validated['group'] = $request->input('new_group_name');
+        }
 
         $updated = $this->localizationService->updateTranslation($translation->key, $validated);
 

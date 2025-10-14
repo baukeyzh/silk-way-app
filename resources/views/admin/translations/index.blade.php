@@ -124,13 +124,13 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">{{ Str::limit($translation->rus, 50) }}</div>
+                                <div class="text-sm text-gray-900">{{ Str::limit($translation->ru, 50) }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">{{ Str::limit($translation->kaz, 50) }}</div>
+                                <div class="text-sm text-gray-900">{{ Str::limit($translation->kz, 50) }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900">{{ Str::limit($translation->chn, 50) }}</div>
+                                <div class="text-sm text-gray-900">{{ Str::limit($translation->cn, 50) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
