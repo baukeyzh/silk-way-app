@@ -9,6 +9,7 @@ class CargoApplication extends Model
 {
     protected $fillable = [
         'cargo_id',
+        'car_id',
         'driver_id',
         'status',
         'driver_notes',
