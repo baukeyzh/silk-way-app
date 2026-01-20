@@ -74,7 +74,7 @@ class CargoApplicationController extends Controller
         CargoApplication::create([
             'cargo_id' => $cargo->id,
             'driver_id' => $user->id,
-            'car_id' => $car->id,
+            'car_id' => $user->cars->first()->id ?? null,
             'status' => 'pending',
             'driver_notes' => $validated['driver_notes'] ?? null,
         ]);
