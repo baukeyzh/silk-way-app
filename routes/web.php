@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     
     // Система заявок на грузы
     Route::prefix('applications')->name('applications.')->group(function () {
-        Route::get('/', [CargoApplicationController::class, 'index'])->name('index')->middleware('role:admin,warehouse_employee');
+        Route::get('/', [CargoApplicationController::class, 'index'])->name('index')->middleware('role:admin|warehouse_employee');
         Route::post('/{cargo}/apply', [CargoApplicationController::class, 'apply'])->name('apply');
         Route::get('/my-applications', [CargoApplicationController::class, 'myApplications'])->name('my-applications');
         
@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
         })->name('index');
         
         // Публичные маршруты (требуют только аутентификации)
-        Route::get('/all', [CarController::class, 'index'])->name('all')->middleware('role:admin,warehouse_employee');
+        Route::get('/all', [CarController::class, 'index'])->name('all')->middleware('role:admin|warehouse_employee');
         
         // Маршруты только для водителей (должны быть выше параметризованных)
         Route::middleware('role:driver')->group(function () {

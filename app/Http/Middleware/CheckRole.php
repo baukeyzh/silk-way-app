@@ -16,8 +16,7 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role)
     {
         // Поддерживаем несколько ролей через запятую
-        $allowedRoles = array_map('trim', explode(',', $role));
-        
+        $allowedRoles = array_map('trim', explode('|', $role));
         Log::info('CheckRole middleware called', [
             'user_id' => $request->user()?->id,
             'user_role' => $request->user()?->role,
