@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cargo;
+use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -83,7 +84,9 @@ class CargoController extends Controller
             abort(403);
         }
         
-        return view('cargo.create');
+        $cities = City::orderBy('country')->orderBy('name_rus')->get()->groupBy('country');
+
+        return view('cargo.create', compact('cities'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -100,22 +103,35 @@ class CargoController extends Controller
         }
 
         $validated = $request->validate([
-            'from_location' => 'required|string|max:255',
-            'to_location' => 'required|string|max:255',
-            'cargo_type' => 'required|string|max:255',
-            'volume' => 'required|numeric|min:0|max:99999999.99',
-            'weight' => 'required|numeric|min:0|max:99999999.99',
-            'ready_date' => 'required|date',
-            'comment' => 'nullable|string',
+            'from_city_id' => 'required|exists:cities,id',
+            'to_city_id'   => 'required|exists:cities,id',
+            'cargo_type'   => 'required|string|max:255',
+            'volume'       => 'required|numeric|min:0|max:99999999.99',
+            'weight'       => 'required|numeric|min:0|max:99999999.99',
+            'ready_date'   => 'required|date',
+            'comment'      => 'nullable|string',
         ]);
 
-        $validated['created_by'] = auth()->id();
-        $validated['status'] = 'available';
+        $fromCity = City::findOrFail($validated['from_city_id']);
+        $toCity   = City::findOrFail($validated['to_city_id']);
 
-        $cargo = Cargo::create($validated);
-        
-        // Сохраняем локализованные поля в зависимости от текущего языка
-        $cargo->saveLocalizedFields($validated);
+        $cargo = Cargo::create([
+            'from_location'     => $fromCity->name,
+            'from_location_rus' => $fromCity->name_rus,
+            'from_location_kaz' => $fromCity->name_kaz,
+            'from_location_chn' => $fromCity->name_chn,
+            'to_location'       => $toCity->name,
+            'to_location_rus'   => $toCity->name_rus,
+            'to_location_kaz'   => $toCity->name_kaz,
+            'to_location_chn'   => $toCity->name_chn,
+            'cargo_type'        => $validated['cargo_type'],
+            'volume'            => $validated['volume'],
+            'weight'            => $validated['weight'],
+            'ready_date'        => $validated['ready_date'],
+            'comment'           => $validated['comment'] ?? null,
+            'created_by'        => auth()->id(),
+            'status'            => 'available',
+        ]);
 
         return redirect()->route('cargo.index')->with('success', 'Груз успешно создан!');
     }
@@ -151,7 +167,11 @@ class CargoController extends Controller
             abort(403);
         }
         
-        return view('cargo.edit', compact('cargo'));
+        $cities    = City::orderBy('country')->orderBy('name_rus')->get()->groupBy('country');
+        $fromCity  = City::where('name', $cargo->from_location)->first();
+        $toCity    = City::where('name', $cargo->to_location)->first();
+
+        return view('cargo.edit', compact('cargo', 'cities', 'fromCity', 'toCity'));
     }
 
     public function update(Request $request, Cargo $cargo): RedirectResponse
@@ -169,19 +189,33 @@ class CargoController extends Controller
         }
 
         $validated = $request->validate([
-            'from_location' => 'required|string|max:255',
-            'to_location' => 'required|string|max:255',
-            'cargo_type' => 'required|string|max:255',
-            'volume' => 'required|numeric|min:0',
-            'weight' => 'required|numeric|min:0',
-            'ready_date' => 'required|date',
-            'comment' => 'nullable|string',
+            'from_city_id' => 'required|exists:cities,id',
+            'to_city_id'   => 'required|exists:cities,id',
+            'cargo_type'   => 'required|string|max:255',
+            'volume'       => 'required|numeric|min:0',
+            'weight'       => 'required|numeric|min:0',
+            'ready_date'   => 'required|date',
+            'comment'      => 'nullable|string',
         ]);
 
-        $cargo->update($validated);
-        
-        // Сохраняем локализованные поля в зависимости от текущего языка
-        $cargo->saveLocalizedFields($validated);
+        $fromCity = City::findOrFail($validated['from_city_id']);
+        $toCity   = City::findOrFail($validated['to_city_id']);
+
+        $cargo->update([
+            'from_location'     => $fromCity->name,
+            'from_location_rus' => $fromCity->name_rus,
+            'from_location_kaz' => $fromCity->name_kaz,
+            'from_location_chn' => $fromCity->name_chn,
+            'to_location'       => $toCity->name,
+            'to_location_rus'   => $toCity->name_rus,
+            'to_location_kaz'   => $toCity->name_kaz,
+            'to_location_chn'   => $toCity->name_chn,
+            'cargo_type'        => $validated['cargo_type'],
+            'volume'            => $validated['volume'],
+            'weight'            => $validated['weight'],
+            'ready_date'        => $validated['ready_date'],
+            'comment'           => $validated['comment'] ?? null,
+        ]);
 
         return redirect()->route('cargo.index')->with('success', 'Груз успешно обновлен!');
     }

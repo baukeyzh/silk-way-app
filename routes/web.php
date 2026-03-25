@@ -6,6 +6,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CargoApplicationController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\CityController;
 
 // Главная страница
 Route::get('/', function () {
@@ -106,4 +107,7 @@ Route::middleware('auth')->group(function () {
     
     // Ресурсный маршрут cargo должен быть последним
     Route::resource('cargo', CargoController::class);
+
+    // Города (только для администраторов)
+    Route::resource('cities', CityController::class)->except(['show'])->middleware('role:admin');
 });

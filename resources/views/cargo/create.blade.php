@@ -19,23 +19,18 @@
                 <div class="shadow sm:rounded-md sm:overflow-hidden">
                     <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <div>
-                                <label for="from_location" class="block text-sm font-medium text-gray-700">
-                                    Откуда
-                                </label>
-                                <input type="text" name="from_location" id="from_location" 
-                                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                       value="{{ old('from_location') }}" required>
-                            </div>
-
-                            <div>
-                                <label for="to_location" class="block text-sm font-medium text-gray-700">
-                                    Куда
-                                </label>
-                                <input type="text" name="to_location" id="to_location" 
-                                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                       value="{{ old('to_location') }}" required>
-                            </div>
+                            @include('partials.city-select', [
+                                'name'     => 'from_city_id',
+                                'label'    => 'Откуда',
+                                'cities'   => $cities,
+                                'selected' => null,
+                            ])
+                            @include('partials.city-select', [
+                                'name'     => 'to_city_id',
+                                'label'    => 'Куда',
+                                'cities'   => $cities,
+                                'selected' => null,
+                            ])
                         </div>
 
                         <div>

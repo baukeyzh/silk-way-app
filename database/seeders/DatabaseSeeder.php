@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             CargoSeeder::class,
             CarSeeder::class,
             TranslationSeeder::class,
+            CitySeeder::class,
         ]);
     }
 }
