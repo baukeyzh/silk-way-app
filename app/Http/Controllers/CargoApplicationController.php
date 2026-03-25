@@ -173,7 +173,10 @@ class CargoApplicationController extends Controller
         ]);
 
         // Обновляем статус груза
-        $application->cargo->update(['status' => 'in_progress']);
+        $application->cargo->update([
+            'status' => 'in_progress',
+            'picked_by' => $application->driver_id,
+        ]);
 
         // Отклоняем все остальные заявки на этот груз
         $application->cargo->applications()
