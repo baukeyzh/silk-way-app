@@ -70,7 +70,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $item->picked_at->format('d.m.Y H:i') }}
+                                {{ $item->picked_at?->format('d.m.Y H:i') ?? '—' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($item->status === 'picked_up')
