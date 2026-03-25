@@ -240,6 +240,6 @@ class CargoApplicationController extends Controller
         // Обновляем статус груза
         $application->cargo->update(['status' => 'delivered']);
 
-        return redirect()->route('cargo.my-applications')->with('success', 'Груз отмечен как доставленный!');
+        return redirect()->route('applications.my-applications')->with('success', 'Груз отмечен как доставленный!');
     }
 }
