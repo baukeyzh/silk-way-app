@@ -103,8 +103,8 @@ class CargoController extends Controller
             'from_location' => 'required|string|max:255',
             'to_location' => 'required|string|max:255',
             'cargo_type' => 'required|string|max:255',
-            'volume' => 'required|numeric|min:0',
-            'weight' => 'required|numeric|min:0',
+            'volume' => 'required|numeric|min:0|max:99999999.99',
+            'weight' => 'required|numeric|min:0|max:99999999.99',
             'ready_date' => 'required|date',
             'comment' => 'nullable|string',
         ]);
