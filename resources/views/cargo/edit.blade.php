@@ -45,7 +45,7 @@
 
                         <div>
                             <label for="price_usd" class="block text-sm font-medium text-gray-700">
-                                Цена (USD)
+                                {{ translate('cargo.price_usd') }}
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
