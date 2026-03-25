@@ -40,6 +40,21 @@
                                    value="{{ old('cargo_type') }}" required>
                         </div>
 
+                        <div>
+                            <label for="price_usd" class="block text-sm font-medium text-gray-700">
+                                Цена (USD)
+                            </label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" step="0.01" min="0" name="price_usd" id="price_usd"
+                                       class="pl-7 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                       value="{{ old('price_usd') }}"
+                                       placeholder="0.00">
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div>
                                 <label for="volume" class="block text-sm font-medium text-gray-700">

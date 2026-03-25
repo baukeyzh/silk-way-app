@@ -25,6 +25,7 @@ class Cargo extends Model
         'cargo_type_chn',
         'volume',
         'weight',
+        'price_usd',
         'ready_date',
         'comment',
         'comment_rus',
@@ -41,6 +42,7 @@ class Cargo extends Model
         'picked_at' => 'datetime',
         'volume' => 'decimal:2',
         'weight' => 'decimal:2',
+        'price_usd' => 'decimal:2',
     ];
 
     public function createdBy(): BelongsTo

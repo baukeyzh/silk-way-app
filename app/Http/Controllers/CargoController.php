@@ -118,6 +118,7 @@ class CargoController extends Controller
             'cargo_type'   => 'required|string|max:255',
             'volume'       => 'required|numeric|min:0|max:99999999.99',
             'weight'       => 'required|numeric|min:0|max:99999999.99',
+            'price_usd'    => 'nullable|numeric|min:0',
             'ready_date'   => 'required|date',
             'comment'      => 'nullable|string',
         ]);
@@ -137,6 +138,7 @@ class CargoController extends Controller
             'cargo_type'        => $validated['cargo_type'],
             'volume'            => $validated['volume'],
             'weight'            => $validated['weight'],
+            'price_usd'         => $validated['price_usd'] ?? null,
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
             'created_by'        => auth()->id(),
@@ -204,6 +206,7 @@ class CargoController extends Controller
             'cargo_type'   => 'required|string|max:255',
             'volume'       => 'required|numeric|min:0',
             'weight'       => 'required|numeric|min:0',
+            'price_usd'    => 'nullable|numeric|min:0',
             'ready_date'   => 'required|date',
             'comment'      => 'nullable|string',
         ]);
@@ -223,6 +226,7 @@ class CargoController extends Controller
             'cargo_type'        => $validated['cargo_type'],
             'volume'            => $validated['volume'],
             'weight'            => $validated['weight'],
+            'price_usd'         => $validated['price_usd'] ?? null,
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
         ]);

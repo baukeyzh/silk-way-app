@@ -107,6 +107,11 @@
                                 <div class="text-sm text-gray-500">
                                     {{ $item->volume }} м³, {{ $item->weight }} кг
                                 </div>
+                                @if($item->price_usd)
+                                <div class="text-sm font-medium text-green-600">
+                                    ${{ number_format($item->price_usd, 2) }}
+                                </div>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $item->ready_date->format('d.m.Y H:i') }}
@@ -226,6 +231,12 @@
                         <span class="text-gray-500">{{ translate('cargo.weight_label') }}</span>
                         <span class="font-medium">{{ $item->weight }} кг</span>
                     </div>
+                    @if($item->price_usd)
+                    <div>
+                        <span class="text-gray-500">Цена:</span>
+                        <span class="font-medium text-green-600">${{ number_format($item->price_usd, 2) }}</span>
+                    </div>
+                    @endif
                     <div>
                         <span class="text-gray-500">{{ translate('cargo.readiness_label') }}</span>
                         <span class="font-medium">{{ $item->ready_date->format('d.m.Y H:i') }}</span>
