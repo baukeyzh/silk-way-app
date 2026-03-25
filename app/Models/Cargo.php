@@ -33,10 +33,12 @@ class Cargo extends Model
         'status',
         'created_by',
         'picked_by',
+        'picked_at',
     ];
 
     protected $casts = [
         'ready_date' => 'datetime',
+        'picked_at' => 'datetime',
         'volume' => 'decimal:2',
         'weight' => 'decimal:2',
     ];

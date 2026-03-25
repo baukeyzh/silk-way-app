@@ -160,7 +160,7 @@
                     </div>
                     <div>
                         <span class="text-gray-500">{{ translate('my_cargo.picked_label') }}</span>
-                        <span class="font-medium">{{ $item->picked_at->format('d.m.Y H:i') }}</span>
+                        <span class="font-medium">{{ $item->picked_at?->format('d.m.Y H:i') ?? '—' }}</span>
                     </div>
                 </div>
 
