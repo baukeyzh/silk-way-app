@@ -47,8 +47,18 @@ class CargoController extends Controller
         
         // Получаем пагинированные результаты
         $cargo = $query->latest()->paginate(15);
-        
-        return view('cargo.index', compact('cargo'));
+
+        // Для водителя загружаем его заявки чтобы показать статус
+        $myApplications = collect();
+        if ($user->isDriver()) {
+            $cargoIds = $cargo->pluck('id');
+            $myApplications = \App\Models\CargoApplication::where('driver_id', $user->id)
+                ->whereIn('cargo_id', $cargoIds)
+                ->get()
+                ->keyBy('cargo_id');
+        }
+
+        return view('cargo.index', compact('cargo', 'myApplications'));
     }
 
     public function myCargo(): View

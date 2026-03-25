@@ -82,7 +82,7 @@
                         <tr class="hover:bg-gray-50 transition duration-200">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
-                                    {{ $application->cargo->from_location }} → {{ $application->cargo->to_location }}
+                                    {{ $application->cargo->localized_from_location }} → {{ $application->cargo->localized_to_location }}
                                 </div>
                                 <div class="text-sm text-gray-500">{{ $application->cargo->cargo_type }}</div>
                             </td>
@@ -154,7 +154,7 @@
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            {{ $application->cargo->from_location }} → {{ $application->cargo->to_location }}
+                            {{ $application->cargo->localized_from_location }} → {{ $application->cargo->localized_to_location }}
                         </h3>
                         <p class="text-sm text-gray-600">{{ $application->cargo->cargo_type }}</p>
                         <p class="text-sm text-gray-500 mt-1">{{ translate('applications.driver_label') }} {{ $application->driver->name }}</p>

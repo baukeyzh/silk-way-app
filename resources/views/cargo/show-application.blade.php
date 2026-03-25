@@ -8,7 +8,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">Заявка на груз</h1>
-                    <p class="text-gray-600">{{ $application->cargo->from_location }} → {{ $application->cargo->to_location }}</p>
+                    <p class="text-gray-600">{{ $application->cargo->localized_from_location }} → {{ $application->cargo->localized_to_location }}</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     @if($application->isPending())
@@ -39,7 +39,7 @@
                 <div class="space-y-4">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Маршрут:</span>
-                        <span class="font-medium">{{ $application->cargo->from_location }} → {{ $application->cargo->to_location }}</span>
+                        <span class="font-medium">{{ $application->cargo->localized_from_location }} → {{ $application->cargo->localized_to_location }}</span>
                     </div>
                     
                     <div class="flex justify-between">

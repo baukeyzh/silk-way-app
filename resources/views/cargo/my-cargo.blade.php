@@ -54,11 +54,11 @@
                             onclick="handleCargoRowClick(event, '{{ route('cargo.show', $item) }}')">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
-                                    {{ $item->from_location }}
+                                    {{ $item->localized_from_location }}
                                 </div>
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-arrow-right mr-1"></i>
-                                    {{ $item->to_location }}
+                                    {{ $item->localized_to_location }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -125,7 +125,7 @@
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            {{ $item->from_location }} → {{ $item->to_location }}
+                            {{ $item->localized_from_location }} → {{ $item->localized_to_location }}
                         </h3>
                         <p class="text-sm text-gray-600">{{ $item->cargo_type }}</p>
                     </div>

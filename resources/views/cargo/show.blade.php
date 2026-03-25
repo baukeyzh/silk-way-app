@@ -21,9 +21,9 @@
                     </dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                         <div class="flex items-center">
-                            <span class="font-medium">{{ $cargo->from_location }}</span>
+                            <span class="font-medium">{{ $cargo->localized_from_location }}</span>
                             <i class="fas fa-arrow-right mx-2 text-gray-400"></i>
-                            <span class="font-medium">{{ $cargo->to_location }}</span>
+                            <span class="font-medium">{{ $cargo->localized_to_location }}</span>
                         </div>
                     </dd>
                 </div>

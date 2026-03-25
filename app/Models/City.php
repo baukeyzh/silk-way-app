@@ -10,8 +10,8 @@ class City extends Model
 
     public function getLocalizedNameAttribute(): string
     {
-        $locale = app()->getLocale();
-        $field = "name_{$locale}";
+        $suffix = ['ru' => 'rus', 'kz' => 'kaz', 'cn' => 'chn'][app()->getLocale()] ?? 'rus';
+        $field  = "name_{$suffix}";
 
         return $this->$field ?: $this->name;
     }

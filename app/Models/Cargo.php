@@ -106,11 +106,14 @@ class Cargo extends Model
     /**
      * Получить локализованное значение для поля from_location
      */
+    private function localeSuffix(): string
+    {
+        return ['ru' => 'rus', 'kz' => 'kaz', 'cn' => 'chn'][app()->getLocale()] ?? 'rus';
+    }
+
     public function getLocalizedFromLocationAttribute(): string
     {
-        $locale = app()->getLocale();
-        $field = "from_location_{$locale}";
-        
+        $field = "from_location_{$this->localeSuffix()}";
         return $this->$field ?: $this->from_location;
     }
 
@@ -119,9 +122,7 @@ class Cargo extends Model
      */
     public function getLocalizedToLocationAttribute(): string
     {
-        $locale = app()->getLocale();
-        $field = "to_location_{$locale}";
-        
+        $field = "to_location_{$this->localeSuffix()}";
         return $this->$field ?: $this->to_location;
     }
 
@@ -130,9 +131,7 @@ class Cargo extends Model
      */
     public function getLocalizedCargoTypeAttribute(): string
     {
-        $locale = app()->getLocale();
-        $field = "cargo_type_{$locale}";
-        
+        $field = "cargo_type_{$this->localeSuffix()}";
         return $this->$field ?: $this->cargo_type;
     }
 
@@ -141,9 +140,7 @@ class Cargo extends Model
      */
     public function getLocalizedCommentAttribute(): string
     {
-        $locale = app()->getLocale();
-        $field = "comment_{$locale}";
-        
+        $field = "comment_{$this->localeSuffix()}";
         return $this->$field ?: $this->comment;
     }
 

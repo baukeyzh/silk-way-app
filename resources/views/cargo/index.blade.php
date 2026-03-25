@@ -76,6 +76,11 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ translate('cargo.table_created') }}
                             </th>
+                            @if(auth()->user()->isDriver())
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Моя заявка
+                            </th>
+                            @endif
                             <th scope="col" class="relative px-6 py-3">
                                 <span class="sr-only">Действия</span>
                             </th>
@@ -88,11 +93,11 @@
                             onclick="handleCargoRowClick(event, '{{ route('cargo.show', $item) }}')">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
-                                    {{ $item->from_location }}
+                                    {{ $item->localized_from_location }}
                                 </div>
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-arrow-right mr-1"></i>
-                                    {{ $item->to_location }}
+                                    {{ $item->localized_to_location }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -127,6 +132,28 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $item->created_at->format('d.m.Y H:i') }}
                             </td>
+                            @if(auth()->user()->isDriver())
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php $myApp = $myApplications->get($item->id) @endphp
+                                @if($myApp)
+                                    @if($myApp->isPending())
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i> На рассмотрении
+                                        </span>
+                                    @elseif($myApp->isApproved())
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check mr-1"></i> Принята
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times mr-1"></i> Отклонена
+                                        </span>
+                                    @endif
+                                @else
+                                    <span class="text-gray-400 text-xs">—</span>
+                                @endif
+                            </td>
+                            @endif
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex space-x-2" onclick="event.stopPropagation()">
                                     <a href="{{ route('cargo.show', $item) }}" 
@@ -166,7 +193,7 @@
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex-1">
                         <h3 class="text-lg font-semibold text-gray-900">
-                            {{ $item->from_location }} → {{ $item->to_location }}
+                            {{ $item->localized_from_location }} → {{ $item->localized_to_location }}
                         </h3>
                         <p class="text-sm text-gray-600">{{ $item->cargo_type }}</p>
                     </div>
@@ -208,6 +235,27 @@
                         <span class="font-medium">{{ $item->created_at->format('d.m.Y H:i') }}</span>
                     </div>
                 </div>
+
+                @if(auth()->user()->isDriver())
+                @php $myApp = $myApplications->get($item->id) @endphp
+                @if($myApp)
+                <div class="mb-3">
+                    @if($myApp->isPending())
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            <i class="fas fa-clock mr-1"></i> Моя заявка: на рассмотрении
+                        </span>
+                    @elseif($myApp->isApproved())
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check mr-1"></i> Моя заявка: принята
+                        </span>
+                    @else
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <i class="fas fa-times mr-1"></i> Моя заявка: отклонена
+                        </span>
+                    @endif
+                </div>
+                @endif
+                @endif
 
                 <div class="flex justify-between items-center" onclick="event.stopPropagation()">
                     <a href="{{ route('cargo.show', $item) }}" 
