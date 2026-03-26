@@ -6,6 +6,7 @@
     <title>@yield('title', 'Silk Way - ' . \App\Helpers\LocalizationHelper::t('header.footer_text'))</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 min-h-screen {{ auth()->check() ? (auth()->user()->isDriver() ? 'driver-user' : 'admin-warehouse-user') : '' }}">
     <!-- Навигация -->
@@ -21,15 +22,35 @@
                     <div class="hidden md:block ml-10">
                         <div class="flex items-baseline space-x-4">
                             @if(auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-200">
-                                <i class="fas fa-cog mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.admin_panel') }}
-                            </a>
-                            <a href="{{ route('admin.users') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-200">
-                                <i class="fas fa-users mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.users') }}
-                            </a>
-                            <a href="{{ route('admin.translations.index') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-200">
-                                <i class="fas fa-language mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
-                            </a>
+                            <!-- Выпадающее меню администратора -->
+                            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                                <button @click="open = !open"
+                                        class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center {{ request()->routeIs('admin.*') || request()->routeIs('cities.*') ? 'bg-blue-800' : '' }}">
+                                    <i class="fas fa-shield-alt mr-2"></i>
+                                    {{ \App\Helpers\LocalizationHelper::t('header.admin_panel') }}
+                                    <i class="fas fa-chevron-down ml-2 text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+                                </button>
+                                <div x-show="open" x-transition
+                                     class="absolute left-0 mt-1 w-52 bg-white rounded-md shadow-lg z-50 py-1">
+                                    <a href="{{ route('admin.dashboard') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 font-semibold' : '' }}">
+                                        <i class="fas fa-tachometer-alt mr-3 text-blue-500 w-4"></i> Дашборд
+                                    </a>
+                                    <a href="{{ route('admin.users') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('admin.users') ? 'bg-gray-100 font-semibold' : '' }}">
+                                        <i class="fas fa-users mr-3 text-green-500 w-4"></i> {{ \App\Helpers\LocalizationHelper::t('header.users') }}
+                                    </a>
+                                    <a href="{{ route('cities.index') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('cities.*') ? 'bg-gray-100 font-semibold' : '' }}">
+                                        <i class="fas fa-city mr-3 text-purple-500 w-4"></i> Города
+                                    </a>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <a href="{{ route('admin.translations.index') }}"
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->routeIs('admin.translations.*') ? 'bg-gray-100 font-semibold' : '' }}">
+                                        <i class="fas fa-language mr-3 text-yellow-500 w-4"></i> {{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
+                                    </a>
+                                </div>
+                            </div>
                             @endif
                             <a href="{{ route('cargo.index') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-200 {{ (request()->routeIs('cargo.index') || request()->routeIs('cargo.edit') || request()->routeIs('cargo.create') || request()->routeIs('cargo.show') || request()->routeIs('cargo.applications.*') || (request()->routeIs('applications.*') && !auth()->user()->isDriver())) && !request()->routeIs('cargo.my-cargo') ? 'bg-blue-800' : '' }}">
                                 <i class="fas fa-box mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.cargo') }}
@@ -113,15 +134,21 @@
         <div id="mobileMenu" class="md:hidden hidden bg-blue-700">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.dashboard') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200">
-                    <i class="fas fa-cog mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.admin_panel') }}
-                </a>
-                <a href="{{ route('admin.users') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200">
-                    <i class="fas fa-users mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.users') }}
-                </a>
-                <a href="{{ route('admin.translations.index') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200">
-                    <i class="fas fa-language mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
-                </a>
+                <div class="border-b border-blue-500 pb-2 mb-2">
+                    <p class="text-blue-200 text-xs font-semibold uppercase px-3 py-1 tracking-wider">Администрирование</p>
+                    <a href="{{ route('admin.dashboard') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600' : '' }}">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Дашборд
+                    </a>
+                    <a href="{{ route('admin.users') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200 {{ request()->routeIs('admin.users') ? 'bg-blue-600' : '' }}">
+                        <i class="fas fa-users mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.users') }}
+                    </a>
+                    <a href="{{ route('cities.index') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200 {{ request()->routeIs('cities.*') ? 'bg-blue-600' : '' }}">
+                        <i class="fas fa-city mr-2"></i>Города
+                    </a>
+                    <a href="{{ route('admin.translations.index') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200 {{ request()->routeIs('admin.translations.*') ? 'bg-blue-600' : '' }}">
+                        <i class="fas fa-language mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
+                    </a>
+                </div>
                 @endif
                 <a href="{{ route('cargo.index') }}" class="text-white hover:bg-blue-600 block px-3 py-2 rounded-md text-base font-medium transition duration-200 {{ (request()->routeIs('cargo.index') || request()->routeIs('cargo.edit') || request()->routeIs('cargo.create') || request()->routeIs('cargo.show') || request()->routeIs('cargo.applications.*') || (request()->routeIs('applications.*') && !auth()->user()->isDriver())) && !request()->routeIs('cargo.my-cargo') ? 'bg-blue-600' : '' }}">
                     <i class="fas fa-box mr-2"></i>{{ \App\Helpers\LocalizationHelper::t('header.cargo') }}
@@ -153,6 +180,82 @@
             </div>
         </div>
     </nav>
+    @endauth
+
+    <!-- Боковая панель администратора (справа) -->
+    @auth
+    @if(auth()->user()->isAdmin())
+    <div x-data="{ open: false }" class="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center">
+        <!-- Кнопка открытия -->
+        <button @click="open = !open"
+                class="bg-blue-600 hover:bg-blue-700 text-white w-6 h-16 rounded-l-lg shadow-lg flex items-center justify-center transition-all duration-300"
+                :title="open ? 'Скрыть' : 'Меню администратора'">
+            <i class="fas fa-chevron-left text-xs transition-transform duration-300" :class="open ? 'rotate-180' : ''"></i>
+        </button>
+
+        <!-- Панель с иконками -->
+        <div x-show="open"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-x-4"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 translate-x-4"
+             class="bg-white shadow-xl rounded-l-xl border border-gray-200 py-3 flex flex-col items-center gap-1 min-w-[56px]">
+
+            <a href="{{ route('admin.dashboard') }}"
+               title="Дашборд"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('admin.dashboard') ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-blue-600 hover:bg-gray-50' }}">
+                <i class="fas fa-tachometer-alt text-lg"></i>
+                <span class="text-[10px] mt-1">Дашборд</span>
+            </a>
+
+            <a href="{{ route('admin.users') }}"
+               title="Пользователи"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('admin.users') ? 'text-green-600 bg-green-50' : 'text-gray-500 hover:text-green-600 hover:bg-gray-50' }}">
+                <i class="fas fa-users text-lg"></i>
+                <span class="text-[10px] mt-1">Юзеры</span>
+            </a>
+
+            <a href="{{ route('cargo.index') }}"
+               title="Грузы"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('cargo.*') && !request()->routeIs('cargo.my-cargo') ? 'text-blue-600 bg-blue-50' : 'text-gray-500 hover:text-blue-600 hover:bg-gray-50' }}">
+                <i class="fas fa-box text-lg"></i>
+                <span class="text-[10px] mt-1">Грузы</span>
+            </a>
+
+            <a href="{{ route('applications.index') }}"
+               title="Заявки"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('applications.*') ? 'text-yellow-600 bg-yellow-50' : 'text-gray-500 hover:text-yellow-600 hover:bg-gray-50' }}">
+                <i class="fas fa-clipboard-list text-lg"></i>
+                <span class="text-[10px] mt-1">Заявки</span>
+            </a>
+
+            <a href="{{ route('cars.all') }}"
+               title="Машины"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('cars.*') ? 'text-indigo-600 bg-indigo-50' : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-50' }}">
+                <i class="fas fa-car text-lg"></i>
+                <span class="text-[10px] mt-1">Машины</span>
+            </a>
+
+            <a href="{{ route('cities.index') }}"
+               title="Города"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('cities.*') ? 'text-purple-600 bg-purple-50' : 'text-gray-500 hover:text-purple-600 hover:bg-gray-50' }}">
+                <i class="fas fa-city text-lg"></i>
+                <span class="text-[10px] mt-1">Города</span>
+            </a>
+
+            <div class="w-8 border-t border-gray-200 my-1"></div>
+
+            <a href="{{ route('admin.translations.index') }}"
+               title="Переводы"
+               class="flex flex-col items-center px-3 py-2 rounded-lg transition {{ request()->routeIs('admin.translations.*') ? 'text-orange-600 bg-orange-50' : 'text-gray-500 hover:text-orange-600 hover:bg-gray-50' }}">
+                <i class="fas fa-language text-lg"></i>
+                <span class="text-[10px] mt-1">Переводы</span>
+            </a>
+        </div>
+    </div>
+    @endif
     @endauth
 
     <!-- Основной контент -->

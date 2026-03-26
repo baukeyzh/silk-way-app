@@ -12,17 +12,49 @@
                 {{ \App\Helpers\LocalizationHelper::t('admin.dashboard_desc') }}
             </p>
         </div>
-        <div class="mt-4 sm:mt-0">
-            <a href="{{ route('admin.translations.index') }}" 
-               class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200">
-                <i class="fas fa-language mr-2"></i>
-                {{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
-            </a>
         </div>
     </div>
 
+    <!-- Быстрые действия -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <a href="{{ route('admin.users') }}"
+           class="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center hover:shadow-md transition duration-200 group">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-green-200 transition">
+                <i class="fas fa-users text-green-600 text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Пользователи</span>
+            @if($pendingUsers->count() > 0)
+            <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                {{ $pendingUsers->count() }} ожидают
+            </span>
+            @endif
+        </a>
+        <a href="{{ route('cargo.index') }}"
+           class="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center hover:shadow-md transition duration-200 group">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition">
+                <i class="fas fa-box text-blue-600 text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Грузы</span>
+        </a>
+        <a href="{{ route('applications.index') }}"
+           class="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center hover:shadow-md transition duration-200 group">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-yellow-200 transition">
+                <i class="fas fa-clipboard-list text-yellow-600 text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Заявки</span>
+        </a>
+        <a href="{{ route('cities.index') }}"
+           class="bg-white rounded-lg shadow p-5 flex flex-col items-center text-center hover:shadow-md transition duration-200 group">
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-200 transition">
+                <i class="fas fa-city text-purple-600 text-xl"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Города</span>
+            <span class="mt-1 text-xs text-gray-400">{{ \App\Models\City::count() }} городов</span>
+        </a>
+    </div>
+
     <!-- Статистика -->
-    <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
