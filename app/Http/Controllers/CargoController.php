@@ -31,10 +31,13 @@ class CargoController extends Controller
             $query = Cargo::available();
         }
         
-        // Применяем поиск
+        // Применяем поиск по локализованным колонкам
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('from_location', 'like', "%{$search}%")
+            $suffix = ['ru' => 'rus', 'kz' => 'kaz', 'cn' => 'chn'][app()->getLocale()] ?? 'rus';
+            $query->where(function($q) use ($search, $suffix) {
+                $q->where("from_location_{$suffix}", 'like', "%{$search}%")
+                  ->orWhere("to_location_{$suffix}", 'like', "%{$search}%")
+                  ->orWhere('from_location', 'like', "%{$search}%")
                   ->orWhere('to_location', 'like', "%{$search}%")
                   ->orWhere('cargo_type', 'like', "%{$search}%");
             });
