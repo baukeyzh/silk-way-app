@@ -351,7 +351,7 @@
     <footer class="bg-gray-800 text-white py-8 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <p>&copy; 2024 Silk Way. {{ \App\Helpers\LocalizationHelper::t('header.footer_text') }}</p>
+                <p>&copy; 2026 Silk Way. {{ \App\Helpers\LocalizationHelper::t('header.footer_text') }}</p>
             </div>
         </div>
     </footer>
