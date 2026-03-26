@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Редактировать груз - Silk Way')
+@section('title', translate('cargo.edit_title'))
 
 @section('content')
 <div class="max-w-2xl mx-auto">
     <div class="md:grid md:grid-cols-3 md:gap-6">
         <div class="md:col-span-1">
             <div class="px-4 sm:px-0">
-                <h3 class="text-lg font-medium leading-6 text-gray-900">Редактировать груз</h3>
+                <h3 class="text-lg font-medium leading-6 text-gray-900">{{ translate('cargo.edit_cargo') }}</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Измените информацию о грузе
+                    {{ translate('cargo.edit_desc') }}
                 </p>
             </div>
         </div>
@@ -22,13 +22,13 @@
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             @include('partials.city-select', [
                                 'name'     => 'from_city_id',
-                                'label'    => 'Откуда',
+                                'label'    => translate('cargo.from_location'),
                                 'cities'   => $cities,
                                 'selected' => $fromCity?->id,
                             ])
                             @include('partials.city-select', [
                                 'name'     => 'to_city_id',
-                                'label'    => 'Куда',
+                                'label'    => translate('cargo.to_location'),
                                 'cities'   => $cities,
                                 'selected' => $toCity?->id,
                             ])
@@ -36,9 +36,9 @@
 
                         <div>
                             <label for="cargo_type" class="block text-sm font-medium text-gray-700">
-                                Тип груза
+                                {{ translate('cargo.cargo_type') }}
                             </label>
-                            <input type="text" name="cargo_type" id="cargo_type" 
+                            <input type="text" name="cargo_type" id="cargo_type"
                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                    value="{{ old('cargo_type', $cargo->cargo_type) }}" required>
                         </div>
@@ -61,18 +61,18 @@
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div>
                                 <label for="volume" class="block text-sm font-medium text-gray-700">
-                                    Объем (м³)
+                                    {{ translate('cargo.volume') }}
                                 </label>
-                                <input type="number" step="0.01" name="volume" id="volume" 
+                                <input type="number" step="0.01" name="volume" id="volume"
                                        class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                        value="{{ old('volume', $cargo->volume) }}" required>
                             </div>
 
                             <div>
                                 <label for="weight" class="block text-sm font-medium text-gray-700">
-                                    Вес (кг)
+                                    {{ translate('cargo.weight') }}
                                 </label>
-                                <input type="number" step="0.01" name="weight" id="weight" 
+                                <input type="number" step="0.01" name="weight" id="weight"
                                        class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                        value="{{ old('weight', $cargo->weight) }}" required>
                             </div>
@@ -80,32 +80,32 @@
 
                         <div>
                             <label for="ready_date" class="block text-sm font-medium text-gray-700">
-                                Дата и время готовности
+                                {{ translate('cargo.ready_date') }}
                             </label>
-                            <input type="datetime-local" name="ready_date" id="ready_date" 
+                            <input type="datetime-local" name="ready_date" id="ready_date"
                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                    value="{{ old('ready_date', $cargo->ready_date->format('Y-m-d\TH:i')) }}" required>
                         </div>
 
                         <div>
                             <label for="comment" class="block text-sm font-medium text-gray-700">
-                                Комментарий / контакт
+                                {{ translate('cargo.comment') }}
                             </label>
-                            <textarea name="comment" id="comment" rows="3" 
+                            <textarea name="comment" id="comment" rows="3"
                                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                      placeholder="Дополнительная информация, контактные данные...">{{ old('comment', $cargo->comment) }}</textarea>
+                                      placeholder="{{ translate('cargo.comment_placeholder') }}">{{ old('comment', $cargo->comment) }}</textarea>
                         </div>
                     </div>
                     <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                        <button type="button" 
+                        <button type="button"
                                 onclick="history.back()"
                                 class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Отмена
+                            {{ translate('cargo.cancel') }}
                         </button>
-                        <button type="submit" 
+                        <button type="submit"
                                 class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <i class="fas fa-save mr-2"></i>
-                            Обновить груз
+                            {{ translate('cargo.update_cargo') }}
                         </button>
                     </div>
                 </div>
@@ -113,4 +113,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

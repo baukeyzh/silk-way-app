@@ -27,6 +27,7 @@ return new class extends Migration
             ['key' => 'applications.my_notes_optional','group' => 'applications', 'ru' => 'Ваши заметки (необязательно)',                                            'kz' => 'Сіздің ескертпелеріңіз (міндетті емес)',                     'cn' => '您的备注（可选）'],
             ['key' => 'applications.apply_placeholder','group' => 'applications', 'ru' => 'Дополнительная информация о вашем опыте или условиях перевозки...',       'kz' => 'Тәжірибеңіз немесе тасымалдау шарттары туралы қосымша ақпарат...', 'cn' => '关于您的经验或运输条件的附加信息...'],
             ['key' => 'applications.my_notes_label',   'group' => 'applications', 'ru' => 'Ваши заметки:',                                                           'kz' => 'Сіздің ескертпелеріңіз:',                                   'cn' => '您的备注：'],
+            ['key' => 'cargo.edit_desc',               'group' => 'cargo',        'ru' => 'Измените информацию о грузе',                                             'kz' => 'Жүк туралы ақпаратты өзгертіңіз',                          'cn' => '修改货物信息'],
         ];
 
         foreach ($rows as $row) {
@@ -58,6 +59,7 @@ return new class extends Migration
             'applications.my_notes_optional',
             'applications.apply_placeholder',
             'applications.my_notes_label',
+            'cargo.edit_desc',
         ])->delete();
     }
 };
