@@ -43,7 +43,17 @@
                         {{ $cargo->volume }} м³, {{ $cargo->weight }} кг
                     </dd>
                 </div>
+                @if($cargo->price_usd)
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">
+                        {{ translate('cargo.price_usd') }}
+                    </dt>
+                    <dd class="mt-1 text-sm font-medium text-green-600 sm:mt-0 sm:col-span-2">
+                        ${{ number_format($cargo->price_usd, 2) }}
+                    </dd>
+                </div>
+                @endif
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">
                         Дата готовности
                     </dt>
