@@ -1,0 +1,1926 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Silk Way API",
+        "description": "REST API для мобильного приложения Silk Way. Авторизация через Bearer токен (Sanctum).",
+        "contact": {
+            "email": "admin@silkway.kz"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API сервер"
+        }
+    ],
+    "paths": {
+        "/admin/users": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Список всех пользователей",
+                "description": "Только для администраторов.",
+                "operationId": "9f06e40259fe789699468c099e316cec",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "pending | approved",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список пользователей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/users/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Детали пользователя",
+                "operationId": "784ee958fd0f07fa4d3ed64d5ee018c3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Удалить пользователя",
+                "operationId": "5bb18645e5945e40ec74786cbe967c02",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Пользователь удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Пользователь удалён."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нельзя удалить себя"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/users/{id}/approve": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Подтвердить аккаунт пользователя",
+                "operationId": "a8000946c16a6d1f8f6054c31cadd0bd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Аккаунт подтверждён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Аккаунт подтверждён."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/users/{id}/toggle": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Переключить статус подтверждения аккаунта",
+                "operationId": "ade7b27c974628ebb876ad7ba7a0b72b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус изменён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "is_approved": {
+                                            "type": "boolean"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "operationId": "c47a1b563e5e8bc3c7b962f893981e84",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "driver",
+                                        "enum": [
+                                            "warehouse_employee",
+                                            "driver"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Регистрация успешна, ожидайте подтверждения администратора",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Регистрация успешна. Ожидайте подтверждения администратора."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Вход в систему",
+                "operationId": "1ff9c65c5cd1a8e0786e318eed856972",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abc123..."
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учётные данные"
+                    },
+                    "403": {
+                        "description": "Аккаунт не подтверждён"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход из системы (удаляет текущий токен)",
+                "operationId": "eae6a8251a6469bbabe454860f64cf37",
+                "responses": {
+                    "200": {
+                        "description": "Выход выполнен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Выход выполнен."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Данные текущего пользователя",
+                "operationId": "257a57ee6760f86fb4b11ff94dba1f38",
+                "responses": {
+                    "200": {
+                        "description": "Данные пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cars": {
+            "get": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Список всех активных машин",
+                "operationId": "5a4232faea14f4b6d28da69ed12170a1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список машин",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Car"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Добавить машину",
+                "description": "Только для водителей.",
+                "operationId": "628a4198ebf8866101714ec6c8feea4e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "brand",
+                                    "model",
+                                    "license_plate",
+                                    "max_weight",
+                                    "trailer_length",
+                                    "trailer_width",
+                                    "trailer_height",
+                                    "trailer_type"
+                                ],
+                                "properties": {
+                                    "brand": {
+                                        "type": "string",
+                                        "example": "Volvo"
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "example": "FH16"
+                                    },
+                                    "license_plate": {
+                                        "type": "string",
+                                        "example": "A123BC"
+                                    },
+                                    "max_weight": {
+                                        "type": "number",
+                                        "example": 20
+                                    },
+                                    "trailer_length": {
+                                        "type": "number",
+                                        "example": 13.6
+                                    },
+                                    "trailer_width": {
+                                        "type": "number",
+                                        "example": 2.4
+                                    },
+                                    "trailer_height": {
+                                        "type": "number",
+                                        "example": 2.7
+                                    },
+                                    "trailer_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "tral",
+                                            "refrigerator",
+                                            "tent"
+                                        ]
+                                    },
+                                    "vehicle_document": {
+                                        "description": "PDF документ, макс. 10MB",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Машина добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Car"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ только для водителей"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cars/my": {
+            "get": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Машины текущего водителя",
+                "operationId": "b9abe373e3080aa51fac9057ea92c141",
+                "responses": {
+                    "200": {
+                        "description": "Список машин водителя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Car"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cars/{id}": {
+            "get": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Детали машины",
+                "operationId": "018ed5bf0dd975a8e657ae8e0c63a7d7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали машины",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Car"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Обновить машину (использовать method=PUT через form-data)",
+                "operationId": "4e1b5fd3cfb61702af115ba6e8754fea",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "brand",
+                                    "model",
+                                    "license_plate",
+                                    "max_weight",
+                                    "trailer_length",
+                                    "trailer_width",
+                                    "trailer_height",
+                                    "trailer_type"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "brand": {
+                                        "type": "string"
+                                    },
+                                    "model": {
+                                        "type": "string"
+                                    },
+                                    "license_plate": {
+                                        "type": "string"
+                                    },
+                                    "max_weight": {
+                                        "type": "number"
+                                    },
+                                    "trailer_length": {
+                                        "type": "number"
+                                    },
+                                    "trailer_width": {
+                                        "type": "number"
+                                    },
+                                    "trailer_height": {
+                                        "type": "number"
+                                    },
+                                    "trailer_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "tral",
+                                            "refrigerator",
+                                            "tent"
+                                        ]
+                                    },
+                                    "vehicle_document": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Машина обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Car"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Удалить машину",
+                "operationId": "b03c354ae2b0640b709a68317865f8e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Машина удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Машина удалена."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cars/{id}/toggle": {
+            "post": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Активировать / деактивировать машину",
+                "operationId": "9b73773e2710c38922bec0e453811877",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус изменён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "is_active": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications": {
+            "get": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Список заявок",
+                "description": "Администратор видит все заявки. Сотрудник склада — только заявки на свои грузы.",
+                "operationId": "802844637087cbafbea4ae935193d490",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список заявок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CargoApplication"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/my": {
+            "get": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Мои заявки (для водителя)",
+                "operationId": "cd702cd2feacee975082e53ff4c20c48",
+                "responses": {
+                    "200": {
+                        "description": "Заявки водителя по статусам",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "pending": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CargoApplication"
+                                            }
+                                        },
+                                        "approved": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CargoApplication"
+                                            }
+                                        },
+                                        "rejected": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CargoApplication"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ только для водителей"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}": {
+            "get": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Детали заявки",
+                "operationId": "0c4b67b63c857ca921c987cced86898d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали заявки",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CargoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cargo/{cargo}/apply": {
+            "post": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Подать заявку на груз",
+                "description": "Только для водителей.",
+                "operationId": "3740e0f566521d14943b2c138d4e08e3",
+                "parameters": [
+                    {
+                        "name": "cargo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "driver_notes": {
+                                        "type": "string",
+                                        "example": "Готов забрать завтра",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Заявка подана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CargoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа или груз недоступен"
+                    },
+                    "409": {
+                        "description": "Заявка уже существует"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/approve": {
+            "post": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Подтвердить заявку водителя",
+                "description": "Только для сотрудников склада и администраторов.",
+                "operationId": "a259011d3b35659364021845ace0262c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "warehouse_notes": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "contact_whatsapp": {
+                                        "type": "string",
+                                        "example": "+77001234567",
+                                        "nullable": true
+                                    },
+                                    "contact_wechat": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "pickup_contact": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "pickup_address": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "delivery_contact": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "delivery_address": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Заявка подтверждена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CargoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "Заявка уже обработана"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/reject": {
+            "post": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Отклонить заявку водителя",
+                "description": "Только для сотрудников склада и администраторов.",
+                "operationId": "783e586e67d2fb2a32e09cd2ee324a11",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Заявка отклонена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Заявка отклонена."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "Заявка уже обработана"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/deliver": {
+            "post": {
+                "tags": [
+                    "Applications"
+                ],
+                "summary": "Отметить груз как доставленный",
+                "description": "Только для водителя-владельца заявки.",
+                "operationId": "89c970e82d31b6b3ac968c63cbdc959b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Груз отмечен как доставленный",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Груз доставлен."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа или заявка не подтверждена"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cargo": {
+            "get": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Список грузов",
+                "description": "Сотрудник склада видит свои грузы, водитель — доступные грузы.",
+                "operationId": "869bb80d609559fe5c1e389413eca875",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по локации или типу",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "available",
+                                "in_progress",
+                                "delivered"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список грузов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Cargo"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Создать груз",
+                "description": "Только для сотрудников склада и администраторов.",
+                "operationId": "c69aa7bb65da46caddf6f8afcaefc910",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "from_city_id",
+                                    "to_city_id",
+                                    "cargo_type",
+                                    "volume",
+                                    "weight",
+                                    "ready_date"
+                                ],
+                                "properties": {
+                                    "from_city_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "to_city_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "cargo_type": {
+                                        "type": "string",
+                                        "example": "Электроника"
+                                    },
+                                    "volume": {
+                                        "type": "number",
+                                        "example": 20.5
+                                    },
+                                    "weight": {
+                                        "type": "number",
+                                        "example": 5
+                                    },
+                                    "price_usd": {
+                                        "type": "number",
+                                        "example": 1500,
+                                        "nullable": true
+                                    },
+                                    "ready_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-01"
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "Хрупкий груз",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Груз создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cargo"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cargo/my": {
+            "get": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Грузы водителя (в работе)",
+                "description": "Только для водителей. Возвращает грузы, которые взял водитель.",
+                "operationId": "ee0cc61916668a9ae184b779225ad258",
+                "responses": {
+                    "200": {
+                        "description": "Список грузов водителя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Cargo"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ только для водителей"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cargo/{id}": {
+            "get": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Детали груза",
+                "operationId": "780f52c51bd9b51b0f02b1b8b79f9da9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали груза",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cargo"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Обновить груз",
+                "operationId": "a4e440395bf2e9e596e884fdb6cf6b2b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "from_city_id",
+                                    "to_city_id",
+                                    "cargo_type",
+                                    "volume",
+                                    "weight",
+                                    "ready_date"
+                                ],
+                                "properties": {
+                                    "from_city_id": {
+                                        "type": "integer"
+                                    },
+                                    "to_city_id": {
+                                        "type": "integer"
+                                    },
+                                    "cargo_type": {
+                                        "type": "string"
+                                    },
+                                    "volume": {
+                                        "type": "number"
+                                    },
+                                    "weight": {
+                                        "type": "number"
+                                    },
+                                    "price_usd": {
+                                        "type": "number",
+                                        "nullable": true
+                                    },
+                                    "ready_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Груз обновлён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Cargo"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cargo"
+                ],
+                "summary": "Удалить груз",
+                "operationId": "bfa983408e87de31627fabd1a7d7b810",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Груз удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Груз удалён."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Не найдено"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Car": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "brand": {
+                        "type": "string",
+                        "example": "Volvo"
+                    },
+                    "model": {
+                        "type": "string",
+                        "example": "FH16"
+                    },
+                    "license_plate": {
+                        "type": "string",
+                        "example": "A123BC"
+                    },
+                    "max_weight": {
+                        "type": "number",
+                        "example": 20
+                    },
+                    "trailer_type": {
+                        "type": "string",
+                        "enum": [
+                            "tral",
+                            "refrigerator",
+                            "tent"
+                        ]
+                    },
+                    "trailer_length": {
+                        "type": "number",
+                        "example": 13.6
+                    },
+                    "trailer_width": {
+                        "type": "number",
+                        "example": 2.4
+                    },
+                    "trailer_height": {
+                        "type": "number",
+                        "example": 2.7
+                    },
+                    "trailer_volume": {
+                        "type": "number",
+                        "example": 88.13
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "vehicle_document": {
+                        "type": "string",
+                        "example": "https://example.com/storage/doc.pdf",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CargoApplication": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                        ]
+                    },
+                    "driver_notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "warehouse_notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contact_whatsapp": {
+                        "type": "string",
+                        "example": "+77001234567",
+                        "nullable": true
+                    },
+                    "contact_wechat": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "pickup_contact": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "pickup_address": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "delivery_contact": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "delivery_address": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "approved_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Cargo": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "from": {
+                        "type": "string",
+                        "example": "Алматы"
+                    },
+                    "to": {
+                        "type": "string",
+                        "example": "Пекин"
+                    },
+                    "cargo_type": {
+                        "type": "string",
+                        "example": "Электроника"
+                    },
+                    "volume": {
+                        "type": "number",
+                        "example": 20.5
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 5
+                    },
+                    "price_usd": {
+                        "type": "number",
+                        "example": 1500
+                    },
+                    "ready_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-01"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Хрупкий груз"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "available",
+                            "in_progress",
+                            "delivered"
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иван Иванов"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ivan@example.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "warehouse_employee",
+                            "driver"
+                        ]
+                    },
+                    "is_approved": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Введите токен (без слова Bearer — оно добавляется автоматически)",
+                "bearerFormat": "Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Авторизация"
+        },
+        {
+            "name": "Cargo",
+            "description": "Грузы"
+        },
+        {
+            "name": "Cars",
+            "description": "Транспортные средства"
+        },
+        {
+            "name": "Applications",
+            "description": "Заявки на грузы"
+        },
+        {
+            "name": "Admin",
+            "description": "Администрирование"
+        }
+    ]
+}

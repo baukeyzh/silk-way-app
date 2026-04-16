@@ -14,19 +14,31 @@ class Authenticate
      *
      * @param  \Closure(\Illuminate\Http\Request): mixed  $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, string ...$guards)
     {
-        Log::info('Authenticate middleware called', [
-            'user_id' => Auth::id(),
-            'authenticated' => Auth::check(),
-            'url' => $request->url()
-        ]);
-
-        if (!Auth::check()) {
-            Log::warning('User not authenticated, redirecting to login');
-            return redirect()->route('login');
+        // Try each specified guard (e.g. auth:sanctum passes 'sanctum' as guard)
+        foreach ($guards as $guard) {
+            if (Auth::guard($guard)->check()) {
+                Auth::shouldUse($guard);
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        // No guards specified — fall back to default guard
+        if (empty($guards) && Auth::check()) {
+            return $next($request);
+        }
+
+        Log::warning('User not authenticated', [
+            'url'    => $request->url(),
+            'guards' => $guards,
+        ]);
+
+        // API requests → 401 JSON
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json(['message' => 'Не авторизован.'], 401);
+        }
+
+        return redirect()->route('login');
     }
 }
