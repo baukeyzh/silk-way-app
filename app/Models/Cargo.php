@@ -140,7 +140,7 @@ class Cargo extends Model
     /**
      * Получить локализованное значение для поля comment
      */
-    public function getLocalizedCommentAttribute(): string
+    public function getLocalizedCommentAttribute(): ?string
     {
         $field = "comment_{$this->localeSuffix()}";
         return $this->$field ?: $this->comment;
