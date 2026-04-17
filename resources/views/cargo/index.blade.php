@@ -4,290 +4,272 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Заголовок -->
-    <div class="sm:flex sm:items-center sm:justify-between">
+
+    {{-- Page header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ translate('cargo.available_cargo') }}</h1>
-            <p class="mt-2 text-sm sm:text-base text-gray-700">
-                {{ translate('cargo.available_cargo_desc') }}
-            </p>
+            <h1 class="text-2xl font-bold text-slate-900">{{ translate('cargo.available_cargo') }}</h1>
+            <p class="mt-1 text-sm text-slate-500">{{ translate('cargo.available_cargo_desc') }}</p>
         </div>
-        @if(auth()->user()->isWarehouseEmployee())
-        <div class="mt-4 sm:mt-0">
-            <a href="{{ route('cargo.create') }}" 
-               class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto transition duration-200">
-                <i class="fas fa-plus mr-2"></i>
-                {{ translate('cargo.add_cargo_button') }}
-            </a>
-        </div>
+        @if(auth()->user()->isWarehouseEmployee() || auth()->user()->isAdmin())
+        <a href="{{ route('cargo.create') }}"
+           class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shrink-0">
+            <i class="fas fa-plus mr-2"></i>{{ translate('cargo.add_cargo_button') }}
+        </a>
         @endif
     </div>
 
-    <!-- Фильтры и поиск -->
-    <div class="bg-white shadow rounded-lg p-4 sm:p-6">
-        <form method="GET" action="{{ route('cargo.index') }}" class="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
-            <div class="flex-1 min-w-0">
-                <label for="search" class="sr-only">Поиск</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
-                    <input type="text" name="search" id="search" 
-                           value="{{ request('search') }}"
-                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                           placeholder="{{ translate('cargo.search_placeholder') }}">
+    {{-- Stats bar --}}
+    @php
+        $total = $cargo->total() ?? $cargo->count();
+        $available = $cargo->where('status','available')->count();
+        $pickedUp = $cargo->where('status','picked_up')->count();
+    @endphp
+    <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Всего</p>
+            <p class="text-2xl font-bold text-slate-900 mt-1">{{ $cargo->total() ?? $cargo->count() }}</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.status_available') }}</p>
+            <p class="text-2xl font-bold text-emerald-600 mt-1">{{ $cargo->where('status','available')->count() }}</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">В пути</p>
+            <p class="text-2xl font-bold text-amber-600 mt-1">{{ $cargo->where('status','picked_up')->count() }}</p>
+        </div>
+    </div>
+
+    {{-- Search + filters --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+        <form method="GET" action="{{ route('cargo.index') }}" class="flex flex-col sm:flex-row gap-3">
+            {{-- Search --}}
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-slate-400 text-sm"></i>
                 </div>
+                <input type="text" name="search" value="{{ request('search') }}"
+                       class="block w-full pl-10 pr-3 py-2.5 text-sm rounded-lg border border-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                       placeholder="{{ translate('cargo.search_placeholder') }}">
             </div>
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <select name="status" class="block w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">{{ translate('cargo.all_statuses') }}</option>
-                    <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>{{ translate('cargo.status_available') }}</option>
-                    <option value="picked_up" {{ request('status') == 'picked_up' ? 'selected' : '' }}>{{ translate('cargo.status_picked_up') }}</option>
-                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>{{ translate('cargo.status_delivered') }}</option>
-                </select>
-                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
-                    <i class="fas fa-filter mr-2"></i>
-                    {{ translate('cargo.filter_button') }}
-                </button>
+
+            {{-- Status pills --}}
+            <div class="flex flex-wrap gap-2 items-center">
+                <a href="{{ route('cargo.index', array_merge(request()->except('status'), ['search' => request('search')])) }}"
+                   class="px-3 py-2 rounded-lg text-xs font-semibold transition-colors {{ !request('status') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    {{ translate('cargo.all_statuses') }}
+                </a>
+                <a href="{{ route('cargo.index', array_merge(request()->except('status'), ['status' => 'available', 'search' => request('search')])) }}"
+                   class="px-3 py-2 rounded-lg text-xs font-semibold transition-colors {{ request('status') === 'available' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    <i class="fas fa-check-circle mr-1"></i>{{ translate('cargo.status_available') }}
+                </a>
+                <a href="{{ route('cargo.index', array_merge(request()->except('status'), ['status' => 'picked_up', 'search' => request('search')])) }}"
+                   class="px-3 py-2 rounded-lg text-xs font-semibold transition-colors {{ request('status') === 'picked_up' ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    <i class="fas fa-truck mr-1"></i>{{ translate('cargo.status_picked_up') }}
+                </a>
+                <a href="{{ route('cargo.index', array_merge(request()->except('status'), ['status' => 'delivered', 'search' => request('search')])) }}"
+                   class="px-3 py-2 rounded-lg text-xs font-semibold transition-colors {{ request('status') === 'delivered' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    <i class="fas fa-check-double mr-1"></i>{{ translate('cargo.status_delivered') }}
+                </a>
             </div>
+
+            <button type="submit"
+                    class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors shrink-0">
+                <i class="fas fa-filter mr-1.5"></i>{{ translate('cargo.filter_button') }}
+            </button>
         </form>
     </div>
 
-    <!-- Список грузов -->
+    {{-- Results --}}
     @if($cargo->count() > 0)
-        <!-- Десктопная таблица -->
-        <div class="hidden lg:block bg-white shadow rounded-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ translate('cargo.table_route') }}
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ translate('cargo.table_cargo') }}
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ translate('cargo.table_readiness') }}
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ translate('cargo.table_status') }}
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ translate('cargo.table_created') }}
-                            </th>
-                            @if(auth()->user()->isDriver())
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Моя заявка
-                            </th>
+
+        {{-- Desktop table --}}
+        <div class="hidden lg:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead>
+                    <tr class="bg-slate-50">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_route') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_cargo') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_readiness') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_status') }}</th>
+                        @if(auth()->user()->isDriver())
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Моя заявка</th>
+                        @endif
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_created') }}</th>
+                        <th class="relative px-6 py-3"><span class="sr-only">Действия</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    @foreach($cargo as $item)
+                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer cargo-row"
+                        onclick="handleCargoRowClick(event, '{{ route('cargo.show', $item) }}')">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-semibold text-slate-900">{{ $item->localized_from_location }}</div>
+                            <div class="flex items-center text-xs text-slate-500 mt-0.5">
+                                <i class="fas fa-arrow-right mr-1 text-slate-400"></i>{{ $item->localized_to_location }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-slate-800">{{ $item->cargo_type }}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">{{ $item->volume }} м³ · {{ $item->weight }} кг</div>
+                            @if($item->price_usd)
+                            <div class="text-xs font-semibold text-emerald-600 mt-0.5">${{ number_format($item->price_usd, 2) }}</div>
                             @endif
-                            <th scope="col" class="relative px-6 py-3">
-                                <span class="sr-only">Действия</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($cargo as $item)
-                        <tr class="hover:bg-gray-50 transition duration-200 cursor-pointer cargo-row" 
-                            data-cargo-url="{{ route('cargo.show', $item) }}"
-                            onclick="handleCargoRowClick(event, '{{ route('cargo.show', $item) }}')">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $item->localized_from_location }}
-                                </div>
-                                <div class="text-sm text-gray-500">
-                                    <i class="fas fa-arrow-right mr-1"></i>
-                                    {{ $item->localized_to_location }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ $item->cargo_type }}
-                                </div>
-                                <div class="text-sm text-gray-500">
-                                    {{ $item->volume }} м³, {{ $item->weight }} кг
-                                </div>
-                                @if($item->price_usd)
-                                <div class="text-sm font-medium text-green-600">
-                                    ${{ number_format($item->price_usd, 2) }}
-                                </div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $item->ready_date->format('d.m.Y H:i') }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($item->status === 'available')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <i class="fas fa-check-circle mr-1"></i>
-                                        {{ translate('cargo.status_available') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                            {{ $item->ready_date->format('d.m.Y') }}<br>
+                            <span class="text-xs text-slate-400">{{ $item->ready_date->format('H:i') }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($item->status === 'available')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                    <i class="fas fa-check-circle mr-1"></i>{{ translate('cargo.status_available') }}
+                                </span>
+                            @elseif($item->status === 'picked_up')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                    <i class="fas fa-truck mr-1"></i>{{ translate('cargo.status_picked_up') }}
+                                </span>
+                            @elseif($item->status === 'delivered')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                    <i class="fas fa-check-double mr-1"></i>{{ translate('cargo.status_delivered') }}
+                                </span>
+                            @endif
+                        </td>
+                        @if(auth()->user()->isDriver())
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @php $myApp = $myApplications->get($item->id) @endphp
+                            @if($myApp)
+                                @if($myApp->isPending())
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                        <i class="fas fa-clock mr-1"></i>На рассмотрении
                                     </span>
-                                @elseif($item->status === 'picked_up')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        <i class="fas fa-truck mr-1"></i>
-                                        {{ translate('cargo.status_picked_up') }}
+                                @elseif($myApp->isApproved())
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                        <i class="fas fa-check mr-1"></i>Принята
                                     </span>
-                                @elseif($item->status === 'delivered')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        <i class="fas fa-check-double mr-1"></i>
-                                        {{ translate('cargo.status_delivered') }}
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $item->created_at->format('d.m.Y H:i') }}
-                            </td>
-                            @if(auth()->user()->isDriver())
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @php $myApp = $myApplications->get($item->id) @endphp
-                                @if($myApp)
-                                    @if($myApp->isPending())
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            <i class="fas fa-clock mr-1"></i> На рассмотрении
-                                        </span>
-                                    @elseif($myApp->isApproved())
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-check mr-1"></i> Принята
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            <i class="fas fa-times mr-1"></i> Отклонена
-                                        </span>
-                                    @endif
                                 @else
-                                    <span class="text-gray-400 text-xs">—</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                                        <i class="fas fa-times mr-1"></i>Отклонена
+                                    </span>
                                 @endif
-                            </td>
+                            @else
+                                <span class="text-slate-300 text-xs">—</span>
                             @endif
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex space-x-2" onclick="event.stopPropagation()">
-                                    <a href="{{ route('cargo.show', $item) }}" 
-                                       class="text-blue-600 hover:text-blue-900 transition duration-200">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    @if(auth()->user()->isWarehouseEmployee() && $item->status === 'available')
-                                    <a href="{{ route('cargo.edit', $item) }}" 
-                                       class="text-indigo-600 hover:text-indigo-900 transition duration-200">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('cargo.destroy', $item) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="text-red-600 hover:text-red-900 transition duration-200"
-                                                onclick="return confirm('{{ translate('cargo.confirm_delete') }}')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </td>
+                        @endif
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
+                            {{ $item->created_at->format('d.m.Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <div class="flex items-center justify-end space-x-3" onclick="event.stopPropagation()">
+                                <a href="{{ route('cargo.show', $item) }}" class="text-indigo-600 hover:text-indigo-800 transition-colors">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if(auth()->user()->isWarehouseEmployee() && $item->status === 'available')
+                                <a href="{{ route('cargo.edit', $item) }}" class="text-slate-500 hover:text-slate-700 transition-colors">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <form action="{{ route('cargo.destroy', $item) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-rose-500 hover:text-rose-700 transition-colors"
+                                            onclick="return confirm('{{ translate('cargo.confirm_delete') }}')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-        <!-- Мобильные карточки -->
-        <div class="lg:hidden space-y-4">
+        {{-- Mobile card grid --}}
+        <div class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach($cargo as $item)
-            <div class="bg-white shadow rounded-lg p-4 hover:shadow-md transition duration-200 cursor-pointer cargo-card" 
-                 data-cargo-url="{{ route('cargo.show', $item) }}"
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden cursor-pointer cargo-card hover:shadow-md transition-shadow"
                  onclick="handleCargoCardClick(event, '{{ route('cargo.show', $item) }}')">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            {{ $item->localized_from_location }} → {{ $item->localized_to_location }}
-                        </h3>
-                        <p class="text-sm text-gray-600">{{ $item->cargo_type }}</p>
-                    </div>
-                    <div class="ml-3">
+                {{-- Card header with status --}}
+                <div class="px-4 pt-4 pb-3 border-b border-slate-100">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-slate-900 truncate">{{ $item->localized_from_location }}</p>
+                            <div class="flex items-center text-xs text-slate-500 mt-0.5">
+                                <i class="fas fa-arrow-right mr-1 text-slate-300"></i>
+                                <span class="truncate">{{ $item->localized_to_location }}</span>
+                            </div>
+                        </div>
                         @if($item->status === 'available')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                {{ translate('cargo.status_available') }}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 shrink-0">
+                                <i class="fas fa-check-circle mr-1"></i>{{ translate('cargo.status_available') }}
                             </span>
                         @elseif($item->status === 'picked_up')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                <i class="fas fa-truck mr-1"></i>
-                                {{ translate('cargo.status_picked_up') }}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 shrink-0">
+                                <i class="fas fa-truck mr-1"></i>В пути
                             </span>
                         @elseif($item->status === 'delivered')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="fas fa-check-double mr-1"></i>
-                                {{ translate('cargo.status_delivered') }}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 shrink-0">
+                                <i class="fas fa-check-double mr-1"></i>Доставлен
                             </span>
                         @endif
                     </div>
                 </div>
-                
-                <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
-                    <div>
-                        <span class="text-gray-500">{{ translate('cargo.volume_label') }}</span>
-                        <span class="font-medium">{{ $item->volume }} м³</span>
+
+                {{-- Card body --}}
+                <div class="px-4 py-3">
+                    <p class="text-sm font-medium text-slate-800 mb-2">{{ $item->cargo_type }}</p>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                        <div class="text-slate-500">{{ translate('cargo.volume_label') }} <span class="font-medium text-slate-700">{{ $item->volume }} м³</span></div>
+                        <div class="text-slate-500">{{ translate('cargo.weight_label') }} <span class="font-medium text-slate-700">{{ $item->weight }} кг</span></div>
+                        @if($item->price_usd)
+                        <div class="text-slate-500">Цена <span class="font-semibold text-emerald-600">${{ number_format($item->price_usd, 2) }}</span></div>
+                        @endif
+                        <div class="text-slate-500">Готов <span class="font-medium text-slate-700">{{ $item->ready_date->format('d.m.Y') }}</span></div>
                     </div>
-                    <div>
-                        <span class="text-gray-500">{{ translate('cargo.weight_label') }}</span>
-                        <span class="font-medium">{{ $item->weight }} кг</span>
-                    </div>
-                    @if($item->price_usd)
-                    <div>
-                        <span class="text-gray-500">Цена:</span>
-                        <span class="font-medium text-green-600">${{ number_format($item->price_usd, 2) }}</span>
+
+                    @if(auth()->user()->isDriver())
+                    @php $myApp = $myApplications->get($item->id) @endphp
+                    @if($myApp)
+                    <div class="mt-3">
+                        @if($myApp->isPending())
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                <i class="fas fa-clock mr-1"></i>Заявка на рассмотрении
+                            </span>
+                        @elseif($myApp->isApproved())
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <i class="fas fa-check mr-1"></i>Заявка принята
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                                <i class="fas fa-times mr-1"></i>Заявка отклонена
+                            </span>
+                        @endif
                     </div>
                     @endif
-                    <div>
-                        <span class="text-gray-500">{{ translate('cargo.readiness_label') }}</span>
-                        <span class="font-medium">{{ $item->ready_date->format('d.m.Y H:i') }}</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-500">{{ translate('cargo.created_label') }}</span>
-                        <span class="font-medium">{{ $item->created_at->format('d.m.Y H:i') }}</span>
-                    </div>
-                </div>
-
-                @if(auth()->user()->isDriver())
-                @php $myApp = $myApplications->get($item->id) @endphp
-                @if($myApp)
-                <div class="mb-3">
-                    @if($myApp->isPending())
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            <i class="fas fa-clock mr-1"></i> Моя заявка: на рассмотрении
-                        </span>
-                    @elseif($myApp->isApproved())
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-check mr-1"></i> Моя заявка: принята
-                        </span>
-                    @else
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            <i class="fas fa-times mr-1"></i> Моя заявка: отклонена
-                        </span>
                     @endif
                 </div>
-                @endif
-                @endif
 
-                <div class="flex justify-between items-center" onclick="event.stopPropagation()">
-                    <a href="{{ route('cargo.show', $item) }}" 
-                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
-                        <i class="fas fa-eye mr-2"></i>
-                        {{ translate('cargo.view_button') }}
+                {{-- Card footer actions --}}
+                <div class="px-4 pb-4 flex items-center justify-between gap-2" onclick="event.stopPropagation()">
+                    <a href="{{ route('cargo.show', $item) }}"
+                       class="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors">
+                        <i class="fas fa-eye mr-1.5"></i>{{ translate('cargo.view_button') }}
                     </a>
-                    
                     @if(auth()->user()->isWarehouseEmployee() && $item->status === 'available')
-                    <div class="flex space-x-2">
-                        <a href="{{ route('cargo.edit', $item) }}" 
-                           class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
-                            <i class="fas fa-edit"></i>
+                    <div class="flex gap-2">
+                        <a href="{{ route('cargo.edit', $item) }}"
+                           class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg transition-colors">
+                            <i class="fas fa-pencil-alt"></i>
                         </a>
                         <form action="{{ route('cargo.destroy', $item) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" 
-                                    class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+                            <button type="submit"
+                                    class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-300 hover:bg-rose-50 hover:border-rose-300 text-rose-600 text-xs font-medium rounded-lg transition-colors"
                                     onclick="return confirm('{{ translate('cargo.confirm_delete') }}')">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
                     </div>
@@ -297,17 +279,19 @@
             @endforeach
         </div>
 
-        <!-- Пагинация -->
-        <div class="mt-6">
+        {{-- Pagination --}}
+        <div class="mt-4">
             {{ $cargo->links() }}
         </div>
+
     @else
-        <div class="text-center py-12">
-            <div class="text-gray-400 mb-4">
-                <i class="fas fa-box text-6xl"></i>
+        {{-- Empty state --}}
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm py-16 text-center">
+            <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-box text-slate-400 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">{{ translate('cargo.no_cargo_found') }}</h3>
-            <p class="text-gray-500 mb-6">
+            <h3 class="text-lg font-semibold text-slate-700 mb-1">{{ translate('cargo.no_cargo_found') }}</h3>
+            <p class="text-sm text-slate-500 mb-6">
                 @if(request('search') || request('status'))
                     {{ translate('cargo.try_change_search') }}
                 @else
@@ -315,10 +299,9 @@
                 @endif
             </p>
             @if(request('search') || request('status'))
-            <a href="{{ route('cargo.index') }}" 
-               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
-                <i class="fas fa-times mr-2"></i>
-                {{ translate('cargo.reset_filters') }}
+            <a href="{{ route('cargo.index') }}"
+               class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-times mr-2"></i>{{ translate('cargo.reset_filters') }}
             </a>
             @endif
         </div>
@@ -326,68 +309,13 @@
 </div>
 
 <script>
-// Функция для обработки клика по строке таблицы грузов
 function handleCargoRowClick(event, url) {
-    // Проверяем, что клик не по кнопкам действий
-    if (event.target.closest('a, button, form') || event.target.closest('[onclick*="event.stopPropagation"]')) {
-        return;
-    }
-    
-    // Добавляем визуальный эффект при клике
-    const row = event.currentTarget;
-    row.style.backgroundColor = '#f3f4f6';
-    
-    // Переходим на страницу просмотра
-    setTimeout(() => {
-        window.location.href = url;
-    }, 150);
+    if (event.target.closest('a, button, form')) return;
+    window.location.href = url;
 }
-
-// Функция для обработки клика по мобильной карточке грузов
 function handleCargoCardClick(event, url) {
-    // Проверяем, что клик не по кнопкам действий
-    if (event.target.closest('a, button, form') || event.target.closest('[onclick*="event.stopPropagation"]')) {
-        return;
-    }
-    
-    // Добавляем визуальный эффект при клике
-    const card = event.currentTarget;
-    card.style.transform = 'scale(0.98)';
-    card.style.transition = 'transform 0.1s ease';
-    
-    // Переходим на страницу просмотра
-    setTimeout(() => {
-        window.location.href = url;
-    }, 100);
+    if (event.target.closest('a, button, form')) return;
+    window.location.href = url;
 }
-
-// Добавляем стили для интерактивности
-document.addEventListener('DOMContentLoaded', function() {
-    // Добавляем hover эффекты для строк таблицы грузов
-    const rows = document.querySelectorAll('.cargo-row');
-    rows.forEach(row => {
-        row.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = '#f9fafb';
-        });
-        
-        row.addEventListener('mouseleave', function() {
-            this.style.backgroundColor = '';
-        });
-    });
-    
-    // Добавляем hover эффекты для мобильных карточек грузов
-    const cards = document.querySelectorAll('.cargo-card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = '';
-            this.style.boxShadow = '';
-        });
-    });
-});
 </script>
-@endsection 
+@endsection

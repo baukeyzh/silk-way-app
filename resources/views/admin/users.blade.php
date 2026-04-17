@@ -4,144 +4,135 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Заголовок -->
-    <div class="sm:flex sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ \App\Helpers\LocalizationHelper::t('admin.users_management_heading') }}</h1>
-            <p class="mt-2 text-sm sm:text-base text-gray-700">
-                {{ \App\Helpers\LocalizationHelper::t('admin.users_management_desc') }}
-            </p>
-        </div>
+
+    {{-- Header --}}
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">{{ \App\Helpers\LocalizationHelper::t('admin.users_management_heading') }}</h1>
+        <p class="mt-1 text-sm text-slate-500">{{ \App\Helpers\LocalizationHelper::t('admin.users_management_desc') }}</p>
     </div>
-    
-    <!-- Таблица пользователей -->
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+
+    {{-- Table --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             {{ \App\Helpers\LocalizationHelper::t('admin.table_user') }}
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             {{ \App\Helpers\LocalizationHelper::t('admin.table_role') }}
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             {{ \App\Helpers\LocalizationHelper::t('admin.table_status') }}
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
                             {{ \App\Helpers\LocalizationHelper::t('admin.table_registration_date') }}
                         </th>
-                        <th scope="col" class="relative px-6 py-3">
+                        <th class="relative px-6 py-3.5">
                             <span class="sr-only">{{ \App\Helpers\LocalizationHelper::t('admin.table_actions') }}</span>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-slate-100">
                     @foreach($users as $user)
-                    <tr class="hover:bg-gray-50 transition duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <i class="fas fa-user text-gray-600"></i>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
+                                        {{ $user->isAdmin() ? 'bg-purple-100 text-purple-700' : ($user->isWarehouseEmployee() ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700') }}">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900">{{ $user->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $user->email }}</p>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        {{ $user->name }}
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        {{ $user->email }}
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->isAdmin())
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                    <i class="fas fa-crown mr-1"></i>
-                                    {{ \App\Helpers\LocalizationHelper::t('admin.administrator') }}
-                                </span>
-                            @elseif($user->isWarehouseEmployee())
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <i class="fas fa-warehouse mr-1"></i>
-                                    {{ \App\Helpers\LocalizationHelper::t('auth.warehouse_employee') }}
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="fas fa-truck mr-1"></i>
-                                    {{ \App\Helpers\LocalizationHelper::t('auth.driver_role') }}
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->isApproved())
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    {{ \App\Helpers\LocalizationHelper::t('admin.status_approved') }}
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    {{ \App\Helpers\LocalizationHelper::t('admin.status_pending') }}
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $user->created_at->format('d.m.Y H:i') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex space-x-2">
-                                @if(!$user->isApproved())
-                                    <form action="{{ route('admin.users.approve', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200">
-                                            <i class="fas fa-check mr-1"></i>
-                                            {{ \App\Helpers\LocalizationHelper::t('admin.approve') }}
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.users.reject', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200"
-                                                onclick="return confirm('{{ \App\Helpers\LocalizationHelper::t('admin.confirm_reject_user') }}')">
-                                            <i class="fas fa-times mr-1"></i>
-                                            {{ \App\Helpers\LocalizationHelper::t('admin.reject') }}
-                                        </button>
-                                    </form>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($user->isAdmin())
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                                        <i class="fas fa-crown text-xs"></i>
+                                        {{ \App\Helpers\LocalizationHelper::t('admin.administrator') }}
+                                    </span>
+                                @elseif($user->isWarehouseEmployee())
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                                        <i class="fas fa-warehouse text-xs"></i>
+                                        {{ \App\Helpers\LocalizationHelper::t('auth.warehouse_employee') }}
+                                    </span>
                                 @else
-                                    @if(!$user->isAdmin())
-                                    <form action="{{ route('admin.users.toggle-approval', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition duration-200"
-                                                title="{{ \App\Helpers\LocalizationHelper::t('admin.toggle_access_title') }}">
-                                            <i class="fas fa-ban mr-1"></i>
-                                            {{ \App\Helpers\LocalizationHelper::t('admin.toggle_approval') }}
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.users.delete', $user) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200"
-                                                onclick="return confirm('{{ \App\Helpers\LocalizationHelper::t('admin.confirm_delete_user') }}')"
-                                                title="{{ \App\Helpers\LocalizationHelper::t('admin.delete_user_title') }}">
-                                            <i class="fas fa-trash mr-1"></i>
-                                            {{ \App\Helpers\LocalizationHelper::t('admin.delete_user') }}
-                                        </button>
-                                    </form>
-                                    @endif
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                        <i class="fas fa-truck text-xs"></i>
+                                        {{ \App\Helpers\LocalizationHelper::t('auth.driver_role') }}
+                                    </span>
                                 @endif
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($user->isApproved())
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        {{ \App\Helpers\LocalizationHelper::t('admin.status_approved') }}
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        {{ \App\Helpers\LocalizationHelper::t('admin.status_pending') }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 hidden sm:table-cell">
+                                {{ $user->created_at->format('d.m.Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <div class="flex justify-end gap-2">
+                                    @if(!$user->isApproved())
+                                        <form action="{{ route('admin.users.approve', $user) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors">
+                                                <i class="fas fa-check"></i>
+                                                {{ \App\Helpers\LocalizationHelper::t('admin.approve') }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.users.reject', $user) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
+                                                    onclick="return confirm('{{ \App\Helpers\LocalizationHelper::t('admin.confirm_reject_user') }}')">
+                                                <i class="fas fa-times"></i>
+                                                {{ \App\Helpers\LocalizationHelper::t('admin.reject') }}
+                                            </button>
+                                        </form>
+                                    @elseif(!$user->isAdmin())
+                                        <form action="{{ route('admin.users.toggle-approval', $user) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
+                                                    title="{{ \App\Helpers\LocalizationHelper::t('admin.toggle_access_title') }}">
+                                                <i class="fas fa-ban"></i>
+                                                {{ \App\Helpers\LocalizationHelper::t('admin.toggle_approval') }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.users.delete', $user) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
+                                                    onclick="return confirm('{{ \App\Helpers\LocalizationHelper::t('admin.confirm_delete_user') }}')"
+                                                    title="{{ \App\Helpers\LocalizationHelper::t('admin.delete_user_title') }}">
+                                                <i class="fas fa-trash"></i>
+                                                {{ \App\Helpers\LocalizationHelper::t('admin.delete_user') }}
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
 @endsection
