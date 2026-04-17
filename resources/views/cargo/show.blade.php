@@ -3,6 +3,7 @@
 @section('title', translate('cargo.show_title'))
 
 @section('content')
+@php $dateFmt = app()->getLocale() === 'cn' ? 'Y年n月j日' : 'd.m.Y'; @endphp
 <div class="max-w-4xl mx-auto space-y-5">
 
     {{-- Back + actions row --}}
@@ -40,7 +41,7 @@
         <div class="flex items-start justify-between gap-4 flex-wrap">
             <div class="flex items-center gap-4 flex-wrap">
                 <div class="text-center">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Откуда</p>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.from_label') }}</p>
                     <p class="text-2xl font-bold text-slate-900">{{ $cargo->localized_from_location }}</p>
                 </div>
                 <div class="flex items-center gap-2 text-slate-300">
@@ -51,7 +52,7 @@
                     <div class="h-px w-8 bg-slate-200"></div>
                 </div>
                 <div class="text-center">
-                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Куда</p>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.to_label') }}</p>
                     <p class="text-2xl font-bold text-slate-900">{{ $cargo->localized_to_location }}</p>
                 </div>
             </div>
@@ -81,7 +82,7 @@
         </div>
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.volume_weight_label') }}</p>
-            <p class="text-sm font-semibold text-slate-900">{{ $cargo->volume }} м³ · {{ $cargo->weight }} кг</p>
+            <p class="text-sm font-semibold text-slate-900">{{ $cargo->volume }} m³ · {{ $cargo->weight }} kg</p>
         </div>
         @if($cargo->price_usd)
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
@@ -91,7 +92,7 @@
         @endif
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
             <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.ready_date_label') }}</p>
-            <p class="text-sm font-semibold text-slate-900">{{ $cargo->ready_date->format('d.m.Y H:i') }}</p>
+            <p class="text-sm font-semibold text-slate-900">{{ $cargo->ready_date->format($dateFmt.' H:i') }}</p>
         </div>
     </div>
 
@@ -101,7 +102,7 @@
             <div>
                 <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.created_by_label') }}</p>
                 <p class="text-slate-800 font-medium">{{ $cargo->createdBy->name }}</p>
-                <p class="text-xs text-slate-400 mt-0.5">{{ $cargo->created_at->format('d.m.Y H:i') }}</p>
+                <p class="text-xs text-slate-400 mt-0.5">{{ $cargo->created_at->format($dateFmt.' H:i') }}</p>
             </div>
             @if($cargo->hasApprovedApplication())
             <div>
@@ -135,7 +136,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('applications.table_submitted') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('applications.status_label') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('applications.table_notes') }}</th>
-                        <th class="relative px-6 py-3"><span class="sr-only">Действия</span></th>
+                        <th class="relative px-6 py-3"><span class="sr-only">{{ translate('common.actions') }}</span></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -152,7 +153,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $application->created_at->format('d.m.Y H:i') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $application->created_at->format($dateFmt.' H:i') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($application->isPending())
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">

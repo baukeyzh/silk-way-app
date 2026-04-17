@@ -18,16 +18,7 @@ class LocalizationService
     {
         $locale = $locale ?: App::getLocale();
         $translations = $this->getCachedTranslations();
-        
-        // Отладочная информация
-        \Log::info('LocalizationService::get', [
-            'key' => $key,
-            'locale' => $locale,
-            'translations_keys' => array_keys($translations),
-            'found_key' => isset($translations[$key]),
-            'translation_data' => $translations[$key] ?? 'NOT_FOUND'
-        ]);
-        
+
         if (!isset($translations[$key])) {
             return $key;
         }
@@ -89,7 +80,7 @@ class LocalizationService
     private function getCachedTranslations(): array
     {
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            $translations = Translation::all()->keyBy('key')->map(function ($translation) {
+            return Translation::all()->keyBy('key')->map(function ($translation) {
                 return [
                     'ru' => $translation->ru,
                     'kz' => $translation->kz,
@@ -98,15 +89,6 @@ class LocalizationService
                     'description' => $translation->description,
                 ];
             })->toArray();
-            
-            // Отладочная информация
-            \Log::info('LocalizationService::getCachedTranslations', [
-                'total_translations' => count($translations),
-                'sample_keys' => array_slice(array_keys($translations), 0, 5),
-                'cars_keys' => array_filter(array_keys($translations), function($key) { return str_starts_with($key, 'cars.'); })
-            ]);
-            
-            return $translations;
         });
     }
 

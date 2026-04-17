@@ -40,7 +40,7 @@
             @if(auth()->user()->isAdmin())
             {{-- Admin section --}}
             <div x-show="sidebarOpen" class="px-4 pb-1">
-                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Администрация</p>
+                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider">{{ \App\Helpers\LocalizationHelper::t('admin.section_admin') }}</p>
             </div>
             <a href="{{ route('admin.dashboard') }}"
                class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
@@ -55,7 +55,7 @@
             <a href="{{ route('cities.index') }}"
                class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('cities.*') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                 <i class="fas fa-city w-5 text-center shrink-0"></i>
-                <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">Города</span>
+                <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('admin.cities') }}</span>
             </a>
             <a href="{{ route('admin.translations.index') }}"
                class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('admin.translations.*') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
@@ -64,7 +64,7 @@
             </a>
 
             <div x-show="sidebarOpen" class="px-4 pt-4 pb-1">
-                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Операции</p>
+                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider">{{ \App\Helpers\LocalizationHelper::t('admin.section_operations') }}</p>
             </div>
             @endif
 
@@ -101,7 +101,7 @@
             <button @click="sidebarOpen = !sidebarOpen"
                     class="w-full flex items-center justify-center py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <i :class="sidebarOpen ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" class="text-xs"></i>
-                <span x-show="sidebarOpen" class="ml-2 text-xs font-medium">Свернуть</span>
+                <span x-show="sidebarOpen" class="ml-2 text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('admin.collapse') }}</span>
             </button>
         </div>
     </aside>
@@ -179,7 +179,7 @@
         <div id="mobileMenu" class="lg:hidden hidden bg-slate-900 border-b border-slate-700">
             <div class="px-4 py-4 space-y-1">
                 @if(auth()->user()->isAdmin())
-                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider px-3 pb-2">Администрация</p>
+                <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider px-3 pb-2">{{ \App\Helpers\LocalizationHelper::t('admin.section_admin') }}</p>
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
                     <i class="fas fa-tachometer-alt mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('admin.dashboard_title') }}
                 </a>
@@ -187,7 +187,7 @@
                     <i class="fas fa-users mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.users') }}
                 </a>
                 <a href="{{ route('cities.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('cities.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
-                    <i class="fas fa-city mr-3 w-4 text-center"></i>Города
+                    <i class="fas fa-city mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('admin.cities') }}
                 </a>
                 <a href="{{ route('admin.translations.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.translations.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
                     <i class="fas fa-language mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('admin.translations') }}
@@ -259,19 +259,19 @@
                 <a href="{{ route('applications.index') }}"
                    class="flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('applications.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                     <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
-                    <span class="text-xs font-medium">Заявки</span>
+                    <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
                 </a>
                 @endif
                 @if(auth()->user()->isAdmin())
                 <a href="{{ route('cars.all') }}"
                    class="flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('cars.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                     <i class="fas fa-truck text-lg mb-0.5"></i>
-                    <span class="text-xs font-medium">Машины</span>
+                    <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.cars') }}</span>
                 </a>
                 <a href="{{ route('admin.users') }}"
                    class="flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('admin.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                     <i class="fas fa-users text-lg mb-0.5"></i>
-                    <span class="text-xs font-medium">Юзеры</span>
+                    <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.users') }}</span>
                 </a>
                 @endif
             </div>
@@ -335,7 +335,7 @@
                          class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-50">
                         <div class="px-4 py-3 border-b border-slate-100">
                             <p class="text-sm font-medium text-slate-900">{{ auth()->user()->name }}</p>
-                            <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Водитель</span>
+                            <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">{{ \App\Helpers\LocalizationHelper::t('admin.driver') }}</span>
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -393,11 +393,11 @@
             </a>
             <a href="{{ route('applications.my-applications') }}" class="flex flex-col items-center py-1 px-3 {{ request()->routeIs('applications.my-applications') ? 'text-indigo-600' : 'text-slate-400' }}">
                 <i class="fas fa-clipboard-list text-xl mb-0.5"></i>
-                <span class="text-xs font-medium">Заявки</span>
+                <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
             </a>
             <a href="{{ route('cars.my-cars') }}" class="flex flex-col items-center py-1 px-3 {{ request()->routeIs('cars.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                 <i class="fas fa-car text-xl mb-0.5"></i>
-                <span class="text-xs font-medium">Машины</span>
+                <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.cars') }}</span>
             </a>
         </div>
     </div>

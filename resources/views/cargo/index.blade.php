@@ -3,6 +3,7 @@
 @section('title', translate('cargo.available_cargo'))
 
 @section('content')
+@php $dateFmt = app()->getLocale() === 'cn' ? 'Y年n月j日' : 'd.m.Y'; @endphp
 <div class="space-y-6">
 
     {{-- Page header --}}
@@ -27,7 +28,7 @@
     @endphp
     <div class="grid grid-cols-3 gap-4">
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Всего</p>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.total') }}</p>
             <p class="text-2xl font-bold text-slate-900 mt-1">{{ $cargo->total() ?? $cargo->count() }}</p>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
@@ -35,7 +36,7 @@
             <p class="text-2xl font-bold text-emerald-600 mt-1">{{ $cargo->where('status','available')->count() }}</p>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">В пути</p>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.status_in_transit') }}</p>
             <p class="text-2xl font-bold text-amber-600 mt-1">{{ $cargo->where('status','picked_up')->count() }}</p>
         </div>
     </div>
@@ -93,10 +94,10 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_readiness') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_status') }}</th>
                         @if(auth()->user()->isDriver())
-                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Моя заявка</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.my_application_col') }}</th>
                         @endif
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('cargo.table_created') }}</th>
-                        <th class="relative px-6 py-3"><span class="sr-only">Действия</span></th>
+                        <th class="relative px-6 py-3"><span class="sr-only">{{ translate('common.actions') }}</span></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -111,13 +112,13 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-slate-800">{{ $item->cargo_type }}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">{{ $item->volume }} м³ · {{ $item->weight }} кг</div>
+                            <div class="text-xs text-slate-500 mt-0.5">{{ $item->volume }} m³ · {{ $item->weight }} kg</div>
                             @if($item->price_usd)
                             <div class="text-xs font-semibold text-emerald-600 mt-0.5">${{ number_format($item->price_usd, 2) }}</div>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            {{ $item->ready_date->format('d.m.Y') }}<br>
+                            {{ $item->ready_date->format($dateFmt) }}<br>
                             <span class="text-xs text-slate-400">{{ $item->ready_date->format('H:i') }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -141,15 +142,15 @@
                             @if($myApp)
                                 @if($myApp->isPending())
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                                        <i class="fas fa-clock mr-1"></i>На рассмотрении
+                                        <i class="fas fa-clock mr-1"></i>{{ translate('cargo.app_pending') }}
                                     </span>
                                 @elseif($myApp->isApproved())
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                        <i class="fas fa-check mr-1"></i>Принята
+                                        <i class="fas fa-check mr-1"></i>{{ translate('cargo.app_approved') }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
-                                        <i class="fas fa-times mr-1"></i>Отклонена
+                                        <i class="fas fa-times mr-1"></i>{{ translate('cargo.app_rejected') }}
                                     </span>
                                 @endif
                             @else
@@ -158,7 +159,7 @@
                         </td>
                         @endif
                         <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
-                            {{ $item->created_at->format('d.m.Y') }}
+                            {{ $item->created_at->format($dateFmt) }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                             <div class="flex items-center justify-end space-x-3" onclick="event.stopPropagation()">
@@ -207,11 +208,11 @@
                             </span>
                         @elseif($item->status === 'picked_up')
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 shrink-0">
-                                <i class="fas fa-truck mr-1"></i>В пути
+                                <i class="fas fa-truck mr-1"></i>{{ translate('cargo.status_in_transit') }}
                             </span>
                         @elseif($item->status === 'delivered')
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 shrink-0">
-                                <i class="fas fa-check-double mr-1"></i>Доставлен
+                                <i class="fas fa-check-double mr-1"></i>{{ translate('cargo.status_delivered') }}
                             </span>
                         @endif
                     </div>
@@ -221,12 +222,12 @@
                 <div class="px-4 py-3">
                     <p class="text-sm font-medium text-slate-800 mb-2">{{ $item->cargo_type }}</p>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-                        <div class="text-slate-500">{{ translate('cargo.volume_label') }} <span class="font-medium text-slate-700">{{ $item->volume }} м³</span></div>
-                        <div class="text-slate-500">{{ translate('cargo.weight_label') }} <span class="font-medium text-slate-700">{{ $item->weight }} кг</span></div>
+                        <div class="text-slate-500">{{ translate('cargo.volume_label') }} <span class="font-medium text-slate-700">{{ $item->volume }} m³</span></div>
+                        <div class="text-slate-500">{{ translate('cargo.weight_label') }} <span class="font-medium text-slate-700">{{ $item->weight }} kg</span></div>
                         @if($item->price_usd)
-                        <div class="text-slate-500">Цена <span class="font-semibold text-emerald-600">${{ number_format($item->price_usd, 2) }}</span></div>
+                        <div class="text-slate-500">{{ translate('cargo.price_label') }} <span class="font-semibold text-emerald-600">${{ number_format($item->price_usd, 2) }}</span></div>
                         @endif
-                        <div class="text-slate-500">Готов <span class="font-medium text-slate-700">{{ $item->ready_date->format('d.m.Y') }}</span></div>
+                        <div class="text-slate-500">{{ translate('cargo.ready_label') }} <span class="font-medium text-slate-700">{{ $item->ready_date->format($dateFmt) }}</span></div>
                     </div>
 
                     @if(auth()->user()->isDriver())
@@ -235,15 +236,15 @@
                     <div class="mt-3">
                         @if($myApp->isPending())
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                                <i class="fas fa-clock mr-1"></i>Заявка на рассмотрении
+                                <i class="fas fa-clock mr-1"></i>{{ translate('cargo.app_pending_full') }}
                             </span>
                         @elseif($myApp->isApproved())
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                <i class="fas fa-check mr-1"></i>Заявка принята
+                                <i class="fas fa-check mr-1"></i>{{ translate('cargo.app_approved_full') }}
                             </span>
                         @else
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
-                                <i class="fas fa-times mr-1"></i>Заявка отклонена
+                                <i class="fas fa-times mr-1"></i>{{ translate('cargo.app_rejected_full') }}
                             </span>
                         @endif
                     </div>
