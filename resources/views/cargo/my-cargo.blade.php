@@ -3,6 +3,7 @@
 @section('title', translate('my_cargo.title'))
 
 @section('content')
+@php $dateFmt = app()->getLocale() === 'cn' ? 'Y年n月j日' : 'd.m.Y'; @endphp
 <div class="space-y-6">
 
     {{-- Header --}}
@@ -13,7 +14,7 @@
         </div>
         <a href="{{ route('cargo.index') }}"
            class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shrink-0">
-            <i class="fas fa-box mr-2"></i>Доступные грузы
+            <i class="fas fa-box mr-2"></i>{{ translate('cargo.available_cargo') }}
         </a>
     </div>
 
@@ -66,7 +67,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('my_cargo.table_cargo') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('my_cargo.table_picked') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">{{ translate('my_cargo.table_status') }}</th>
-                        <th class="relative px-6 py-3"><span class="sr-only">Действия</span></th>
+                        <th class="relative px-6 py-3"><span class="sr-only">{{ translate('common.actions') }}</span></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -81,10 +82,10 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <p class="text-sm font-medium text-slate-800">{{ $item->cargo_type }}</p>
-                            <p class="text-xs text-slate-400 mt-0.5">{{ $item->volume }} м³ · {{ $item->weight }} кг</p>
+                            <p class="text-xs text-slate-400 mt-0.5">{{ $item->volume }} m³ · {{ $item->weight }} kg</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            {{ $item->picked_at?->format('d.m.Y H:i') ?? '—' }}
+                            {{ $item->picked_at?->format($dateFmt.' H:i') ?? '—' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-2">
@@ -106,7 +107,7 @@
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
-                                        {{ ucfirst($item->status) }}
+                                        {{ translate('cargo.status_available') }}
                                     </span>
                                 @endif
                             </div>
@@ -117,7 +118,7 @@
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 @if($item->status === 'picked_up')
-                                <form action="{{ route('cargo.mark-delivered', $item) }}" method="POST" class="inline">
+                                <form action="{{ route('applications.mark-delivered', $applications->get($item->id)) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit"
                                             class="inline-flex items-center px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
@@ -147,11 +148,11 @@
                         </div>
                         @if($item->status === 'picked_up')
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 shrink-0">
-                                <i class="fas fa-truck mr-1"></i>В пути
+                                <i class="fas fa-truck mr-1"></i>{{ translate('my_cargo.status_in_delivery') }}
                             </span>
                         @elseif($item->status === 'delivered')
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 shrink-0">
-                                <i class="fas fa-check-double mr-1"></i>Доставлен
+                                <i class="fas fa-check-double mr-1"></i>{{ translate('my_cargo.status_delivered') }}
                             </span>
                         @endif
                     </div>
@@ -165,9 +166,9 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="text-slate-500">{{ translate('my_cargo.volume_label') }} <span class="font-medium text-slate-700">{{ $item->volume }} м³</span></div>
-                        <div class="text-slate-500">{{ translate('my_cargo.weight_label') }} <span class="font-medium text-slate-700">{{ $item->weight }} кг</span></div>
-                        <div class="text-slate-500">{{ translate('my_cargo.picked_label') }} <span class="font-medium text-slate-700">{{ $item->picked_at?->format('d.m.Y') ?? '—' }}</span></div>
+                        <div class="text-slate-500">{{ translate('my_cargo.volume_label') }} <span class="font-medium text-slate-700">{{ $item->volume }} m³</span></div>
+                        <div class="text-slate-500">{{ translate('my_cargo.weight_label') }} <span class="font-medium text-slate-700">{{ $item->weight }} kg</span></div>
+                        <div class="text-slate-500">{{ translate('my_cargo.picked_label') }} <span class="font-medium text-slate-700">{{ $item->picked_at?->format($dateFmt) ?? '—' }}</span></div>
                     </div>
                 </div>
                 <div class="px-4 pb-4 flex items-center justify-between" onclick="event.stopPropagation()">
@@ -199,7 +200,7 @@
             <p class="text-sm text-slate-500 mb-6">{{ translate('my_cargo.no_cargo_desc') }}</p>
             <a href="{{ route('cargo.index') }}"
                class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                <i class="fas fa-box mr-2"></i>Доступные грузы
+                <i class="fas fa-box mr-2"></i>{{ translate('cargo.available_cargo') }}
             </a>
         </div>
     @endif

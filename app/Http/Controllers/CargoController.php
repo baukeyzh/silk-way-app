@@ -78,10 +78,15 @@ class CargoController extends Controller
             abort(403, 'Доступ только для водителей.');
         }
         
-        // Получаем грузы, которые забрал водитель
         $cargo = $user->pickedCargo()->latest()->paginate(15);
-        
-        return view('cargo.my-cargo', compact('cargo'));
+
+        $applications = $user->cargoApplications()
+            ->whereIn('cargo_id', $cargo->pluck('id'))
+            ->where('status', 'approved')
+            ->get()
+            ->keyBy('cargo_id');
+
+        return view('cargo.my-cargo', compact('cargo', 'applications'));
     }
 
     public function create(): View
