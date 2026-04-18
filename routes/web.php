@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CargoApplicationController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\DriverDocumentController;
 
 // Главная страница
 Route::get('/', function () {
@@ -110,4 +111,18 @@ Route::middleware('auth')->group(function () {
 
     // Города (только для администраторов)
     Route::resource('cities', CityController::class)->except(['show'])->middleware('role:admin');
+
+    // Документы водителей
+    Route::prefix('documents')->name('documents.')->group(function () {
+        Route::get('/', [DriverDocumentController::class, 'index'])->name('index');
+        Route::post('/batch', [DriverDocumentController::class, 'batchUpload'])->name('batch');
+        Route::post('/{document}/upload', [DriverDocumentController::class, 'upload'])->name('upload');
+        Route::delete('/{document}', [DriverDocumentController::class, 'destroy'])->name('destroy');
+    });
+
+    // Администрирование документов
+    Route::prefix('admin/documents')->name('admin.documents.')->middleware('role:admin')->group(function () {
+        Route::get('/', [DriverDocumentController::class, 'adminIndex'])->name('index');
+        Route::post('/{document}/verify', [DriverDocumentController::class, 'adminVerify'])->name('verify');
+    });
 });

@@ -76,6 +76,11 @@ class User extends Authenticatable
         return $this->hasMany(Car::class);
     }
 
+    public function driverDocuments(): HasMany
+    {
+        return $this->hasMany(\App\Models\DriverDocument::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

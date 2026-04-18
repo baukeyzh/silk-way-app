@@ -5,6 +5,7 @@ use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\CarController;
 use App\Http\Controllers\API\CargoApplicationController;
 use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\DriverDocumentController;
 use Illuminate\Support\Facades\Route;
 
 // === AUTH ===
@@ -64,4 +65,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users/{user}/toggle',     [AdminController::class, 'toggleApproval']);
         Route::delete('/users/{user}',          [AdminController::class, 'deleteUser']);
     });
+
+    // === DOCUMENTS ===
+    Route::get('/documents',                              [DriverDocumentController::class, 'index'])->middleware('role:driver');
+    Route::post('/documents/{document}/upload',           [DriverDocumentController::class, 'upload'])->middleware('role:driver');
+    Route::delete('/documents/{document}',                [DriverDocumentController::class, 'destroy'])->middleware('role:driver');
+    Route::get('/admin/documents',                        [DriverDocumentController::class, 'adminIndex'])->middleware('role:admin');
+    Route::post('/admin/documents/{document}/verify',     [DriverDocumentController::class, 'adminVerify'])->middleware('role:admin');
 });

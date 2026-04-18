@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Silk Way — ' . \App\Helpers\LocalizationHelper::t('header.footer_text'))</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -92,6 +93,11 @@
                class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('cars.*') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                 <i class="fas fa-truck w-5 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('header.all_cars') }}</span>
+            </a>
+            <a href="{{ route('admin.documents.index') }}"
+               class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('admin.documents.*') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                <i class="fas fa-id-card w-5 text-center shrink-0"></i>
+                <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('docs.admin_title') }}</span>
             </a>
             @endif
         </nav>
@@ -210,6 +216,9 @@
                 <a href="{{ route('cars.all') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('cars.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
                     <i class="fas fa-truck mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.all_cars') }}
                 </a>
+                <a href="{{ route('admin.documents.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.documents.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
+                    <i class="fas fa-id-card mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('docs.admin_title') }}
+                </a>
                 @endif
             </div>
         </div>
@@ -310,6 +319,10 @@
                    class="px-3 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('cars.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fas fa-car mr-1.5"></i>{{ \App\Helpers\LocalizationHelper::t('header.my_cars') }}
                 </a>
+                <a href="{{ route('documents.index') }}"
+                   class="px-3 py-2 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('documents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fas fa-id-card mr-1.5"></i>{{ \App\Helpers\LocalizationHelper::t('docs.title') }}
+                </a>
             </nav>
 
             <div class="flex items-center space-x-3">
@@ -398,6 +411,10 @@
             <a href="{{ route('cars.my-cars') }}" class="flex flex-col items-center py-1 px-3 {{ request()->routeIs('cars.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                 <i class="fas fa-car text-xl mb-0.5"></i>
                 <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.cars') }}</span>
+            </a>
+            <a href="{{ route('documents.index') }}" class="flex flex-col items-center py-1 px-3 {{ request()->routeIs('documents.*') ? 'text-indigo-600' : 'text-slate-400' }}">
+                <i class="fas fa-id-card text-xl mb-0.5"></i>
+                <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('docs.title') }}</span>
             </a>
         </div>
     </div>

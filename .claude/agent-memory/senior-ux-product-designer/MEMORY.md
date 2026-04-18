@@ -1,0 +1,2 @@
+- [Project: Silk Way App](project_silk_way.md) — Laravel logistics SaaS, Tailwind + Alpine.js + Font Awesome, slate/indigo palette, dual layout (admin sidebar / driver top-nav + bottom tabs)
+- [Project: Documents Feature](project_documents_feature.md) — Driver documents section: 6 doc types, 4 states, card grid UI with inline upload interaction
