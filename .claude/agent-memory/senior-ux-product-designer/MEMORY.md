@@ -1,2 +1,4 @@
 - [Project: Silk Way App](project_silk_way.md) — Laravel logistics SaaS, Tailwind + Alpine.js + Font Awesome, slate/indigo palette, dual layout (admin sidebar / driver top-nav + bottom tabs)
 - [Project: Documents Feature](project_documents_feature.md) — Driver documents section: 6 doc types, 4 states, card grid UI with inline upload interaction
+- [Project: Public Cargo Listing Page](project_public_cargo_page.md) — Guest /cargo page UX: price-hidden pill, card layout, filter chips, unapproved-driver bottom sheet, v1 exclusions
+- [Project: Admin Document Review Page](project_admin_documents_review.md) — Accordion layout, inline file previews, filter tabs, approve/reject, private file-serving routes added

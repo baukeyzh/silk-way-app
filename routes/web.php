@@ -125,11 +125,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/batch', [DriverDocumentController::class, 'batchUpload'])->name('batch');
         Route::post('/{document}/upload', [DriverDocumentController::class, 'upload'])->name('upload');
         Route::delete('/{document}', [DriverDocumentController::class, 'destroy'])->name('destroy');
+        // Driver previews their own uploaded file (streams from local disk)
+        Route::get('/{document}/file', [DriverDocumentController::class, 'driverFile'])->name('file');
     });
 
     // Администрирование документов
     Route::prefix('admin/documents')->name('admin.documents.')->middleware('role:admin')->group(function () {
         Route::get('/', [DriverDocumentController::class, 'adminIndex'])->name('index');
         Route::post('/{document}/verify', [DriverDocumentController::class, 'adminVerify'])->name('verify');
+        // Admin streams a driver's uploaded file (authorized to admin only)
+        Route::get('/{document}/file', [DriverDocumentController::class, 'adminFile'])->name('file');
     });
 });

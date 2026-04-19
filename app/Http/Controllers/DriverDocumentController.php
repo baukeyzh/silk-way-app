@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DriverDocumentController extends Controller
 {
@@ -201,19 +202,65 @@ class DriverDocumentController extends Controller
 
     /**
      * List all drivers with their document completion state.
+     * Supports ?filter= (all|pending|rejected|verified) and ?search= (name/email).
      */
-    public function adminIndex(): View
+    public function adminIndex(Request $request): View
     {
         abort_unless(auth()->user()->isAdmin(), 403);
 
-        $drivers = User::where('role', 'driver')
-            ->with(['driverDocuments'])
-            ->orderBy('name')
-            ->paginate(30);
+        $filter = $request->input('filter', 'pending');
+        $search = trim((string) $request->input('search', ''));
 
+        $query = User::where('role', 'driver')
+            ->with(['driverDocuments.verifiedBy'])
+            ->orderBy('name');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by document status: only keep drivers that have at least one
+        // document in the requested state (or show all when filter === 'all').
+        if ($filter !== 'all') {
+            $query->whereHas('driverDocuments', fn ($q) => $q->where('status', $filter));
+        }
+
+        $drivers       = $query->paginate(30)->withQueryString();
         $documentTypes = DriverDocument::DOCUMENT_TYPES;
 
-        return view('admin.documents.index', compact('drivers', 'documentTypes'));
+        return view('admin.documents.index', compact('drivers', 'documentTypes', 'filter', 'search'));
+    }
+
+    /**
+     * Stream a driver's own uploaded file so they can preview it.
+     * Only the owning driver may access their documents this way.
+     */
+    public function driverFile(DriverDocument $document): StreamedResponse
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        abort_unless($document->user_id === $user->id, 403);
+        abort_unless($document->file_path !== null, 404);
+        abort_unless(Storage::disk('local')->exists($document->file_path), 404);
+
+        return Storage::disk('local')->response($document->file_path, $document->original_filename);
+    }
+
+    /**
+     * Stream a driver's uploaded file for admin review.
+     * Authorized to admins only; any admin may view any document.
+     */
+    public function adminFile(DriverDocument $document): StreamedResponse
+    {
+        abort_unless(auth()->user()->isAdmin(), 403);
+        abort_unless($document->file_path !== null, 404);
+        abort_unless(Storage::disk('local')->exists($document->file_path), 404);
+
+        return Storage::disk('local')->response($document->file_path, $document->original_filename);
     }
 
     /**
