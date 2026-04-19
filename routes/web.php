@@ -19,7 +19,7 @@ Route::get('/', function () {
 // Авторизованные пользователи также обслуживаются здесь — контроллер
 // определяет нужный вид в зависимости от auth()->check().
 Route::get('/cargo', [PublicCargoController::class, 'index'])->name('cargo.index');
-Route::get('/cargo/{cargo}', [PublicCargoController::class, 'show'])->name('cargo.show');
+Route::get('/cargo/{cargo}', [PublicCargoController::class, 'show'])->name('cargo.show')->whereNumber('cargo');
 
 
 // Аутентификация
