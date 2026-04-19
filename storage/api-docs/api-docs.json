@@ -6,11 +6,11 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.0.0"
+        "version": "1.2.0"
     },
     "servers": [
         {
-            "url": "/api",
+            "url": "/api/v1",
             "description": "API сервер"
         }
     ],
@@ -499,6 +499,9 @@
                     },
                     "401": {
                         "description": "Не авторизован"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -593,11 +596,17 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Доступ только для водителей"
                     },
                     "422": {
                         "description": "Ошибка валидации"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -687,12 +696,12 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Cars"
                 ],
-                "summary": "Обновить машину (использовать method=PUT через form-data)",
-                "operationId": "4e1b5fd3cfb61702af115ba6e8754fea",
+                "summary": "Обновить машину (form-data с _method=PUT)",
+                "operationId": "531ad7a5d36382ed878ec85c7a56bd5f",
                 "parameters": [
                     {
                         "name": "id",
@@ -778,11 +787,17 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
                     "404": {
                         "description": "Не найдено"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -824,11 +839,17 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
                     "404": {
                         "description": "Не найдено"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -1083,10 +1104,10 @@
                         }
                     },
                     "403": {
-                        "description": "Нет доступа или груз недоступен"
+                        "description": "Нет доступа"
                     },
                     "409": {
-                        "description": "Заявка уже существует"
+                        "description": "Груз уже взят другим водителем или повторная заявка"
                     }
                 },
                 "security": [
@@ -1285,7 +1306,7 @@
                     "Cargo"
                 ],
                 "summary": "Список грузов",
-                "description": "Сотрудник склада видит свои грузы, водитель — доступные грузы.",
+                "description": "Публично: все гости видят только available. Сотрудник склада: свои грузы. Иначе: доступные грузы.",
                 "operationId": "869bb80d609559fe5c1e389413eca875",
                 "parameters": [
                     {
@@ -1299,7 +1320,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Фильтр по статусу",
+                        "description": "Фильтр по статусу (игнорируется для гостей)",
                         "schema": {
                             "type": "string",
                             "enum": [
@@ -1321,7 +1342,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Список грузов",
+                        "description": "Список грузов (price_usd, created_by, picked_by скрыты для неавторизованных)",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1355,15 +1376,10 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Не авторизован"
+                    "429": {
+                        "description": "Слишком много запросов (30/мин для гостей)"
                     }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
+                }
             },
             "post": {
                 "tags": [
@@ -1443,11 +1459,17 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
                     "422": {
                         "description": "Ошибка валидации"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -1484,8 +1506,14 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Доступ только для водителей"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -1501,6 +1529,7 @@
                     "Cargo"
                 ],
                 "summary": "Детали груза",
+                "description": "Публично: только available. Авторизованные: полный доступ по роли. price_usd, created_by, picked_by скрыты для неавторизованных.",
                 "operationId": "780f52c51bd9b51b0f02b1b8b79f9da9",
                 "parameters": [
                     {
@@ -1533,13 +1562,11 @@
                     },
                     "404": {
                         "description": "Не найдено"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (30/мин для гостей)"
                     }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
+                }
             },
             "put": {
                 "tags": [
@@ -1620,11 +1647,17 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
                     "404": {
                         "description": "Не найдено"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
                     }
                 },
                 "security": [
@@ -1666,11 +1699,619 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
                     "404": {
                         "description": "Не найдено"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (120/мин)"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Get the authenticated driver's 6 documents",
+                "operationId": "5ac557e9fe9108f4a41ffe061805e903",
+                "responses": {
+                    "200": {
+                        "description": "List of driver documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "document_type": {
+                                                        "type": "string",
+                                                        "example": "driver_license"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    },
+                                                    "original_filename": {
+                                                        "type": "string",
+                                                        "example": "prava.pdf",
+                                                        "nullable": true
+                                                    },
+                                                    "expires_at": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2027-08-15",
+                                                        "nullable": true
+                                                    },
+                                                    "rejection_reason": {
+                                                        "type": "string",
+                                                        "example": null,
+                                                        "nullable": true
+                                                    },
+                                                    "verified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": null,
+                                                        "nullable": true
+                                                    },
+                                                    "is_optional": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — driver role required"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents/{document}/upload": {
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Upload a file for a driver document",
+                "operationId": "a484f4ebb432379fbce83479a52aaa09",
+                "parameters": [
+                    {
+                        "name": "document",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "PDF, JPG, JPEG or PNG, max 5 MB",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "expires_at": {
+                                        "description": "Optional expiry date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2027-08-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document updated, status set to pending",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Validation error or document status does not allow upload"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents/batch": {
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Пакетная загрузка документов водителя",
+                "description": "Загружает файлы сразу для нескольких слотов документов в одном запросе. Каждый ключ в `files` и `expires_at` — это ID документа. Все ID должны принадлежать авторизованному водителю (иначе 403, без побочных эффектов). Слоты со статусом `verified` или `pending` молча пропускаются — они не завершают запрос ошибкой. При частичных ошибках возвращается 207 с полями `uploaded` и `errors`.",
+                "operationId": "3b7ac98b6b3c4aa02cebdbbc72dfaf76",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "files"
+                                ],
+                                "properties": {
+                                    "files": {
+                                        "description": "Ключ — ID документа (integer), значение — файл (PDF, JPG, JPEG, PNG, max 5 MB)",
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "expires_at": {
+                                        "description": "Ключ — ID документа, значение — дата истечения (YYYY-MM-DD), необязательно",
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2027-08-15"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Все файлы успешно загружены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Документы успешно загружены."
+                                        },
+                                        "uploaded": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "document_id": {
+                                                        "type": "integer",
+                                                        "example": 42
+                                                    },
+                                                    "filename": {
+                                                        "type": "string",
+                                                        "example": "passport.pdf"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "207": {
+                        "description": "Частичный успех — часть файлов загружена, часть не удалась",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Часть документов загружена с ошибками."
+                                        },
+                                        "uploaded": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "document_id": {
+                                                        "type": "integer",
+                                                        "example": 42
+                                                    },
+                                                    "filename": {
+                                                        "type": "string",
+                                                        "example": "passport.pdf"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "document_id": {
+                                                        "type": "integer",
+                                                        "example": 47
+                                                    },
+                                                    "reason": {
+                                                        "type": "string",
+                                                        "example": "Не удалось сохранить файл на диск."
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Запрещено — один или несколько document_id не принадлежат водителю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации — файлы не переданы или не прошли проверку",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The files field is required."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Слишком много запросов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Too Many Attempts."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents/{document}": {
+            "delete": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Delete a driver's uploaded document and reset to not_uploaded",
+                "description": "Permitted only when the document status is pending or rejected.",
+                "operationId": "8805b9e7408abeefe28ada08fe0356a2",
+                "parameters": [
+                    {
+                        "name": "document",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Document deleted."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Document status does not allow deletion"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/documents": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Admin — paginated list of drivers with document statuses",
+                "operationId": "13a45e125ffdf6ca9611f90a0d00afec",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated driver list with document status map",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Ivan Ivanov"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "ivan@example.com"
+                                                    },
+                                                    "documents": {
+                                                        "properties": {
+                                                            "driver_license": {
+                                                                "type": "string",
+                                                                "example": "verified"
+                                                            },
+                                                            "vehicle_passport": {
+                                                                "type": "string",
+                                                                "example": "pending"
+                                                            },
+                                                            "trailer_passport": {
+                                                                "type": "string",
+                                                                "example": "not_uploaded"
+                                                            },
+                                                            "category_cert": {
+                                                                "type": "string",
+                                                                "example": "not_uploaded"
+                                                            },
+                                                            "green_card": {
+                                                                "type": "string",
+                                                                "example": "not_uploaded"
+                                                            },
+                                                            "insurance": {
+                                                                "type": "string",
+                                                                "example": "not_uploaded"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "verified_count": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "total_count": {
+                                                        "type": "integer",
+                                                        "example": 6
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — admin role required"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/documents/{document}/verify": {
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Admin — approve or reject a driver document",
+                "operationId": "1553dd121a708e6d46bfe8ca8a893084",
+                "parameters": [
+                    {
+                        "name": "document",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "action"
+                                ],
+                                "properties": {
+                                    "action": {
+                                        "type": "string",
+                                        "example": "approve",
+                                        "enum": [
+                                            "approve",
+                                            "reject"
+                                        ]
+                                    },
+                                    "rejection_reason": {
+                                        "description": "Required when action is reject",
+                                        "type": "string",
+                                        "example": "Document is expired."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document verification result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — admin role required"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -1831,8 +2472,10 @@
                         "example": 5
                     },
                     "price_usd": {
+                        "description": "Only returned to authenticated users",
                         "type": "number",
-                        "example": 1500
+                        "example": 1500,
+                        "nullable": true
                     },
                     "ready_date": {
                         "type": "string",
@@ -1850,6 +2493,24 @@
                             "in_progress",
                             "delivered"
                         ]
+                    },
+                    "created_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Только для авторизованных пользователей, когда загружено отношение"
+                    },
+                    "picked_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Только для авторизованных пользователей, когда загружено отношение"
                     },
                     "created_at": {
                         "type": "string",
@@ -1921,6 +2582,10 @@
         {
             "name": "Admin",
             "description": "Администрирование"
+        },
+        {
+            "name": "Documents",
+            "description": "Документы водителя"
         }
     ]
 }

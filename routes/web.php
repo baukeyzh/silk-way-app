@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\PublicCargoController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CargoApplicationController;
 use App\Http\Controllers\CarController;
@@ -13,6 +14,12 @@ use App\Http\Controllers\DriverDocumentController;
 Route::get('/', function () {
     return redirect()->route('cargo.index');
 });
+
+// Публичный каталог грузов (доступен без аутентификации)
+// Авторизованные пользователи также обслуживаются здесь — контроллер
+// определяет нужный вид в зависимости от auth()->check().
+Route::get('/cargo', [PublicCargoController::class, 'index'])->name('cargo.index');
+Route::get('/cargo/{cargo}', [PublicCargoController::class, 'show'])->name('cargo.show');
 
 
 // Аутентификация
@@ -106,8 +113,8 @@ Route::middleware('auth')->group(function () {
     // Управление грузами - специальные маршруты должны быть выше ресурсного
     Route::get('/cargo/my-cargo', [CargoController::class, 'myCargo'])->name('cargo.my-cargo');
     
-    // Ресурсный маршрут cargo должен быть последним
-    Route::resource('cargo', CargoController::class);
+    // Ресурсный маршрут cargo — index и show исключены (они зарегистрированы как публичные выше)
+    Route::resource('cargo', CargoController::class)->except(['index', 'show']);
 
     // Города (только для администраторов)
     Route::resource('cities', CityController::class)->except(['show'])->middleware('role:admin');

@@ -43,6 +43,10 @@
             <form action="{{ route('login') }}" method="POST" class="space-y-5">
                 @csrf
 
+                @if(request('redirect'))
+                <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                @endif
+
                 {{-- Email --}}
                 <div>
                     <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">

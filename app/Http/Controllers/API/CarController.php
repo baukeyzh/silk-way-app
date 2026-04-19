@@ -23,7 +23,8 @@ class CarController extends Controller
      *     @OA\Response(response=200, description="Список машин",
      *         @OA\JsonContent(@OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Car")))
      *     ),
-     *     @OA\Response(response=401, description="Не авторизован")
+     *     @OA\Response(response=401, description="Не авторизован"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function index(): ResourceCollection
@@ -100,8 +101,10 @@ class CarController extends Controller
      *     @OA\Response(response=201, description="Машина добавлена",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Car"))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Доступ только для водителей"),
-     *     @OA\Response(response=422, description="Ошибка валидации")
+     *     @OA\Response(response=422, description="Ошибка валидации"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function store(Request $request): JsonResponse
@@ -133,10 +136,10 @@ class CarController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Put(
      *     path="/cars/{id}",
      *     tags={"Cars"},
-     *     summary="Обновить машину (использовать method=PUT через form-data)",
+     *     summary="Обновить машину (form-data с _method=PUT)",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\RequestBody(
@@ -161,8 +164,10 @@ class CarController extends Controller
      *     @OA\Response(response=200, description="Машина обновлена",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Car"))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=404, description="Не найдено")
+     *     @OA\Response(response=404, description="Не найдено"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function update(Request $request, Car $car): JsonResponse
@@ -209,8 +214,10 @@ class CarController extends Controller
      *     @OA\Response(response=200, description="Машина удалена",
      *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Машина удалена."))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=404, description="Не найдено")
+     *     @OA\Response(response=404, description="Не найдено"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function destroy(Request $request, Car $car): JsonResponse

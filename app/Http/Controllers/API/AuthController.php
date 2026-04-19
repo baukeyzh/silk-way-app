@@ -14,13 +14,13 @@ use Illuminate\Validation\ValidationException;
 /**
  * @OA\Info(
  *     title="Silk Way API",
- *     version="1.0.0",
+ *     version="1.2.0",
  *     description="REST API для мобильного приложения Silk Way. Авторизация через Bearer токен (Sanctum).",
  *     @OA\Contact(email="admin@silkway.kz")
  * )
  *
  * @OA\Server(
- *     url="/api",
+ *     url="/api/v1",
  *     description="API сервер"
  * )
  *
@@ -37,6 +37,7 @@ use Illuminate\Validation\ValidationException;
  * @OA\Tag(name="Cars",         description="Транспортные средства")
  * @OA\Tag(name="Applications", description="Заявки на грузы")
  * @OA\Tag(name="Admin",        description="Администрирование")
+ * @OA\Tag(name="Documents",    description="Документы водителя")
  */
 class AuthController extends Controller
 {

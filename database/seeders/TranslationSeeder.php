@@ -1855,7 +1855,21 @@ class TranslationSeeder extends Seeder
                 'cn' => '目前没有运输申请',
 
             ],
-            
+            [
+                'key' => 'applications.cargo_already_taken',
+                'ru' => 'Груз уже взят другим водителем. Заявка отклонена.',
+                'kz' => null,
+                'cn' => null,
+
+            ],
+            [
+                'key' => 'applications.already_applied',
+                'ru' => 'Вы уже подали заявку на этот груз.',
+                'kz' => null,
+                'cn' => null,
+
+            ],
+
             // Формы создания и редактирования грузов
             [
                 'key' => 'cargo.create_title',
@@ -2782,6 +2796,180 @@ class TranslationSeeder extends Seeder
                 'kz' => 'Пайдаланушыны жою',
                 'cn' => '删除用户',
 
+            ],
+
+            // Публичный каталог грузов (гостевые страницы)
+            [
+                'key'   => 'cargo.public.title',
+                'ru'    => 'Доступные грузы',
+                'kz'    => 'Қолжетімді жүктер', // TODO: проверить перевод
+                'cn'    => '可用货物',            // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Public cargo listing page title',
+            ],
+            [
+                'key'   => 'cargo.public.login_to_see_rate',
+                'ru'    => 'Войдите, чтобы увидеть ставку',
+                'kz'    => 'Бағаны көру үшін кіріңіз', // TODO: проверить перевод
+                'cn'    => '登录以查看价格',             // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Amber pill shown instead of price for guests',
+            ],
+            [
+                'key'   => 'cargo.public.apply_cta',
+                'ru'    => 'Подать заявку на этот груз',
+                'kz'    => 'Осы жүкке өтінім беру', // TODO: проверить перевод
+                'cn'    => '申请此货物',              // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Sticky CTA button on public detail page',
+            ],
+            [
+                'key'   => 'cargo.public.filters',
+                'ru'    => 'Фильтры',
+                'kz'    => 'Сүзгілер', // TODO: проверить перевод
+                'cn'    => '筛选条件', // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Mobile filter pill label on public listing',
+            ],
+            [
+                'key'   => 'cargo.public.from',
+                'ru'    => 'Откуда',
+                'kz'    => 'Қайдан', // TODO: проверить перевод
+                'cn'    => '出发地', // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'From city filter label',
+            ],
+            [
+                'key'   => 'cargo.public.to',
+                'ru'    => 'Куда',
+                'kz'    => 'Қайда', // TODO: проверить перевод
+                'cn'    => '目的地', // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'To city filter label',
+            ],
+            [
+                'key'   => 'cargo.public.no_results_title',
+                'ru'    => 'Грузы не найдены',
+                'kz'    => 'Жүктер табылмады', // TODO: проверить перевод
+                'cn'    => '未找到货物',        // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Empty state heading on public listing',
+            ],
+            [
+                'key'   => 'cargo.public.no_results_cta',
+                'ru'    => 'Сбросить фильтры',
+                'kz'    => 'Сүзгілерді тазалау', // TODO: проверить перевод
+                'cn'    => '清除筛选条件',         // TODO: проверить перевод
+                'group' => 'cargo',
+                'description' => 'Clear filters CTA in empty state',
+            ],
+            [
+                'key'   => 'nav.login',
+                'ru'    => 'Войти',
+                'kz'    => 'Кіру',
+                'cn'    => '登录',
+                'group' => 'header',
+                'description' => 'Top-bar login button for guests',
+            ],
+            [
+                'key'   => 'cargo.ready_label',
+                'ru'    => 'Готов к',
+                'kz'    => 'Дайын',
+                'cn'    => '准备时间',
+                'group' => 'cargo',
+                'description' => 'Inline label for ready date on cargo card',
+            ],
+            [
+                'key'   => 'cargo.ready_date_label',
+                'ru'    => 'Дата готовности',
+                'kz'    => 'Дайындық күні',
+                'cn'    => '准备日期',
+                'group' => 'cargo',
+                'description' => 'Ready date tile label on public detail',
+            ],
+            [
+                'key'   => 'cargo.volume_weight_label',
+                'ru'    => 'Объем и вес',
+                'kz'    => 'Көлем және салмақ',
+                'cn'    => '体积和重量',
+                'group' => 'cargo',
+                'description' => 'Volume + weight tile label on public detail',
+            ],
+            [
+                'key'   => 'cargo.price_usd',
+                'ru'    => 'Ставка',
+                'kz'    => 'Баға',
+                'cn'    => '价格',
+                'group' => 'cargo',
+                'description' => 'Price tile label on public detail',
+            ],
+            [
+                'key'   => 'cargo.comment_label',
+                'ru'    => 'Комментарий',
+                'kz'    => 'Түсініктеме',
+                'cn'    => '评论',
+                'group' => 'cargo',
+                'description' => 'Comment section heading on public detail',
+            ],
+
+            // Documents — missing keys not covered by the migration seeder
+            [
+                'key'         => 'docs.verified_count_separator',
+                'ru'          => 'из',
+                'kz'          => 'ішінен',
+                'cn'          => '共',
+                'group'       => 'docs',
+                'description' => 'Separator word between verified count and total in completion pill (e.g. "3 из 5")',
+            ],
+            [
+                'key'         => 'docs.verified_count_suffix',
+                'ru'          => 'подтверждено',
+                'kz'          => 'расталды',
+                'cn'          => '已确认',
+                'group'       => 'docs',
+                'description' => 'Suffix word after the count in the completion pill (e.g. "3 из 5 подтверждено")',
+            ],
+
+            // Batch upload UI keys
+            [
+                'key'         => 'docs.batch_upload_button',
+                'ru'          => 'Загрузить выбранные',
+                'kz'          => 'Таңдалғандарды жүктеу',
+                'cn'          => '上传所选文件',
+                'group'       => 'docs',
+                'description' => 'Label for the single batch submit button at bottom of documents page',
+            ],
+            [
+                'key'         => 'docs.batch_selected_count',
+                'ru'          => 'Выбрано файлов: :count',
+                'kz'          => 'Таңдалған файлдар: :count',
+                'cn'          => '已选择文件：:count',
+                'group'       => 'docs',
+                'description' => 'Live counter label shown next to batch submit button',
+            ],
+            [
+                'key'         => 'docs.batch_no_files',
+                'ru'          => 'Выберите хотя бы один файл для загрузки',
+                'kz'          => 'Жүктеу үшін кем дегенде бір файл таңдаңыз',
+                'cn'          => '请至少选择一个文件上传',
+                'group'       => 'docs',
+                'description' => 'Validation message when batch form submitted with zero files',
+            ],
+            [
+                'key'         => 'docs.batch_success',
+                'ru'          => 'Файлы успешно загружены',
+                'kz'          => 'Файлдар сәтті жүктелді',
+                'cn'          => '文件上传成功',
+                'group'       => 'docs',
+                'description' => 'Flash success message after all files in a batch upload successfully',
+            ],
+            [
+                'key'         => 'docs.batch_partial_error',
+                'ru'          => 'Не все файлы удалось загрузить. Смотрите ошибки ниже.',
+                'kz'          => 'Барлық файлдарды жүктеу мүмкін болмады. Төмендегі қателерді қараңыз.',
+                'cn'          => '部分文件上传失败，请查看下方错误信息。',
+                'group'       => 'docs',
+                'description' => 'Flash message when some slots succeed and some fail in a batch upload',
             ],
         ];
 

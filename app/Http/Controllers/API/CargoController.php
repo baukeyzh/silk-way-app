@@ -17,14 +17,13 @@ class CargoController extends Controller
      *     path="/cargo",
      *     tags={"Cargo"},
      *     summary="Список грузов",
-     *     description="Сотрудник склада видит свои грузы, водитель — доступные грузы.",
-     *     security={{"sanctum":{}}},
+     *     description="Публично: все гости видят только available. Сотрудник склада: свои грузы. Иначе: доступные грузы.",
      *     @OA\Parameter(name="search", in="query", description="Поиск по локации или типу", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="status", in="query", description="Фильтр по статусу", @OA\Schema(type="string", enum={"available","in_progress","delivered"})),
+     *     @OA\Parameter(name="status", in="query", description="Фильтр по статусу (игнорируется для гостей)", @OA\Schema(type="string", enum={"available","in_progress","delivered"})),
      *     @OA\Parameter(name="page",   in="query", description="Номер страницы", @OA\Schema(type="integer", default=1)),
      *     @OA\Response(
      *         response=200,
-     *         description="Список грузов",
+     *         description="Список грузов (price_usd, created_by, picked_by скрыты для неавторизованных)",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Cargo")),
      *             @OA\Property(property="meta", type="object",
@@ -35,7 +34,7 @@ class CargoController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=401, description="Не авторизован")
+     *     @OA\Response(response=429, description="Слишком много запросов (30/мин для гостей)")
      * )
      */
     public function index(Request $request): ResourceCollection
@@ -44,9 +43,13 @@ class CargoController extends Controller
         $search = $request->query('search');
         $status = $request->query('status');
 
-        $query = $user->isWarehouseEmployee()
-            ? $user->createdCargo()
-            : Cargo::available();
+        if ($user === null) {
+            $query = Cargo::available();
+        } elseif ($user->isWarehouseEmployee()) {
+            $query = $user->createdCargo();
+        } else {
+            $query = Cargo::available();
+        }
 
         if ($search) {
             $suffix = ['ru' => 'rus', 'kz' => 'kaz', 'cn' => 'chn'][app()->getLocale()] ?? 'rus';
@@ -57,7 +60,7 @@ class CargoController extends Controller
             });
         }
 
-        if ($status) {
+        if ($status && $user !== null) {
             $query->where('status', $status);
         }
 
@@ -76,7 +79,9 @@ class CargoController extends Controller
      *     @OA\Response(response=200, description="Список грузов водителя",
      *         @OA\JsonContent(@OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Cargo")))
      *     ),
-     *     @OA\Response(response=403, description="Доступ только для водителей")
+     *     @OA\Response(response=401, description="Не авторизован"),
+     *     @OA\Response(response=403, description="Доступ только для водителей"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function myCargo(Request $request): JsonResponse|ResourceCollection
@@ -97,18 +102,26 @@ class CargoController extends Controller
      *     path="/cargo/{id}",
      *     tags={"Cargo"},
      *     summary="Детали груза",
-     *     security={{"sanctum":{}}},
+     *     description="Публично: только available. Авторизованные: полный доступ по роли. price_usd, created_by, picked_by скрыты для неавторизованных.",
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Детали груза",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Cargo"))
      *     ),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=404, description="Не найдено")
+     *     @OA\Response(response=404, description="Не найдено"),
+     *     @OA\Response(response=429, description="Слишком много запросов (30/мин для гостей)")
      * )
      */
     public function show(Request $request, Cargo $cargo): JsonResponse
     {
         $user = $request->user();
+
+        if ($user === null) {
+            if ($cargo->status !== 'available') {
+                abort(404);
+            }
+            return response()->json(['data' => new CargoResource($cargo)]);
+        }
 
         if ($user->isWarehouseEmployee() && $cargo->created_by !== $user->id) {
             return response()->json(['message' => 'Нет доступа к этому грузу.'], 403);
@@ -143,8 +156,10 @@ class CargoController extends Controller
      *     @OA\Response(response=201, description="Груз создан",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Cargo"))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=422, description="Ошибка валидации")
+     *     @OA\Response(response=422, description="Ошибка валидации"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function store(Request $request): JsonResponse
@@ -209,8 +224,10 @@ class CargoController extends Controller
      *     @OA\Response(response=200, description="Груз обновлён",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Cargo"))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=404, description="Не найдено")
+     *     @OA\Response(response=404, description="Не найдено"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function update(Request $request, Cargo $cargo): JsonResponse
@@ -265,8 +282,10 @@ class CargoController extends Controller
      *     @OA\Response(response=200, description="Груз удалён",
      *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Груз удалён."))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=404, description="Не найдено")
+     *     @OA\Response(response=404, description="Не найдено"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function destroy(Request $request, Cargo $cargo): JsonResponse

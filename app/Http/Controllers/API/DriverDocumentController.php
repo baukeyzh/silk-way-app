@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Concerns\UploadsDriverDocuments;
 use App\Http\Controllers\Controller;
 use App\Models\DriverDocument;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DriverDocumentController extends Controller
 {
+    use UploadsDriverDocuments;
     // -------------------------------------------------------------------------
     // Driver endpoints
     // -------------------------------------------------------------------------
@@ -121,6 +123,176 @@ class DriverDocumentController extends Controller
         ]);
 
         return response()->json(['data' => $this->documentShape($document->fresh())]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/documents/batch",
+     *     tags={"Documents"},
+     *     summary="Пакетная загрузка документов водителя",
+     *     description="Загружает файлы сразу для нескольких слотов документов в одном запросе. Каждый ключ в `files` и `expires_at` — это ID документа. Все ID должны принадлежать авторизованному водителю (иначе 403, без побочных эффектов). Слоты со статусом `verified` или `pending` молча пропускаются — они не завершают запрос ошибкой. При частичных ошибках возвращается 207 с полями `uploaded` и `errors`.",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"files"},
+     *                 @OA\Property(
+     *                     property="files",
+     *                     type="object",
+     *                     description="Ключ — ID документа (integer), значение — файл (PDF, JPG, JPEG, PNG, max 5 MB)",
+     *                     @OA\AdditionalProperties(type="string", format="binary")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="expires_at",
+     *                     type="object",
+     *                     description="Ключ — ID документа, значение — дата истечения (YYYY-MM-DD), необязательно",
+     *                     @OA\AdditionalProperties(type="string", format="date", example="2027-08-15")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Все файлы успешно загружены",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Документы успешно загружены."),
+     *             @OA\Property(property="uploaded", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="document_id", type="integer", example=42),
+     *                     @OA\Property(property="filename",    type="string",  example="passport.pdf"),
+     *                     @OA\Property(property="status",      type="string",  example="pending")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=207,
+     *         description="Частичный успех — часть файлов загружена, часть не удалась",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Часть документов загружена с ошибками."),
+     *             @OA\Property(property="uploaded", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="document_id", type="integer", example=42),
+     *                     @OA\Property(property="filename",    type="string",  example="passport.pdf"),
+     *                     @OA\Property(property="status",      type="string",  example="pending")
+     *                 )
+     *             ),
+     *             @OA\Property(property="errors", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="document_id", type="integer", example=47),
+     *                     @OA\Property(property="reason",      type="string",  example="Не удалось сохранить файл на диск.")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Не авторизован",
+     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Unauthenticated."))
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Запрещено — один или несколько document_id не принадлежат водителю",
+     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Forbidden."))
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Ошибка валидации — файлы не переданы или не прошли проверку",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The files field is required."),
+     *             @OA\Property(property="errors",  type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=429,
+     *         description="Слишком много запросов",
+     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Too Many Attempts."))
+     *     )
+     * )
+     */
+    public function batchUpload(Request $request): JsonResponse
+    {
+        $request->validate([
+            'files'        => ['required', 'array', 'min:1'],
+            'files.*'      => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'expires_at'   => ['sometimes', 'array'],
+            'expires_at.*' => ['sometimes', 'nullable', 'date'],
+        ]);
+
+        $uploadedFiles = $request->file('files', []);
+
+        // Authorization pre-flight: every document ID must belong to the
+        // authenticated driver. Fail with 403 before touching the filesystem
+        // — no partial writes on ownership mismatch.
+        $documentIds = array_keys($uploadedFiles);
+        $documents   = DriverDocument::whereIn('id', $documentIds)->get()->keyBy('id');
+
+        foreach ($documentIds as $docId) {
+            $doc = $documents->get($docId);
+            abort_unless($doc !== null && $doc->user_id === $request->user()->id, 403);
+        }
+
+        $expiresAt    = $request->input('expires_at', []);
+        $uploadedRows = [];
+        $errorRows    = [];
+
+        foreach ($uploadedFiles as $docId => $file) {
+            /** @var DriverDocument $doc */
+            $doc = $documents->get($docId);
+
+            // Silently skip locked slots — pending/verified cannot be overwritten.
+            if (! in_array($doc->status, [
+                DriverDocument::STATUS_NOT_UPLOADED,
+                DriverDocument::STATUS_REJECTED,
+            ], true)) {
+                continue;
+            }
+
+            try {
+                $this->uploadFileToSlot(
+                    $doc,
+                    $file,
+                    ($expiresAt[$docId] ?? null) ?: null
+                );
+
+                $uploadedRows[] = [
+                    'document_id' => $doc->id,
+                    'filename'    => $file->getClientOriginalName(),
+                    'status'      => DriverDocument::STATUS_PENDING,
+                ];
+            } catch (\Throwable $e) {
+                $errorRows[] = [
+                    'document_id' => $doc->id,
+                    'reason'      => $e->getMessage(),
+                ];
+            }
+        }
+
+        // All slots failed (or were all locked/skipped with nothing uploaded).
+        if (empty($uploadedRows) && ! empty($errorRows)) {
+            return response()->json([
+                'message' => 'Не удалось загрузить ни один документ.',
+                'errors'  => collect($errorRows)->mapWithKeys(
+                    fn (array $e) => ["files.{$e['document_id']}" => [$e['reason']]]
+                )->all(),
+            ], 422);
+        }
+
+        // Partial success — at least one slot succeeded, at least one failed.
+        if (! empty($errorRows)) {
+            return response()->json([
+                'message'  => 'Часть документов загружена с ошибками.',
+                'uploaded' => $uploadedRows,
+                'errors'   => $errorRows,
+            ], 207);
+        }
+
+        return response()->json([
+            'message'  => 'Документы успешно загружены.',
+            'uploaded' => $uploadedRows,
+        ], 200);
     }
 
     /**

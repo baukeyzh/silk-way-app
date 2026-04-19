@@ -9,6 +9,7 @@ use App\Models\CargoApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class CargoApplicationController extends Controller
 {
@@ -119,8 +120,8 @@ class CargoApplicationController extends Controller
      *     @OA\Response(response=201, description="Заявка подана",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/CargoApplication"))
      *     ),
-     *     @OA\Response(response=403, description="Нет доступа или груз недоступен"),
-     *     @OA\Response(response=409, description="Заявка уже существует")
+     *     @OA\Response(response=403, description="Нет доступа"),
+     *     @OA\Response(response=409, description="Груз уже взят другим водителем или повторная заявка")
      * )
      */
     public function apply(Request $request, Cargo $cargo): JsonResponse
@@ -131,27 +132,39 @@ class CargoApplicationController extends Controller
             return response()->json(['message' => 'Только водители могут подавать заявки.'], 403);
         }
 
-        if ($cargo->status !== 'available') {
-            return response()->json(['message' => 'Этот груз больше не доступен.'], 403);
-        }
-
-        if ($cargo->applications()->where('driver_id', $user->id)->exists()) {
-            return response()->json(['message' => 'Вы уже подавали заявку на этот груз.'], 409);
-        }
-
         $validated = $request->validate([
             'driver_notes' => 'nullable|string|max:1000',
         ]);
 
-        $application = CargoApplication::create([
-            'cargo_id'     => $cargo->id,
-            'driver_id'    => $user->id,
-            'car_id'       => $user->cars->first()?->id,
-            'status'       => 'pending',
-            'driver_notes' => $validated['driver_notes'] ?? null,
-        ]);
+        return DB::transaction(function () use ($cargo, $user, $validated): JsonResponse {
+            // Блокируем строку груза для предотвращения гонки потоков
+            $cargo = Cargo::where('id', $cargo->id)->lockForUpdate()->firstOrFail();
 
-        return response()->json(['data' => new CargoApplicationResource($application)], 201);
+            // Проверяем статус груза
+            if ($cargo->status !== 'available') {
+                return response()->json(['message' => 'Cargo is no longer available.'], 409);
+            }
+
+            // Защитная проверка: груз не должен иметь одобренную заявку
+            if ($cargo->hasApprovedApplication()) {
+                return response()->json(['message' => 'Cargo is no longer available.'], 409);
+            }
+
+            // Проверяем дублирующую заявку от того же водителя
+            if ($cargo->applications()->where('driver_id', $user->id)->exists()) {
+                return response()->json(['message' => 'You have already applied for this cargo.'], 409);
+            }
+
+            $application = CargoApplication::create([
+                'cargo_id'     => $cargo->id,
+                'driver_id'    => $user->id,
+                'car_id'       => $user->cars->first()?->id,
+                'status'       => 'pending',
+                'driver_notes' => $validated['driver_notes'] ?? null,
+            ]);
+
+            return response()->json(['data' => new CargoApplicationResource($application)], 201);
+        });
     }
 
     /**

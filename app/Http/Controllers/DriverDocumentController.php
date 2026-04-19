@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\UploadsDriverDocuments;
 use App\Models\DriverDocument;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +14,7 @@ use Illuminate\View\View;
 
 class DriverDocumentController extends Controller
 {
+    use UploadsDriverDocuments;
     // -------------------------------------------------------------------------
     // Driver-facing routes
     // -------------------------------------------------------------------------
@@ -36,10 +37,10 @@ class DriverDocumentController extends Controller
     }
 
     /**
-     * Handle file upload for a single document.
-     * Accepts only the document that belongs to the authenticated driver.
+     * Handle file upload for a single document slot.
+     * Accepts only documents that belong to the authenticated driver.
      */
-    public function upload(Request $request, DriverDocument $document): RedirectResponse|JsonResponse
+    public function upload(Request $request, DriverDocument $document): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
@@ -60,31 +61,11 @@ class DriverDocumentController extends Controller
             'file' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ]);
 
-        // Delete any previously stored file before overwriting
-        if ($document->file_path && Storage::disk('local')->exists($document->file_path)) {
-            Storage::disk('local')->delete($document->file_path);
-        }
-
-        $uploadedFile = $request->file('file');
-        $directory    = 'driver-documents/' . $user->id;
-        $storedPath   = $uploadedFile->store($directory, 'local');
-
-        $document->update([
-            'file_path'         => $storedPath,
-            'original_filename' => $uploadedFile->getClientOriginalName(),
-            'status'            => DriverDocument::STATUS_PENDING,
-            'rejection_reason'  => null,
-            'expires_at'        => $request->input('expires_at') ?: null,
-        ]);
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'id'                => $document->id,
-                'status'            => $document->status,
-                'original_filename' => $document->original_filename,
-                'expires_at'        => $document->expires_at?->format('Y-m-d'),
-            ]);
-        }
+        $this->uploadFileToSlot(
+            $document,
+            $request->file('file'),
+            $request->input('expires_at') ?: null
+        );
 
         return redirect()->route('documents.index')
             ->with('success', translate('docs.status_pending'));
@@ -127,117 +108,91 @@ class DriverDocumentController extends Controller
     }
 
     /**
-     * Handle simultaneous upload of multiple documents in a single request.
+     * Handle simultaneous upload of multiple document slots in one request.
      *
-     * Accepts parallel arrays: files[], document_ids[], expires_at[].
-     * Processes each entry independently — a validation failure on one file
-     * does not abort the others. Returns a JSON results array so the client
-     * can update each card reactively without a page reload.
+     * Body: files[{documentId}] = file, expires_at[{documentId}] = date (optional).
+     * Every documentId must belong to the authenticated driver; any mismatch aborts
+     * the whole request (403) before any file is written — no partial writes.
+     * Slots whose status is pending or verified are silently skipped (they are
+     * locked), so the driver does not get a confusing error if the form rendered
+     * stale state.
      */
-    public function batchUpload(Request $request): JsonResponse
+    public function batchUpload(Request $request): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
 
         abort_unless($user->isDriver(), 403);
 
-        $files       = $request->file('files', []);
-        $documentIds = $request->input('document_ids', []);
+        $request->validate([
+            'files'      => ['required', 'array', 'min:1'],
+            'files.*'    => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'expires_at' => ['sometimes', 'array'],
+            'expires_at.*' => ['sometimes', 'nullable', 'date'],
+        ]);
+
+        $uploadedFiles = $request->file('files', []);
+
+        if (empty($uploadedFiles)) {
+            return redirect()->route('documents.index')
+                ->with('flash.errors', [translate('docs.batch_no_files')]);
+        }
+
+        // Authorization pass — verify ALL document IDs belong to this driver
+        // before touching the filesystem. Fail fast with 403 on any mismatch.
+        $documentIds = array_keys($uploadedFiles);
+        $documents   = DriverDocument::whereIn('id', $documentIds)->get()->keyBy('id');
+
+        foreach ($documentIds as $docId) {
+            $doc = $documents->get($docId);
+            abort_unless($doc !== null && $doc->user_id === $user->id, 403);
+        }
+
+        $slotErrors  = [];
+        $slotNames   = [];
         $expiresAt   = $request->input('expires_at', []);
 
-        $results = [];
+        foreach ($uploadedFiles as $docId => $uploadedFile) {
+            /** @var DriverDocument $doc */
+            $doc = $documents->get($docId);
 
-        foreach ($documentIds as $index => $documentId) {
-            $result = [
-                'id'                => (int) $documentId,
-                'status'            => null,
-                'original_filename' => null,
-                'expires_at'        => null,
-                'error'             => null,
-            ];
-
-            // --- locate the document and verify ownership ---
-            $document = DriverDocument::find($documentId);
-
-            if (! $document) {
-                $result['error'] = 'Документ не найден.';
-                $results[]       = $result;
-                continue;
-            }
-
-            if ($document->user_id !== $user->id) {
-                $result['error'] = 'Нет доступа к документу.';
-                $results[]       = $result;
-                continue;
-            }
-
-            if (! in_array($document->status, [
+            // Skip locked slots silently — pending/verified cannot be overwritten.
+            if (! in_array($doc->status, [
                 DriverDocument::STATUS_NOT_UPLOADED,
                 DriverDocument::STATUS_REJECTED,
             ], true)) {
-                $result['error'] = 'Документ уже отправлен на проверку или подтверждён.';
-                $results[]       = $result;
                 continue;
             }
 
-            // --- validate the uploaded file for this slot ---
-            $uploadedFile = $files[$index] ?? null;
-
-            if (! $uploadedFile) {
-                $result['error'] = 'Файл не приложен.';
-                $results[]       = $result;
-                continue;
+            try {
+                $this->uploadFileToSlot(
+                    $doc,
+                    $uploadedFile,
+                    ($expiresAt[$docId] ?? null) ?: null
+                );
+                $slotNames[] = $doc->document_type_label;
+            } catch (\Throwable $e) {
+                $slotErrors[$docId] = $e->getMessage();
             }
-
-            // Manual mime + size validation so one bad file does not throw a
-            // ValidationException that would abort the entire request.
-            $allowedMimes = ['application/pdf', 'image/jpeg', 'image/png'];
-            $maxBytes     = 5 * 1024 * 1024; // 5 MB
-
-            if (! $uploadedFile->isValid()) {
-                $result['error'] = 'Файл повреждён или не загружен полностью.';
-                $results[]       = $result;
-                continue;
-            }
-
-            if (! in_array($uploadedFile->getMimeType(), $allowedMimes, true)) {
-                $result['error'] = 'Допустимые форматы: PDF, JPG, PNG.';
-                $results[]       = $result;
-                continue;
-            }
-
-            if ($uploadedFile->getSize() > $maxBytes) {
-                $result['error'] = 'Файл превышает 5 МБ.';
-                $results[]       = $result;
-                continue;
-            }
-
-            // --- store the file ---
-            if ($document->file_path && Storage::disk('local')->exists($document->file_path)) {
-                Storage::disk('local')->delete($document->file_path);
-            }
-
-            $directory  = 'driver-documents/' . $user->id;
-            $storedPath = $uploadedFile->store($directory, 'local');
-
-            $expiry = ($expiresAt[$index] ?? null) ?: null;
-
-            $document->update([
-                'file_path'         => $storedPath,
-                'original_filename' => $uploadedFile->getClientOriginalName(),
-                'status'            => DriverDocument::STATUS_PENDING,
-                'rejection_reason'  => null,
-                'expires_at'        => $expiry,
-            ]);
-
-            $result['status']            = DriverDocument::STATUS_PENDING;
-            $result['original_filename'] = $uploadedFile->getClientOriginalName();
-            $result['expires_at']        = $expiry;
-
-            $results[] = $result;
         }
 
-        return response()->json(['results' => $results]);
+        if (! empty($slotErrors) && empty($slotNames)) {
+            // Every slot failed.
+            return redirect()->route('documents.index')
+                ->with('flash.errors', $slotErrors);
+        }
+
+        if (! empty($slotErrors)) {
+            // Partial failure — some slots uploaded, some did not.
+            return redirect()->route('documents.index')
+                ->with('flash.uploaded', $slotNames)
+                ->with('flash.errors', $slotErrors)
+                ->with('warning', translate('docs.batch_partial_error'));
+        }
+
+        return redirect()->route('documents.index')
+            ->with('flash.uploaded', $slotNames)
+            ->with('success', translate('docs.batch_success'));
     }
 
     // -------------------------------------------------------------------------

@@ -14,10 +14,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="cargo_type", type="string",  example="Электроника"),
  *     @OA\Property(property="volume",     type="number",  example=20.5),
  *     @OA\Property(property="weight",     type="number",  example=5.0),
- *     @OA\Property(property="price_usd",  type="number",  example=1500.00),
+ *     @OA\Property(property="price_usd",  type="number",  nullable=true, example=1500.00, description="Only returned to authenticated users"),
  *     @OA\Property(property="ready_date", type="string",  format="date", example="2026-05-01"),
  *     @OA\Property(property="comment",    type="string",  example="Хрупкий груз"),
  *     @OA\Property(property="status",     type="string",  enum={"available","in_progress","delivered"}),
+ *     @OA\Property(property="created_by", ref="#/components/schemas/User", nullable=true, description="Только для авторизованных пользователей, когда загружено отношение"),
+ *     @OA\Property(property="picked_by",  ref="#/components/schemas/User", nullable=true, description="Только для авторизованных пользователей, когда загружено отношение"),
  *     @OA\Property(property="created_at", type="string",  format="date-time")
  * )
  */
@@ -25,6 +27,8 @@ class CargoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $isAuth = $request->user() !== null;
+
         return [
             'id'           => $this->id,
             'from'         => $this->localized_from_location,
@@ -32,12 +36,18 @@ class CargoResource extends JsonResource
             'cargo_type'   => $this->localized_cargo_type,
             'volume'       => $this->volume,
             'weight'       => $this->weight,
-            'price_usd'    => $this->price_usd,
+            'price_usd'    => $this->when($isAuth, fn () => $this->price_usd),
             'ready_date'   => $this->ready_date?->toDateString(),
             'comment'      => $this->localized_comment,
             'status'       => $this->status,
-            'created_by'   => $this->whenLoaded('createdBy', fn() => new UserResource($this->createdBy)),
-            'picked_by'    => $this->whenLoaded('pickedBy',  fn() => new UserResource($this->pickedBy)),
+            'created_by'   => $this->when(
+                $isAuth && $this->relationLoaded('createdBy'),
+                fn () => new UserResource($this->createdBy)
+            ),
+            'picked_by'    => $this->when(
+                $isAuth && $this->relationLoaded('pickedBy'),
+                fn () => new UserResource($this->pickedBy)
+            ),
             'created_at'   => $this->created_at?->toISOString(),
         ];
     }

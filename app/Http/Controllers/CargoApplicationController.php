@@ -6,6 +6,7 @@ use App\Models\Cargo;
 use App\Models\CargoApplication;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CargoApplicationController extends Controller
@@ -46,40 +47,50 @@ class CargoApplicationController extends Controller
     public function apply(Request $request, Cargo $cargo): RedirectResponse
     {
         $user = auth()->user();
-        
+
         // Проверяем подтверждение аккаунта
         if (!$user->isAdmin() && !$user->isApproved()) {
             abort(403, 'Ваш аккаунт еще не подтвержден администратором.');
         }
-        
+
         // Только водители могут подавать заявки
         if (!$user->isDriver()) {
             abort(403, 'Только водители могут подавать заявки на грузы.');
-        }
-        
-        // Проверяем, что груз доступен
-        if ($cargo->status !== 'available') {
-            return redirect()->route('cargo.index')->with('error', 'Этот груз больше не доступен.');
-        }
-        
-        // Проверяем, что водитель еще не подавал заявку на этот груз
-        if ($cargo->applications()->where('driver_id', $user->id)->exists()) {
-            return redirect()->route('cargo.index')->with('error', 'Вы уже подавали заявку на этот груз.');
         }
 
         $validated = $request->validate([
             'driver_notes' => 'nullable|string|max:1000',
         ]);
 
-        CargoApplication::create([
-            'cargo_id' => $cargo->id,
-            'driver_id' => $user->id,
-            'car_id' => $user->cars->first()->id ?? null,
-            'status' => 'pending',
-            'driver_notes' => $validated['driver_notes'] ?? null,
-        ]);
+        return DB::transaction(function () use ($cargo, $user, $validated) {
+            // Блокируем строку груза для предотвращения гонки потоков
+            $cargo = Cargo::where('id', $cargo->id)->lockForUpdate()->firstOrFail();
 
-        return redirect()->route('cargo.index')->with('success', 'Заявка на груз успешно подана!');
+            // Проверяем, что груз доступен (статус)
+            if ($cargo->status !== 'available') {
+                return back()->withErrors(['cargo' => translate('applications.cargo_already_taken')]);
+            }
+
+            // Защитная проверка: груз не должен иметь одобренную заявку
+            if ($cargo->hasApprovedApplication()) {
+                return back()->withErrors(['cargo' => translate('applications.cargo_already_taken')]);
+            }
+
+            // Проверяем, что водитель еще не подавал заявку на этот груз
+            if ($cargo->applications()->where('driver_id', $user->id)->exists()) {
+                return back()->withErrors(['cargo' => translate('applications.already_applied')]);
+            }
+
+            CargoApplication::create([
+                'cargo_id'     => $cargo->id,
+                'driver_id'    => $user->id,
+                'car_id'       => $user->cars->first()?->id,
+                'status'       => 'pending',
+                'driver_notes' => $validated['driver_notes'] ?? null,
+            ]);
+
+            return redirect()->route('cargo.index')->with('success', 'Заявка на груз успешно подана!');
+        });
     }
 
     public function myApplications(): View

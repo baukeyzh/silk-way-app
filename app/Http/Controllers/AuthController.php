@@ -35,6 +35,12 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
+
+            $redirect = $request->input('redirect');
+            if (is_string($redirect) && str_starts_with($redirect, '/') && !str_starts_with($redirect, '//')) {
+                return redirect($redirect);
+            }
+
             return redirect()->intended(route('cargo.index'));
         }
 

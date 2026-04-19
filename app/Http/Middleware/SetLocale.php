@@ -17,15 +17,17 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $isApi = $request->is('api/*');
+
         // Приоритет определения языка:
         // 1. Из URL параметра
-        // 2. Из сессии
+        // 2. Из сессии (только для web; API не имеет сессии)
         // 3. Из заголовка Accept-Language
         // 4. По умолчанию русский
-        
-        $localeRaw = $request->get('lang') 
-            ?: Session::get('locale') 
-            ?: $this->getLocaleFromHeader($request) 
+
+        $localeRaw = $request->get('lang')
+            ?: (!$isApi ? Session::get('locale') : null)
+            ?: $this->getLocaleFromHeader($request)
             ?: 'ru';
 
         // Нормализуем код языка: поддерживаем старые коды (rus/kaz/chn)
@@ -44,11 +46,13 @@ class SetLocale
         if (!in_array($locale, ['ru', 'kz', 'cn'])) {
             $locale = 'ru';
         }
-        
-        // Устанавливаем язык
+
         App::setLocale($locale);
-        Session::put('locale', $locale);
-        
+
+        if (!$isApi) {
+            Session::put('locale', $locale);
+        }
+
         return $next($request);
     }
 
