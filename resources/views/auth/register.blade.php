@@ -80,13 +80,19 @@
                     <label for="password" class="block text-sm font-medium text-slate-700 mb-1.5">
                         {{ \App\Helpers\LocalizationHelper::t('auth.password') }}
                     </label>
-                    <div class="relative">
+                    <div class="relative" x-data="{ show: false }">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-slate-400 text-sm"></i>
                         </div>
-                        <input id="password" name="password" type="password" required
-                               class="block w-full pl-10 pr-3 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent @error('password') border-rose-400 ring-1 ring-rose-400 @enderror"
+                        <input id="password" name="password" :type="show ? 'text' : 'password'" required
+                               class="block w-full pl-10 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent @error('password') border-rose-400 ring-1 ring-rose-400 @enderror"
                                placeholder="{{ \App\Helpers\LocalizationHelper::t('auth.password_placeholder') }}">
+                        <button type="button"
+                                @click="show = !show"
+                                :aria-label="show ? '{{ \App\Helpers\LocalizationHelper::t('auth.password_hide') }}' : '{{ \App\Helpers\LocalizationHelper::t('auth.password_show') }}'"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none focus:text-indigo-600 transition-colors">
+                            <i class="fas text-sm" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
                     </div>
                     <p class="mt-1.5 text-xs text-slate-400">Минимум 8 символов — используйте буквы и цифры</p>
                 </div>
@@ -96,13 +102,19 @@
                     <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1.5">
                         {{ \App\Helpers\LocalizationHelper::t('auth.password_confirmation') }}
                     </label>
-                    <div class="relative">
+                    <div class="relative" x-data="{ show: false }">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-slate-400 text-sm"></i>
                         </div>
-                        <input id="password_confirmation" name="password_confirmation" type="password" required
-                               class="block w-full pl-10 pr-3 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        <input id="password_confirmation" name="password_confirmation" :type="show ? 'text' : 'password'" required
+                               class="block w-full pl-10 pr-10 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                placeholder="{{ \App\Helpers\LocalizationHelper::t('auth.password_confirmation_placeholder') }}">
+                        <button type="button"
+                                @click="show = !show"
+                                :aria-label="show ? '{{ \App\Helpers\LocalizationHelper::t('auth.password_hide') }}' : '{{ \App\Helpers\LocalizationHelper::t('auth.password_show') }}'"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none focus:text-indigo-600 transition-colors">
+                            <i class="fas text-sm" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
                     </div>
                 </div>
 

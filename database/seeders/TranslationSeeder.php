@@ -2667,6 +2667,20 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                'key' => 'auth.password_show',
+                'ru' => 'Показать пароль',
+                'kz' => 'Құпия сөзді көрсету', // TODO: verify with native speaker
+                'cn' => '显示密码', // TODO: verify with native speaker
+
+            ],
+            [
+                'key' => 'auth.password_hide',
+                'ru' => 'Скрыть пароль',
+                'kz' => 'Құпия сөзді жасыру', // TODO: verify with native speaker
+                'cn' => '隐藏密码', // TODO: verify with native speaker
+
+            ],
+            [
                 'key' => 'auth.select_role',
                 'ru' => 'Выберите роль',
                 'kz' => 'Рөлді таңдаңыз',
@@ -3523,6 +3537,216 @@ class TranslationSeeder extends Seeder
                 'cn'          => '通过辅助函数：',
                 'group'       => 'admin',
                 'description' => 'Comment label preceding the LocalizationHelper snippet on translation detail page',
+            ],
+
+            // Admin translation create page (create.blade.php) & edit page (edit.blade.php)
+            [
+                'key'         => 'admin.translation_create_title',
+                'ru'          => 'Новый перевод',
+                'kz'          => 'Жаңа аударма', // TODO: verify with native speaker
+                'cn'          => '新建翻译', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Browser tab title and H1 heading on admin translation create page',
+            ],
+            [
+                'key'         => 'admin.translation_create_desc',
+                'ru'          => 'Добавьте новый ключ перевода с вариантами на всех языках',
+                'kz'          => 'Барлық тілдерде аударма нұсқаларымен жаңа кілт қосыңыз', // TODO: verify with native speaker
+                'cn'          => '添加新的翻译键及所有语言的翻译内容', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Subtitle under the heading on admin translation create page',
+            ],
+            [
+                'key'         => 'admin.translation_edit_title',
+                'ru'          => 'Редактировать перевод',
+                'kz'          => 'Аударманы өңдеу', // TODO: verify with native speaker
+                'cn'          => '编辑翻译', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Browser tab title and H1 heading on admin translation edit page',
+            ],
+            [
+                'key'         => 'admin.translation_edit_desc',
+                'ru'          => 'Обновите значения перевода для одного или нескольких языков',
+                'kz'          => 'Бір немесе бірнеше тіл үшін аударма мәндерін жаңартыңыз', // TODO: verify with native speaker
+                'cn'          => '更新一种或多种语言的翻译内容', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Subtitle under the heading on admin translation edit page',
+            ],
+            [
+                'key'         => 'admin.translation_section_meta',
+                'ru'          => 'Идентификация',
+                'kz'          => 'Идентификация', // TODO: verify with native speaker
+                'cn'          => '标识信息', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Section heading for key/group/description fields on create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_section_locales',
+                'ru'          => 'Переводы',
+                'kz'          => 'Аудармалар', // TODO: verify with native speaker
+                'cn'          => '翻译内容', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Section heading for locale textarea cards on create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_key_placeholder',
+                'ru'          => 'section.subsection_name',
+                'kz'          => 'section.subsection_name',
+                'cn'          => 'section.subsection_name',
+                'group'       => 'admin',
+                'description' => 'Placeholder for the translation key input on create page',
+            ],
+            [
+                'key'         => 'admin.translation_key_hint',
+                'ru'          => 'Используйте точечные пространства имён. Должен быть уникальным.',
+                'kz'          => 'Нүктелі аттар кеңістігін пайдаланыңыз. Бірегей болуы керек.', // TODO: verify with native speaker
+                'cn'          => '使用点分命名空间，且必须唯一。', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Helper hint below the key input on translation create page',
+            ],
+            [
+                'key'         => 'admin.translation_key_readonly_hint',
+                'ru'          => 'Ключ перевода нельзя изменить',
+                'kz'          => 'Аударма кілтін өзгерту мүмкін емес', // TODO: verify with native speaker
+                'cn'          => '翻译键不可修改', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Helper hint below the readonly key input on translation edit page',
+            ],
+            [
+                'key'         => 'admin.translation_group_placeholder',
+                'ru'          => 'Выберите или введите группу',
+                'kz'          => 'Топты таңдаңыз немесе енгізіңіз', // TODO: verify with native speaker
+                'cn'          => '选择或输入分组', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Placeholder for the group input on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_group_hint',
+                'ru'          => 'Существующие группы показаны в подсказках. Введите новое имя, чтобы создать группу.',
+                'kz'          => 'Бар топтар белгілерде көрсетілген. Жаңа топ жасау үшін жаңа атауды енгізіңіз.', // TODO: verify with native speaker
+                'cn'          => '已有分组会作为建议显示。输入新名称可创建新分组。', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Helper hint below the group input on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_description_label',
+                'ru'          => 'Описание (для админов)',
+                'kz'          => 'Сипаттама (әкімшілерге арналған)', // TODO: verify with native speaker
+                'cn'          => '描述（供管理员查看）', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Label for the description textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_description_placeholder',
+                'ru'          => 'Опишите, где используется этот ключ...',
+                'kz'          => 'Бұл кілт қайда қолданылатынын сипаттаңыз...', // TODO: verify with native speaker
+                'cn'          => '描述此键的使用位置...', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Placeholder for description textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_description_hint',
+                'ru'          => 'Не отображается пользователям. Помогает будущим администраторам понять контекст ключа.',
+                'kz'          => 'Пайдаланушыларға көрсетілмейді. Болашақ әкімшілерге кілттің мазмұнын түсінуге көмектеседі.', // TODO: verify with native speaker
+                'cn'          => '不面向用户显示，帮助未来管理员理解此键的使用场景。', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Helper hint below the description textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_ru_label',
+                'ru'          => 'Русский',
+                'kz'          => 'Орысша', // TODO: verify with native speaker
+                'cn'          => '俄语', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Label for Russian locale textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_kz_label',
+                'ru'          => 'Қазақша',
+                'kz'          => 'Қазақша',
+                'cn'          => '哈萨克语', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Label for Kazakh locale textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_cn_label',
+                'ru'          => '中文',
+                'kz'          => '中文',
+                'cn'          => '中文',
+                'group'       => 'admin',
+                'description' => 'Label for Chinese locale textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_ru_placeholder',
+                'ru'          => 'Текст на русском языке...',
+                'kz'          => 'Орыс тіліндегі мәтін...', // TODO: verify with native speaker
+                'cn'          => '俄语文本...', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Placeholder for Russian textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_kz_placeholder',
+                'ru'          => 'Мәтін қазақша...',
+                'kz'          => 'Мәтін қазақша...',
+                'cn'          => '哈萨克语文本...', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Placeholder for Kazakh textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_cn_placeholder',
+                'ru'          => '中文文本...',
+                'kz'          => '中文文本...',
+                'cn'          => '中文文本...',
+                'group'       => 'admin',
+                'description' => 'Placeholder for Chinese textarea on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_chars_suffix',
+                'ru'          => 'симв.',
+                'kz'          => 'таңба', // TODO: verify with native speaker
+                'cn'          => '字符',
+                'group'       => 'admin',
+                'description' => 'Character count suffix shown in locale card header on create/edit page (live counter)',
+            ],
+            [
+                'key'         => 'admin.translation_optional_badge',
+                'ru'          => 'необязательно',
+                'kz'          => 'міндетті емес', // TODO: verify with native speaker
+                'cn'          => '可选', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Optional badge shown in locale card header for KZ and CN on create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_error_summary',
+                'ru'          => 'Исправьте ошибки ниже',
+                'kz'          => 'Төмендегі қателерді түзетіңіз', // TODO: verify with native speaker
+                'cn'          => '请修正以下错误', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Error summary banner heading on translation create/edit page when validation fails',
+            ],
+            [
+                'key'         => 'admin.translation_error_count',
+                'ru'          => 'Найдено ошибок: :count',
+                'kz'          => 'Қателер табылды: :count', // TODO: verify with native speaker
+                'cn'          => '发现 :count 个错误', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Error count line in the validation error banner on translation create/edit page; :count is replaced at runtime',
+            ],
+            [
+                'key'         => 'admin.translation_btn_save',
+                'ru'          => 'Сохранить',
+                'kz'          => 'Сақтау', // TODO: verify with native speaker
+                'cn'          => '保存', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Primary submit button on translation create/edit page',
+            ],
+            [
+                'key'         => 'admin.translation_btn_cancel',
+                'ru'          => 'Отмена',
+                'kz'          => 'Болдырмау', // TODO: verify with native speaker
+                'cn'          => '取消', // TODO: verify with native speaker
+                'group'       => 'admin',
+                'description' => 'Cancel/back button on translation create/edit page',
             ],
 
             // ─── Public landing page — hero ────────────────────────────────────
