@@ -41,7 +41,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
                                         {{ $user->isAdmin() ? 'bg-purple-100 text-purple-700' : ($user->isWarehouseEmployee() ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700') }}">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-slate-900">{{ $user->name }}</p>

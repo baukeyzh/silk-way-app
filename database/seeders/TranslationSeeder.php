@@ -1343,6 +1343,83 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                'key' => 'applications.approved_by_label',
+                'ru' => 'Подтвердил:',
+                'kz' => 'Бекіткен:',
+                'cn' => '审核人：',
+
+            ],
+            [
+                'key' => 'applications.clear_search',
+                'ru' => 'Сбросить',
+                'kz' => 'Тазалау',
+                'cn' => '清除',
+
+            ],
+            [
+                'key' => 'applications.show_all_link',
+                'ru' => 'Показать все заявки',
+                'kz' => 'Барлық өтініштерді көрсету',
+                'cn' => '显示所有申请',
+
+            ],
+            [
+                'key' => 'applications.no_pending',
+                'ru' => 'Нет заявок в ожидании',
+                'kz' => 'Күтудегі өтініштер жоқ',
+                'cn' => '暂无待审核申请',
+
+            ],
+            [
+                'key' => 'applications.no_pending_desc',
+                'ru' => 'Все заявки обработаны — отлично!',
+                'kz' => 'Барлық өтініштер өңделді — тамаша!',
+                'cn' => '所有申请均已处理，干得好！',
+
+            ],
+            [
+                'key' => 'applications.no_approved',
+                'ru' => 'Нет подтверждённых заявок',
+                'kz' => 'Бекітілген өтініштер жоқ',
+                'cn' => '暂无已确认申请',
+
+            ],
+            [
+                'key' => 'applications.no_approved_desc',
+                'ru' => 'Подтверждённые заявки будут отображаться здесь',
+                'kz' => 'Бекітілген өтініштер осында көрсетіледі',
+                'cn' => '已确认的申请将显示在这里',
+
+            ],
+            [
+                'key' => 'applications.no_rejected',
+                'ru' => 'Нет отклонённых заявок',
+                'kz' => 'Бас тартылған өтініштер жоқ',
+                'cn' => '暂无已拒绝申请',
+
+            ],
+            [
+                'key' => 'applications.no_rejected_desc',
+                'ru' => 'Отклонённые заявки будут отображаться здесь',
+                'kz' => 'Бас тартылған өтініштер осында көрсетіледі',
+                'cn' => '被拒绝的申请将显示在这里',
+
+            ],
+            [
+                'key' => 'applications.no_search_results',
+                'ru' => 'Ничего не найдено',
+                'kz' => 'Ештеңе табылмады',
+                'cn' => '未找到结果',
+
+            ],
+            [
+                'key' => 'applications.no_search_results_desc',
+                'ru' => 'По вашему запросу заявок не найдено. Попробуйте изменить поисковый запрос.',
+                'kz' => 'Сіздің сұрауыңыз бойынша өтініштер табылмады. Іздеу сұрауын өзгертіп көріңіз.',
+                'cn' => '未找到与您搜索条件匹配的申请，请尝试修改搜索词。',
+
+            ],
+            [
                 'key' => 'my_cargo.title',
                 'ru' => 'Мои грузы',
                 'kz' => 'Менің жүктерім',
@@ -3189,6 +3266,74 @@ class TranslationSeeder extends Seeder
                 'cn'          => '车辆保险单（可选）', // TODO: verify
                 'group'       => 'docs',
                 'description' => 'Mobile API: upload hint for insurance slot (optional)',
+            ],
+
+            // ---------------------------------------------------------------
+            // Driver documents page — file preview & metadata keys
+            // ---------------------------------------------------------------
+            [
+                'key'         => 'docs.open_pdf',
+                'ru'          => 'Открыть PDF',
+                'kz'          => 'PDF ашу',
+                'cn'          => '打开PDF',
+                'group'       => 'docs',
+                'description' => 'Link label on PDF card in driver documents view to open file in new tab',
+            ],
+            [
+                'key'         => 'docs.open_in_new_tab',
+                'ru'          => 'Открыть в новой вкладке',
+                'kz'          => 'Жаңа қойындыда ашу',
+                'cn'          => '在新标签页中打开',
+                'group'       => 'docs',
+                'description' => 'Link label in driver documents view to open uploaded file in new browser tab',
+            ],
+            [
+                'key'         => 'docs.uploaded_ago',
+                'ru'          => 'Загружено',
+                'kz'          => 'Жүктелді',
+                'cn'          => '上传于',
+                'group'       => 'docs',
+                'description' => 'Label prefix for relative upload timestamp in driver documents card (e.g. "Загружено 5 минут назад")',
+            ],
+            [
+                'key'         => 'docs.approved_ago',
+                'ru'          => 'Подтверждено',
+                'kz'          => 'Расталды',
+                'cn'          => '已批准',
+                'group'       => 'docs',
+                'description' => 'Label prefix for relative approval timestamp in driver verified document card',
+            ],
+            [
+                'key'         => 'docs.expires_in_days',
+                'ru'          => 'Истекает через',
+                'kz'          => 'Мерзімі аяқталады',
+                'cn'          => '将于',
+                'group'       => 'docs',
+                'description' => 'Label for expiry countdown when document expires within 30 days, followed by day count',
+            ],
+            [
+                'key'         => 'docs.expired_days_ago',
+                'ru'          => 'Истёк',
+                'kz'          => 'Мерзімі өтті',
+                'cn'          => '已过期',
+                'group'       => 'docs',
+                'description' => 'Label shown when document expiry date is in the past, followed by days-ago count',
+            ],
+            [
+                'key'         => 'docs.expires_at_label',
+                'ru'          => 'Действует до',
+                'kz'          => 'Дейін жарамды',
+                'cn'          => '有效期至',
+                'group'       => 'docs',
+                'description' => 'Label for document expiry date when more than 30 days remain, followed by formatted date',
+            ],
+            [
+                'key'         => 'docs.locked_by_admin',
+                'ru'          => 'Документ подтверждён — замена недоступна',
+                'kz'          => 'Құжат расталды — ауыстыру мүмкін емес',
+                'cn'          => '文件已验证，无法替换',
+                'group'       => 'docs',
+                'description' => 'Lock notice on verified document card in driver view — explains why no re-upload is possible',
             ],
         ];
 

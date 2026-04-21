@@ -11,37 +11,63 @@ use Illuminate\View\View;
 
 class CargoApplicationController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = auth()->user();
-        
+
         // Проверяем подтверждение аккаунта
         if (!$user->isAdmin() && !$user->isApproved()) {
             abort(403, 'Ваш аккаунт еще не подтвержден администратором.');
         }
-        
+
         // Только админы и сотрудники склада могут видеть все заявки
         if (!$user->isAdmin() && !$user->isWarehouseEmployee()) {
             abort(403, 'Доступ только для администраторов и сотрудников склада.');
         }
-        
-        // Получаем заявки в зависимости от роли пользователя
-        if ($user->isAdmin()) {
-            // Админы видят все заявки
-            $applications = CargoApplication::with(['cargo', 'driver'])
-                ->latest()
-                ->paginate(20);
-        } else {
+
+        // Whitelist allowed status values; anything outside the set is treated as "all"
+        $allowedStatuses = ['pending', 'approved', 'rejected'];
+        $status = in_array($request->query('status'), $allowedStatuses, true)
+            ? $request->query('status')
+            : null; // null means "all"
+
+        $search = trim((string) $request->query('search', ''));
+
+        // Base query scoped by role
+        $baseQuery = CargoApplication::with(['cargo', 'driver', 'approvedBy']);
+
+        if (!$user->isAdmin()) {
             // Сотрудники склада видят заявки только на свои грузы
-            $applications = CargoApplication::with(['cargo', 'driver'])
-                ->whereHas('cargo', function ($query) use ($user) {
-                    $query->where('created_by', $user->id);
-                })
-                ->latest()
-                ->paginate(20);
+            $baseQuery->whereHas('cargo', fn ($q) => $q->where('created_by', $user->id));
         }
-        
-        return view('applications.index', compact('applications'));
+
+        // Compute per-status counts on the role-scoped query before applying filters
+        $counts = [
+            'all'      => (clone $baseQuery)->count(),
+            'pending'  => (clone $baseQuery)->where('status', 'pending')->count(),
+            'approved' => (clone $baseQuery)->where('status', 'approved')->count(),
+            'rejected' => (clone $baseQuery)->where('status', 'rejected')->count(),
+        ];
+
+        // Apply status filter
+        if ($status !== null) {
+            $baseQuery->where('status', $status);
+        }
+
+        // Apply search filter: match on driver name or email
+        if ($search !== '') {
+            $baseQuery->whereHas('driver', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $applications = $baseQuery
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('applications.index', compact('applications', 'counts', 'status', 'search'));
     }
 
     public function apply(Request $request, Cargo $cargo): RedirectResponse

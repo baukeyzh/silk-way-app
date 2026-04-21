@@ -142,7 +142,7 @@
 
                 {{-- Avatar --}}
                 <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm shrink-0">
-                    {{ strtoupper(substr($driver->name, 0, 1)) }}
+                    {{ mb_strtoupper(mb_substr($driver->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                 </div>
 
                 {{-- Name + email --}}

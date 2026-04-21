@@ -144,7 +144,7 @@
                     <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                         <button @click="open = !open" class="flex items-center space-x-2 group">
                             <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                             </div>
                             <div class="hidden sm:block text-left">
                                 <p class="text-sm font-semibold text-slate-800 leading-tight">{{ auth()->user()->name }}</p>
@@ -340,7 +340,7 @@
                 <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                     <button @click="open = !open" class="flex items-center space-x-2">
                         <div class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-semibold text-sm">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                         </div>
                         <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-200 hidden sm:block" :class="open ? 'rotate-180' : ''"></i>
                     </button>

@@ -145,7 +145,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-semibold shrink-0">
-                                    {{ strtoupper(substr($application->driver->name, 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($application->driver->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium text-slate-800">{{ $application->driver->name }}</p>

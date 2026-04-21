@@ -79,7 +79,7 @@
                 {{-- Driver --}}
                 <div class="flex items-center gap-2.5 mb-3 pb-3 border-b border-slate-100">
                     <div class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-semibold shrink-0">
-                        {{ strtoupper(substr($car->user->name, 0, 1)) }}
+                        {{ mb_strtoupper(mb_substr($car->user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                     </div>
                     <div>
                         <p class="text-xs font-medium text-slate-800">{{ $car->user->name }}</p>

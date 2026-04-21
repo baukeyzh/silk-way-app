@@ -147,6 +147,11 @@
             $canUpload = in_array($status, ['not_uploaded', 'rejected'], true);
             $canDelete = in_array($status, ['pending', 'rejected'], true);
             $slotError = $batchErrors[$doc->id] ?? null;
+
+            // File preview detection — consistent with admin view pattern.
+            $ext     = strtolower(pathinfo($doc->original_filename ?? '', PATHINFO_EXTENSION));
+            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+            $hasFile = $doc->file_path !== null;
         @endphp
 
         {{--
@@ -207,13 +212,58 @@
                 </div>
                 @endif
 
-                {{-- Uploaded filename --}}
-                @if($doc->original_filename)
-                <div class="flex items-center gap-2 text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                    <i class="fas fa-paperclip text-slate-400 shrink-0"></i>
-                    <span class="truncate text-slate-600 font-medium">{{ $doc->original_filename }}</span>
-                </div>
+                {{-- --------------------------------------------------------
+                     File preview — shown for pending / verified / rejected
+                     when a file has been uploaded.
+                --------------------------------------------------------- --}}
+                @if($hasFile && in_array($status, ['pending', 'verified', 'rejected'], true))
+
+                    @if($isImage)
+                    {{-- Image inline preview --}}
+                    <a href="{{ route('documents.file', $doc) }}" target="_blank" rel="noopener"
+                       class="block rounded-lg overflow-hidden bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors">
+                        <img src="{{ route('documents.file', $doc) }}"
+                             alt="{{ $doc->label ?? $doc->document_type }}"
+                             loading="lazy"
+                             class="w-full h-40 sm:h-48 object-cover">
+                    </a>
+                    @else
+                    {{-- PDF / unknown file card --}}
+                    <a href="{{ route('documents.file', $doc) }}" target="_blank" rel="noopener"
+                       class="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors">
+                        <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0">
+                            <i class="fas fa-file-pdf text-rose-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-700 truncate">{{ $doc->original_filename }}</p>
+                            <p class="text-xs text-slate-500">{{ translate('docs.open_pdf') }}</p>
+                        </div>
+                        <i class="fas fa-external-link-alt text-slate-400 text-xs shrink-0"></i>
+                    </a>
+                    @endif
+
+                    {{-- File size + open-in-tab link --}}
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                        @if($doc->file_size_kb !== null)
+                        <span>
+                            @if($doc->file_size_kb > 1024)
+                                {{ number_format($doc->file_size_kb / 1024, 1) }} MB
+                            @else
+                                {{ $doc->file_size_kb }} KB
+                            @endif
+                        </span>
+                        @else
+                        <span></span>
+                        @endif
+                        <a href="{{ route('documents.file', $doc) }}" target="_blank" rel="noopener"
+                           class="inline-flex items-center gap-1 text-indigo-500 hover:text-indigo-700 transition-colors">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                            {{ translate('docs.open_in_new_tab') }}
+                        </a>
+                    </div>
+
                 @endif
+                {{-- /file preview --}}
 
                 {{-- Pending info --}}
                 @if($status === 'pending')
@@ -221,34 +271,80 @@
                     <i class="fas fa-clock text-amber-500 shrink-0"></i>
                     <span>Документ отправлен и ожидает проверки администратора</span>
                 </div>
+                {{-- Uploaded timestamp --}}
+                @if($doc->file_path && $doc->updated_at)
+                <p class="text-xs text-slate-400">
+                    <i class="fas fa-clock mr-1"></i>{{ translate('docs.uploaded_ago') }}: {{ $doc->updated_at->diffForHumans() }}
+                </p>
                 @endif
+                {{-- Expiry for pending --}}
+                @if($doc->expires_at)
+                @php $daysUntilExpiry = now()->diffInDays($doc->expires_at, false); @endphp
+                <p class="text-xs
+                    @if($daysUntilExpiry < 0) text-rose-600
+                    @elseif($daysUntilExpiry <= 30) text-amber-600
+                    @else text-slate-500
+                    @endif">
+                    <i class="fas fa-calendar-alt mr-1"></i>
+                    @if($daysUntilExpiry < 0)
+                        {{ translate('docs.expired_days_ago') }}: {{ abs($daysUntilExpiry) }}
+                    @elseif($daysUntilExpiry <= 30)
+                        {{ translate('docs.expires_in_days') }}: {{ $daysUntilExpiry }}
+                    @else
+                        {{ translate('docs.expires_at_label') }}: {{ $doc->expires_at->format('d.m.Y') }}
+                    @endif
+                </p>
+                @endif
+                @endif
+                {{-- /pending info --}}
 
                 {{-- Verified info --}}
                 @if($status === 'verified')
                 <div class="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2 border border-emerald-100">
                     <i class="fas fa-check-circle text-emerald-500 shrink-0"></i>
                     <span>{{ translate('docs.status_verified') }}</span>
-                    @if($doc->expires_at)
-                    <span class="ml-auto text-slate-400">{{ $doc->expires_at->format('d.m.Y') }}</span>
-                    @endif
                 </div>
-
-                {{-- Verified — lock notice, driver cannot replace --}}
+                {{-- Approved timestamp --}}
+                @if($doc->verified_at)
+                <p class="text-xs text-slate-400">
+                    <i class="fas fa-user-check mr-1"></i>{{ translate('docs.approved_ago') }}: {{ $doc->verified_at->diffForHumans() }}
+                </p>
+                @endif
+                {{-- Expiry for verified --}}
+                @if($doc->expires_at)
+                @php $daysUntilExpiry = now()->diffInDays($doc->expires_at, false); @endphp
+                <p class="text-xs
+                    @if($daysUntilExpiry < 0) text-rose-600
+                    @elseif($daysUntilExpiry <= 30) text-amber-600
+                    @else text-slate-500
+                    @endif">
+                    <i class="fas fa-calendar-alt mr-1"></i>
+                    @if($daysUntilExpiry < 0)
+                        {{ translate('docs.expired_days_ago') }}: {{ abs($daysUntilExpiry) }}
+                    @elseif($daysUntilExpiry <= 30)
+                        {{ translate('docs.expires_in_days') }}: {{ $daysUntilExpiry }}
+                    @else
+                        {{ translate('docs.expires_at_label') }}: {{ $doc->expires_at->format('d.m.Y') }}
+                    @endif
+                </p>
+                @endif
+                {{-- Lock notice — driver cannot replace a verified document --}}
                 <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
                     <i class="fas fa-lock text-slate-400 shrink-0"></i>
-                    <span>Документ подтверждён — замена не требуется</span>
+                    <span>{{ translate('docs.locked_by_admin') }}</span>
                 </div>
                 @endif
+                {{-- /verified info --}}
 
-                {{-- Expiry shown for pending docs --}}
-                @if($status === 'pending' && $doc->expires_at)
-                <div>
-                    <p class="text-xs font-medium text-slate-500 mb-1">
-                        <i class="fas fa-calendar-alt mr-1"></i>{{ translate('docs.expiry_date') }}
-                    </p>
-                    <p class="text-sm text-slate-600">{{ $doc->expires_at->format('d.m.Y') }}</p>
-                </div>
+                {{-- Rejected — uploaded timestamp (file still shown above) --}}
+                @if($status === 'rejected')
+                @if($doc->file_path && $doc->updated_at)
+                <p class="text-xs text-slate-400">
+                    <i class="fas fa-clock mr-1"></i>{{ translate('docs.uploaded_ago') }}: {{ $doc->updated_at->diffForHumans() }}
+                </p>
                 @endif
+                @endif
+                {{-- /rejected info --}}
 
                 {{--
                     Upload controls — rendered only for not_uploaded and rejected slots.

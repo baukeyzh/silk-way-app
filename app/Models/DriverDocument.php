@@ -144,6 +144,24 @@ class DriverDocument extends Model
     }
 
     /**
+     * File size in kilobytes, read directly from local storage.
+     * Returns null if no file is stored or the file no longer exists on disk.
+     * Used in the driver documents view for display only — not part of the API contract.
+     */
+    public function getFileSizeKbAttribute(): ?int
+    {
+        if ($this->file_path === null) {
+            return null;
+        }
+
+        if (! \Storage::disk('local')->exists($this->file_path)) {
+            return null;
+        }
+
+        return (int) round(\Storage::disk('local')->size($this->file_path) / 1024);
+    }
+
+    /**
      * ISO-8601 timestamp of when the file was last uploaded (updated_at when
      * a file_path is present), exposed as `uploaded_at` for mobile clarity.
      */

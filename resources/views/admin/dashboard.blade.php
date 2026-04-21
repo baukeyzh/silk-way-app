@@ -105,7 +105,7 @@
                     <li class="px-6 py-4 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-sm font-bold text-indigo-600">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                             </div>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
@@ -158,7 +158,7 @@
                 <li class="px-6 py-4 flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 text-sm font-bold text-slate-600">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                            {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                         </div>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
