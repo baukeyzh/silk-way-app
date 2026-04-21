@@ -3524,6 +3524,314 @@ class TranslationSeeder extends Seeder
                 'group'       => 'admin',
                 'description' => 'Comment label preceding the LocalizationHelper snippet on translation detail page',
             ],
+
+            // ─── Public landing page — hero ────────────────────────────────────
+            [
+                'key'         => 'public.hero_headline',
+                'ru'          => 'Найдите груз. Зарегистрируйтесь и начните возить.',
+                'kz'          => 'Жүк табыңыз. Тіркеліп, тасымалдауды бастаңыз.', // TODO: verify with native speaker
+                'cn'          => '找到货物，注册并开始运输。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Hero section main headline on public cargo listing',
+            ],
+            [
+                'key'         => 'public.hero_subtitle',
+                'ru'          => 'Silk Way — платформа для водителей и экспедиторов в Центральной Азии. Просматривайте грузы без регистрации, берите рейсы после проверки.',
+                'kz'          => 'Silk Way — Орталық Азиядағы жүргізушілер мен экспедиторларға арналған платформа. Тіркелмей жүктерді қараңыз, тексеруден өткеннен кейін рейс алыңыз.', // TODO: verify with native speaker
+                'cn'          => 'Silk Way 是中亚司机和货代的专属平台。无需注册即可浏览货物，审核通过后即可接单。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Hero section supporting subtitle on public cargo listing',
+            ],
+            [
+                'key'         => 'public.hero_cta_register',
+                'ru'          => 'Создать аккаунт',
+                'kz'          => 'Аккаунт жасау', // TODO: verify with native speaker
+                'cn'          => '注册账号', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Primary CTA in hero — registration button',
+            ],
+            [
+                'key'         => 'public.hero_cta_login',
+                'ru'          => 'Войти',
+                'kz'          => 'Кіру', // TODO: verify with native speaker
+                'cn'          => '登录', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Secondary CTA in hero — login button',
+            ],
+            [
+                'key'         => 'public.hero_trust_1',
+                'ru'          => 'Бесплатно для водителей',
+                'kz'          => 'Жүргізушілер үшін тегін', // TODO: verify with native speaker
+                'cn'          => '司机免费使用', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'First trust bullet under hero CTAs',
+            ],
+            [
+                'key'         => 'public.hero_trust_2',
+                'ru'          => 'Одобрение за 24 часа',
+                'kz'          => '24 сағатта мақұлдау', // TODO: verify with native speaker
+                'cn'          => '24小时内审核', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Second trust bullet under hero CTAs',
+            ],
+            [
+                'key'         => 'public.hero_trust_3',
+                'ru'          => 'Русский, Казахский, Китайский',
+                'kz'          => 'Орыс, Қазақ, Қытай тілдері', // TODO: verify with native speaker
+                'cn'          => '支持俄语、哈萨克语、中文', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Third trust bullet under hero CTAs — multilingual support',
+            ],
+
+            // ─── Public landing page — how it works ───────────────────────────
+            [
+                'key'         => 'public.how_title',
+                'ru'          => 'Как это работает',
+                'kz'          => 'Бұл қалай жұмыс істейді', // TODO: verify with native speaker
+                'cn'          => '如何运作', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Section heading for the "how it works" strip',
+            ],
+            [
+                'key'         => 'public.how_step1_label',
+                'ru'          => 'Шаг 1',
+                'kz'          => '1-қадам', // TODO: verify with native speaker
+                'cn'          => '第一步', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step number label — step 1',
+            ],
+            [
+                'key'         => 'public.how_step1_title',
+                'ru'          => 'Просматривайте грузы',
+                'kz'          => 'Жүктерді шолыңыз', // TODO: verify with native speaker
+                'cn'          => '浏览货物', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 1 headline in how-it-works strip',
+            ],
+            [
+                'key'         => 'public.how_step1_body',
+                'ru'          => 'Фильтруйте по маршруту и дате — без регистрации.',
+                'kz'          => 'Маршрут пен күн бойынша сүзіңіз — тіркелусіз.', // TODO: verify with native speaker
+                'cn'          => '按路线和日期筛选，无需注册。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 1 body text in how-it-works strip',
+            ],
+            [
+                'key'         => 'public.how_step2_label',
+                'ru'          => 'Шаг 2',
+                'kz'          => '2-қадам', // TODO: verify with native speaker
+                'cn'          => '第二步', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step number label — step 2',
+            ],
+            [
+                'key'         => 'public.how_step2_title',
+                'ru'          => 'Зарегистрируйтесь и пройдите проверку',
+                'kz'          => 'Тіркеліп, тексеруден өтіңіз', // TODO: verify with native speaker
+                'cn'          => '注册并完成审核', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 2 headline in how-it-works strip',
+            ],
+            [
+                'key'         => 'public.how_step2_body',
+                'ru'          => 'Загрузите документы. Администратор одобрит аккаунт в течение 24 часов.',
+                'kz'          => 'Құжаттарды жүктеңіз. Әкімші 24 сағат ішінде аккаунтты мақұлдайды.', // TODO: verify with native speaker
+                'cn'          => '上传文件，管理员将在24小时内审核并批准账号。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 2 body text in how-it-works strip',
+            ],
+            [
+                'key'         => 'public.how_step3_label',
+                'ru'          => 'Шаг 3',
+                'kz'          => '3-қадам', // TODO: verify with native speaker
+                'cn'          => '第三步', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step number label — step 3',
+            ],
+            [
+                'key'         => 'public.how_step3_title',
+                'ru'          => 'Берите рейсы и зарабатывайте',
+                'kz'          => 'Рейс алып, табыс табыңыз', // TODO: verify with native speaker
+                'cn'          => '接单赚钱', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 3 headline in how-it-works strip',
+            ],
+            [
+                'key'         => 'public.how_step3_body',
+                'ru'          => 'Откликайтесь на грузы, видите ставку и договаривайтесь с отправителем.',
+                'kz'          => 'Жүктерге жауап беріңіз, ставканы көріп, жөнелтушімен келісіңіз.', // TODO: verify with native speaker
+                'cn'          => '响应货物需求，查看报价，与发货方协商。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Step 3 body text in how-it-works strip',
+            ],
+
+            // ─── Public landing page — listings section ────────────────────────
+            [
+                'key'         => 'public.listings_title',
+                'ru'          => 'Доступные грузы',
+                'kz'          => 'Қолжетімді жүктер', // TODO: verify with native speaker
+                'cn'          => '可用货物', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Subheading above cargo card grid on public listing',
+            ],
+            [
+                'key'         => 'public.listings_subtitle',
+                'ru'          => 'Просматривайте маршруты и подавайте заявку после регистрации',
+                'kz'          => 'Маршруттарды шолыңыз және тіркелгеннен кейін өтінім беріңіз', // TODO: verify with native speaker
+                'cn'          => '浏览路线，注册后即可申请', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Supporting line under listings section heading',
+            ],
+            [
+                'key'         => 'public.listings_count_badge',
+                'ru'          => 'сейчас в поиске водителя',
+                'kz'          => 'қазір жүргізуші іздейді', // TODO: verify with native speaker
+                'cn'          => '个货物正在寻找司机', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Suffix in the count badge next to listings heading (prepend the number)',
+            ],
+
+            // ─── Public landing page — empty state ────────────────────────────
+            [
+                'key'         => 'public.empty_title',
+                'ru'          => 'Ничего не найдено',
+                'kz'          => 'Ештеңе табылмады', // TODO: verify with native speaker
+                'cn'          => '未找到结果', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Empty state heading when filters return no results',
+            ],
+            [
+                'key'         => 'public.empty_body_filtered',
+                'ru'          => 'Ничего не подходит по фильтрам. Попробуйте убрать даты или выбрать соседний город.',
+                'kz'          => 'Фильтрлерге сәйкес ештеңе жоқ. Күндерді алып тастауға немесе жақын қалаңды таңдауға тырысыңыз.', // TODO: verify with native speaker
+                'cn'          => '没有符合筛选条件的结果。请尝试清除日期或选择附近城市。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Empty state body when filters are active',
+            ],
+            [
+                'key'         => 'public.empty_body_no_cargo',
+                'ru'          => 'Сейчас нет доступных грузов. Зарегистрируйтесь — мы уведомим вас, когда появятся новые.',
+                'kz'          => 'Қазір қолжетімді жүктер жоқ. Тіркеліңіз — жаңалары пайда болған кезде хабарлаймыз.', // TODO: verify with native speaker
+                'cn'          => '目前没有可用货物。注册后，有新货物时我们会通知您。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Empty state body when no filters are active',
+            ],
+
+            // ─── Public landing page — footer ─────────────────────────────────
+            [
+                'key'         => 'public.footer_company_name',
+                'ru'          => 'Silk Way',
+                'kz'          => 'Silk Way',
+                'cn'          => 'Silk Way',
+                'group'       => 'public',
+                'description' => 'Company name in footer',
+            ],
+            [
+                'key'         => 'public.footer_company_tagline',
+                'ru'          => 'Платформа для грузоперевозок в Центральной Азии',
+                'kz'          => 'Орталық Азияда жүк тасымалдау платформасы', // TODO: verify with native speaker
+                'cn'          => '中亚货运平台', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Short company tagline in footer',
+            ],
+            [
+                'key'         => 'public.footer_col_product',
+                'ru'          => 'Продукт',
+                'kz'          => 'Өнім', // TODO: verify with native speaker
+                'cn'          => '产品', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer column heading — product links',
+            ],
+            [
+                'key'         => 'public.footer_col_drivers',
+                'ru'          => 'Водителям',
+                'kz'          => 'Жүргізушілерге', // TODO: verify with native speaker
+                'cn'          => '司机专区', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer column heading — driver links',
+            ],
+            [
+                'key'         => 'public.footer_col_legal',
+                'ru'          => 'Документы',
+                'kz'          => 'Құжаттар', // TODO: verify with native speaker
+                'cn'          => '法律文件', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer column heading — legal links',
+            ],
+            [
+                'key'         => 'public.footer_link_browse',
+                'ru'          => 'Просмотр грузов',
+                'kz'          => 'Жүктерді шолу', // TODO: verify with native speaker
+                'cn'          => '浏览货物', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — browse cargo page',
+            ],
+            [
+                'key'         => 'public.footer_link_register',
+                'ru'          => 'Регистрация',
+                'kz'          => 'Тіркелу', // TODO: verify with native speaker
+                'cn'          => '注册', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — register',
+            ],
+            [
+                'key'         => 'public.footer_link_login',
+                'ru'          => 'Войти',
+                'kz'          => 'Кіру', // TODO: verify with native speaker
+                'cn'          => '登录', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — login',
+            ],
+            [
+                'key'         => 'public.footer_link_how',
+                'ru'          => 'Как это работает',
+                'kz'          => 'Бұл қалай жұмыс істейді', // TODO: verify with native speaker
+                'cn'          => '如何运作', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — how it works anchor',
+            ],
+            [
+                'key'         => 'public.footer_link_privacy',
+                'ru'          => 'Политика конфиденциальности',
+                'kz'          => 'Құпиялылық саясаты', // TODO: verify with native speaker
+                'cn'          => '隐私政策', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — privacy policy placeholder',
+            ],
+            [
+                'key'         => 'public.footer_link_terms',
+                'ru'          => 'Условия использования',
+                'kz'          => 'Пайдалану шарттары', // TODO: verify with native speaker
+                'cn'          => '使用条款', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer link — terms of service placeholder',
+            ],
+            [
+                'key'         => 'public.footer_copyright',
+                'ru'          => '© :year Silk Way. Все права защищены.',
+                'kz'          => '© :year Silk Way. Барлық құқықтар қорғалған.', // TODO: verify with native speaker
+                'cn'          => '© :year Silk Way. 保留所有权利。', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Footer copyright line — :year is replaced at render time',
+            ],
+
+            // ─── Public detail page — CTA ─────────────────────────────────────
+            [
+                'key'         => 'public.detail_cta_label',
+                'ru'          => 'Войдите, чтобы подать заявку',
+                'kz'          => 'Өтінім беру үшін кіріңіз', // TODO: verify with native speaker
+                'cn'          => '登录后申请', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Sticky bottom CTA text on public detail page (replaces duplicate in-flow banner)',
+            ],
+            [
+                'key'         => 'public.detail_back',
+                'ru'          => 'Все грузы',
+                'kz'          => 'Барлық жүктер', // TODO: verify with native speaker
+                'cn'          => '所有货物', // TODO: verify with native speaker
+                'group'       => 'public',
+                'description' => 'Back link text on public detail page top bar',
+            ],
         ];
 
         foreach ($translations as $translation) {
