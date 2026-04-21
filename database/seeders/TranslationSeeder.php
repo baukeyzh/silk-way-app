@@ -832,6 +832,15 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                'key' => 'admin.translations_desc',
+                'group' => 'admin',
+                'ru' => 'Управление переводами интерфейса на русском, казахском и китайском',
+                'kz' => 'Интерфейс аудармаларын орыс, қазақ және қытай тілдерінде басқару',
+                'cn' => '管理界面翻译（俄语、哈萨克语、中文）',
+                'description' => 'Subtitle on the admin translations list page',
+
+            ],
+            [
                 'key' => 'admin.user_name',
                 'ru' => 'Имя',
                 'kz' => 'Аты',
