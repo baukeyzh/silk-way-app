@@ -137,6 +137,13 @@
                                     <div>
                                         <p class="text-sm font-medium text-slate-800">{{ $application->driver->name }}</p>
                                         <p class="text-xs text-slate-400">{{ $application->driver->email }}</p>
+                                        {{-- CMR pending badge --}}
+                                        @if(($application->cmr_status ?? 'not_uploaded') === 'pending_review')
+                                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                            <i class="fas fa-file-contract text-xs"></i>
+                                            {{ translate('cmr.badge_pending') }}
+                                        </span>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -250,6 +257,13 @@
                         <div>
                             <p class="text-sm font-medium text-slate-800">{{ $application->driver->name }}</p>
                             <p class="text-xs text-slate-400">{{ $application->driver->email }}</p>
+                            {{-- CMR pending badge --}}
+                            @if(($application->cmr_status ?? 'not_uploaded') === 'pending_review')
+                            <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                <i class="fas fa-file-contract text-xs"></i>
+                                {{ translate('cmr.badge_pending') }}
+                            </span>
+                            @endif
                         </div>
                     </div>
 

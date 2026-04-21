@@ -9,12 +9,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
  * @OA\Info(
  *     title="Silk Way API",
- *     version="1.4.0",
+ *     version="1.5.0",
  *     description="REST API для мобильного приложения Silk Way. Авторизация через Bearer токен (Sanctum).",
  *     @OA\Contact(email="admin@silkway.kz")
  * )
@@ -70,10 +71,10 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|string|email|max:255|unique:users',
-            'password'              => 'required|string|min:8|confirmed',
-            'role'                  => 'required|in:warehouse_employee,driver',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role'     => ['required', Rule::in([User::ROLE_WAREHOUSE_EMPLOYEE, User::ROLE_DRIVER])],
         ]);
 
         User::create([

@@ -655,11 +655,23 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                // Kept for backward compatibility — the UI previously used this key for
+                // cargo in 'in_progress' DB status. Use cargo.status_in_progress for new UI work.
                 'key' => 'cargo.status_picked_up',
                 'ru' => 'Забран',
                 'kz' => 'Алынды',
                 'cn' => '已取',
 
+            ],
+            [
+                // Canonical translation key for DB status value 'in_progress'.
+                // cargo.status_picked_up overlaps and is kept for backward compatibility.
+                'key'         => 'cargo.status_in_progress',
+                'ru'          => 'В пути',
+                'kz'          => 'Жолда', // TODO: verify with native speaker
+                'cn'          => '运输中', // TODO: verify with native speaker
+                'group'       => 'cargo',
+                'description' => 'Cargo status label for in_progress DB value. cargo.status_picked_up is an older alias kept for backward compatibility.',
             ],
             [
                 'key' => 'cargo.status_delivered',
@@ -3014,6 +3026,41 @@ class TranslationSeeder extends Seeder
                 'description' => 'Comment section heading on public detail',
             ],
 
+            // Documents — status labels (also inserted by add_document_translations migration;
+            // using updateOrCreate here ensures a fresh db:seed without migrations still works).
+            [
+                'key'         => 'docs.status_not_uploaded',
+                'ru'          => 'Не загружен',
+                'kz'          => 'Жүктелмеген',
+                'cn'          => '未上传',
+                'group'       => 'docs',
+                'description' => 'Document status: file has not been uploaded yet',
+            ],
+            [
+                'key'         => 'docs.status_pending',
+                'ru'          => 'На проверке',
+                'kz'          => 'Тексерілуде',
+                'cn'          => '审核中',
+                'group'       => 'docs',
+                'description' => 'Document status: file uploaded and awaiting admin review',
+            ],
+            [
+                'key'         => 'docs.status_verified',
+                'ru'          => 'Проверен',
+                'kz'          => 'Тексерілді',
+                'cn'          => '已验证',
+                'group'       => 'docs',
+                'description' => 'Document status: admin has approved the document',
+            ],
+            [
+                'key'         => 'docs.status_rejected',
+                'ru'          => 'Отклонен',
+                'kz'          => 'Қабылданбады',
+                'cn'          => '已拒绝',
+                'group'       => 'docs',
+                'description' => 'Document status: admin has rejected the document',
+            ],
+
             // Documents — missing keys not covered by the migration seeder
             [
                 'key'         => 'docs.verified_count_separator',
@@ -4055,6 +4102,329 @@ class TranslationSeeder extends Seeder
                 'cn'          => '所有货物', // TODO: verify with native speaker
                 'group'       => 'public',
                 'description' => 'Back link text on public detail page top bar',
+            ],
+
+            // ─── CMR UI copy ──────────────────────────────────────────────────
+            // Labels — section headings and field labels
+            [
+                'key'         => 'cmr.label_section_title',
+                'ru'          => 'CMR — подтверждение доставки',
+                'kz'          => 'CMR — жеткізуді растау', // TODO: verify with native speaker
+                'cn'          => 'CMR —交货确认', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Driver CMR section heading on application detail page',
+            ],
+            [
+                'key'         => 'cmr.label_review_section_title',
+                'ru'          => 'Проверка CMR',
+                'kz'          => 'CMR тексеру', // TODO: verify with native speaker
+                'cn'          => 'CMR 审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Reviewer (WE/admin) CMR section heading on application detail page',
+            ],
+            [
+                'key'         => 'cmr.label_helper_text',
+                'ru'          => 'Загрузите фото или скан подписанного CMR для подтверждения доставки.',
+                'kz'          => 'Жеткізуді растау үшін қол қойылған CMR-дің фотосын немесе сканерін жүктеңіз.', // TODO: verify with native speaker
+                'cn'          => '请上传已签署CMR的照片或扫描件以确认交货。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Helper text shown in the driver CMR upload form (not_uploaded state)',
+            ],
+            [
+                'key'         => 'cmr.label_file_types',
+                'ru'          => 'Фото (JPG, PNG) или PDF',
+                'kz'          => 'Сурет (JPG, PNG) немесе PDF', // TODO: verify with native speaker
+                'cn'          => '照片 (JPG, PNG) 或 PDF', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Accepted file types hint inside CMR upload drop zone',
+            ],
+            [
+                'key'         => 'cmr.label_max_size',
+                'ru'          => 'Максимальный размер: 10 МБ',
+                'kz'          => 'Максималды өлшем: 10 МБ', // TODO: verify with native speaker
+                'cn'          => '最大文件大小：10MB', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Max file size hint inside CMR upload drop zone',
+            ],
+            [
+                'key'         => 'cmr.label_confirmed_by',
+                'ru'          => 'Подтверждено',
+                'kz'          => 'Расталды', // TODO: verify with native speaker
+                'cn'          => '已确认', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Prefix before name of user who confirmed the CMR',
+            ],
+            [
+                'key'         => 'cmr.label_locked',
+                'ru'          => 'CMR подтверждён и заблокирован для изменений',
+                'kz'          => 'CMR расталған және өзгертуге бұғатталған', // TODO: verify with native speaker
+                'cn'          => 'CMR已确认，不可更改', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Lock notice shown to driver when CMR is in confirmed state',
+            ],
+            [
+                'key'         => 'cmr.label_previous_file',
+                'ru'          => 'Ранее загруженный файл',
+                'kz'          => 'Бұрын жүктелген файл', // TODO: verify with native speaker
+                'cn'          => '之前上传的文件', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Caption above old file preview when CMR is in rejected state (driver view)',
+            ],
+            [
+                'key'         => 'cmr.label_reupload_prompt',
+                'ru'          => 'Загрузите исправленный CMR:',
+                'kz'          => 'Түзетілген CMR жүктеңіз:', // TODO: verify with native speaker
+                'cn'          => '请上传修正后的CMR：', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Prompt above re-upload form when CMR is in rejected state (driver view)',
+            ],
+            [
+                'key'         => 'cmr.label_rejection_reason',
+                'ru'          => 'Причина отклонения',
+                'kz'          => 'Қабылдамау себебі', // TODO: verify with native speaker
+                'cn'          => '拒绝原因', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Label for rejection reason textarea in reviewer reject form',
+            ],
+            [
+                'key'         => 'cmr.label_rejection_reason_placeholder',
+                'ru'          => 'Опишите, почему CMR не может быть принят...',
+                'kz'          => 'CMR неліктен қабылданбайтынын сипаттаңыз...', // TODO: verify with native speaker
+                'cn'          => '请说明CMR无法被接受的原因...', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Placeholder for rejection reason textarea',
+            ],
+
+            // Actions — button labels
+            [
+                'key'         => 'cmr.action_deliver',
+                'ru'          => 'Доставить груз',
+                'kz'          => 'Жүкті жеткізу', // TODO: verify with native speaker
+                'cn'          => '确认交货', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'CTA button in my-cargo list and application detail when cmr_status = not_uploaded — opens the CMR upload flow',
+            ],
+            [
+                'key'         => 'cmr.action_upload',
+                'ru'          => 'Загрузить CMR',
+                'kz'          => 'CMR жүктеу', // TODO: verify with native speaker
+                'cn'          => '上传CMR', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Submit button inside the CMR file upload form',
+            ],
+            [
+                'key'         => 'cmr.action_open',
+                'ru'          => 'Открыть файл',
+                'kz'          => 'Файлды ашу', // TODO: verify with native speaker
+                'cn'          => '打开文件', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Label on PDF preview card — opens file in new tab',
+            ],
+            [
+                'key'         => 'cmr.action_delete_reupload',
+                'ru'          => 'Удалить и загрузить заново',
+                'kz'          => 'Жою және қайта жүктеу', // TODO: verify with native speaker
+                'cn'          => '删除并重新上传', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Delete + re-upload button shown to driver when cmr_status = pending_review',
+            ],
+            [
+                'key'         => 'cmr.action_delete_confirm',
+                'ru'          => 'Удалить загруженный CMR?',
+                'kz'          => 'Жүктелген CMR жойылсын ба?', // TODO: verify with native speaker
+                'cn'          => '确定删除已上传的CMR吗？', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Browser confirm dialog when driver deletes their uploaded CMR',
+            ],
+            [
+                'key'         => 'cmr.action_confirm',
+                'ru'          => 'Подтвердить CMR',
+                'kz'          => 'CMR растау', // TODO: verify with native speaker
+                'cn'          => '确认CMR', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Primary confirm button for reviewer on application detail (pending_review state)',
+            ],
+            [
+                'key'         => 'cmr.action_confirm_dialog',
+                'ru'          => 'Подтвердить CMR? После подтверждения груз будет помечен как доставлен.',
+                'kz'          => 'CMR растайсыз ба? Растаудан кейін жүк жеткізілген деп белгіленеді.', // TODO: verify with native speaker
+                'cn'          => '确认CMR？确认后货物将被标记为已交付。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Browser confirm dialog shown to reviewer before confirming CMR',
+            ],
+            [
+                'key'         => 'cmr.action_reject',
+                'ru'          => 'Отклонить CMR',
+                'kz'          => 'CMR қабылдамау', // TODO: verify with native speaker
+                'cn'          => '拒绝CMR', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Ghost button that toggles the rejection reason textarea for reviewer',
+            ],
+            [
+                'key'         => 'cmr.action_reject_submit',
+                'ru'          => 'Отклонить',
+                'kz'          => 'Қабылдамау', // TODO: verify with native speaker
+                'cn'          => '拒绝', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Final submit button inside the rejection form',
+            ],
+
+            // Banners — status headline copy
+            [
+                'key'         => 'cmr.banner_pending_title',
+                'ru'          => 'CMR загружен и отправлен на проверку',
+                'kz'          => 'CMR жүктелді және тексеруге жіберілді', // TODO: verify with native speaker
+                'cn'          => 'CMR已上传，待审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Amber banner headline shown to driver when cmr_status = pending_review',
+            ],
+            [
+                'key'         => 'cmr.banner_pending_reviewer_title',
+                'ru'          => 'Водитель загрузил CMR — требуется проверка',
+                'kz'          => 'Жүргізуші CMR жүктеді — тексеру қажет', // TODO: verify with native speaker
+                'cn'          => '司机已上传CMR — 需要审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Amber banner headline shown to reviewer (WE/admin) when cmr_status = pending_review',
+            ],
+            [
+                'key'         => 'cmr.banner_confirmed_title',
+                'ru'          => 'CMR подтверждён',
+                'kz'          => 'CMR расталды', // TODO: verify with native speaker
+                'cn'          => 'CMR已确认', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Emerald banner headline when cmr_status = confirmed (shown to driver and reviewer)',
+            ],
+            [
+                'key'         => 'cmr.banner_rejected_title',
+                'ru'          => 'CMR отклонён',
+                'kz'          => 'CMR қабылданбады', // TODO: verify with native speaker
+                'cn'          => 'CMR已被拒绝', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Rose banner headline when cmr_status = rejected (shown to driver and reviewer)',
+            ],
+
+            // Inline badges — shown in the applications list
+            [
+                'key'         => 'cmr.badge_pending',
+                'ru'          => 'CMR на проверке',
+                'kz'          => 'CMR тексерілуде', // TODO: verify with native speaker
+                'cn'          => 'CMR审核中', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Amber badge shown next to driver name in applications list when cmr_status = pending_review',
+            ],
+            [
+                'key'         => 'cmr.badge_rejected',
+                'ru'          => 'CMR отклонён',
+                'kz'          => 'CMR қабылданбады', // TODO: verify with native speaker
+                'cn'          => 'CMR已拒绝', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Rose badge/label shown in my-cargo list when cmr_status = rejected',
+            ],
+
+            // CMR flow — backend status labels, flash messages and error strings
+            [
+                'key'         => 'cmr.status_not_uploaded',
+                'ru'          => 'CMR не загружен',
+                'kz'          => 'CMR жүктелмеген', // TODO: verify with native speaker
+                'cn'          => 'CMR未上传', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Machine-readable CMR status label: not_uploaded',
+            ],
+            [
+                'key'         => 'cmr.status_pending_review',
+                'ru'          => 'Ожидает проверки',
+                'kz'          => 'Тексеруді күтуде', // TODO: verify with native speaker
+                'cn'          => '待审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Machine-readable CMR status label: pending_review',
+            ],
+            [
+                'key'         => 'cmr.status_confirmed',
+                'ru'          => 'Подтверждён',
+                'kz'          => 'Расталды', // TODO: verify with native speaker
+                'cn'          => '已确认', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Machine-readable CMR status label: confirmed',
+            ],
+            [
+                'key'         => 'cmr.status_rejected',
+                'ru'          => 'Отклонён',
+                'kz'          => 'Қабылданбады', // TODO: verify with native speaker
+                'cn'          => '已拒绝', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Machine-readable CMR status label: rejected',
+            ],
+            [
+                'key'         => 'cmr.upload_success',
+                'ru'          => 'CMR успешно загружен и отправлен на проверку.',
+                'kz'          => 'CMR сәтті жүктелді және тексеруге жіберілді.', // TODO: verify with native speaker
+                'cn'          => 'CMR已成功上传，等待审核。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Flash success shown to driver after CMR upload',
+            ],
+            [
+                'key'         => 'cmr.confirmed_success',
+                'ru'          => 'CMR подтверждён. Груз переведён в статус «Доставлен».',
+                'kz'          => 'CMR расталды. Жүк «Жеткізілді» мәртебесіне ауысты.', // TODO: verify with native speaker
+                'cn'          => 'CMR已确认。货物状态已更新为"已送达"。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Flash success shown to reviewer after confirming a CMR',
+            ],
+            [
+                'key'         => 'cmr.rejected_success',
+                'ru'          => 'CMR отклонён. Водитель может загрузить новый файл.',
+                'kz'          => 'CMR қабылданбады. Жүргізуші жаңа файлды жүктей алады.', // TODO: verify with native speaker
+                'cn'          => 'CMR已拒绝。司机可重新上传文件。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Flash success shown to reviewer after rejecting a CMR',
+            ],
+            [
+                'key'         => 'cmr.deleted_success',
+                'ru'          => 'CMR-файл удалён.',
+                'kz'          => 'CMR файлы жойылды.', // TODO: verify with native speaker
+                'cn'          => 'CMR文件已删除。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Flash success shown to driver after deleting their uploaded CMR',
+            ],
+            [
+                'key'         => 'cmr.invalid_state',
+                'ru'          => 'Действие невозможно в текущем состоянии CMR.',
+                'kz'          => 'CMR ағымдағы күйінде бұл әрекет мүмкін емес.', // TODO: verify with native speaker
+                'cn'          => '当前CMR状态下无法执行此操作。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Error when a CMR state-transition is attempted at the wrong step',
+            ],
+            [
+                'key'         => 'cmr.already_confirmed',
+                'ru'          => 'CMR уже подтверждён и не может быть изменён.',
+                'kz'          => 'CMR расталған және өзгертілуі мүмкін емес.', // TODO: verify with native speaker
+                'cn'          => 'CMR已确认，无法修改。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Error when driver tries to delete or re-upload a confirmed CMR',
+            ],
+            [
+                'key'         => 'cmr.validation_file_required',
+                'ru'          => 'Пожалуйста, выберите файл CMR для загрузки.',
+                'kz'          => 'CMR файлын жүктеу үшін таңдаңыз.', // TODO: verify with native speaker
+                'cn'          => '请选择要上传的CMR文件。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Validation error when cmr_file is absent from the upload request',
+            ],
+            [
+                'key'         => 'cmr.validation_reason_required',
+                'ru'          => 'Укажите причину отклонения CMR.',
+                'kz'          => 'CMR қабылданбау себебін көрсетіңіз.', // TODO: verify with native speaker
+                'cn'          => '请填写拒绝CMR的原因。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Validation error when rejection_reason is absent from the reject request',
+            ],
+            [
+                'key'         => 'cmr.access_denied',
+                'ru'          => 'У вас нет прав для выполнения этого действия с CMR.',
+                'kz'          => 'Бұл CMR әрекетін орындауға рұқсатыңыз жоқ.', // TODO: verify with native speaker
+                'cn'          => '您没有权限执行此CMR操作。', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Generic CMR authorisation denial message',
             ],
         ];
 

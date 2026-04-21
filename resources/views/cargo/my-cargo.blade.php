@@ -117,15 +117,28 @@
                                 <a href="{{ route('cargo.show', $item) }}" class="text-indigo-600 hover:text-indigo-800 transition-colors text-sm">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                @if($item->status === 'picked_up')
-                                <form action="{{ route('applications.mark-delivered', $applications->get($item->id)) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                            class="inline-flex items-center px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
-                                            onclick="return confirm('{{ translate('my_cargo.confirm_mark_delivered') }}')">
-                                        <i class="fas fa-check-double mr-1"></i>{{ translate('my_cargo.mark_delivered') }}
-                                    </button>
-                                </form>
+                                @if($item->status === 'in_progress' || $item->status === 'picked_up')
+                                @php $app = $applications->get($item->id); @endphp
+                                @if($app)
+                                @php $cmrStatus = $app->cmr_status ?? 'not_uploaded'; @endphp
+                                <a href="{{ route('my-cargo.applications.show-from-my-cargo', $app) }}"
+                                   class="inline-flex items-center px-3 py-1 min-h-[36px] text-xs font-medium rounded-lg transition-colors
+                                          @if($cmrStatus === 'pending_review') bg-amber-100 hover:bg-amber-200 text-amber-700
+                                          @elseif($cmrStatus === 'confirmed') bg-emerald-100 hover:bg-emerald-200 text-emerald-700
+                                          @elseif($cmrStatus === 'rejected') bg-rose-100 hover:bg-rose-200 text-rose-700
+                                          @else bg-indigo-600 hover:bg-indigo-700 text-white
+                                          @endif">
+                                    @if($cmrStatus === 'pending_review')
+                                        <i class="fas fa-clock mr-1"></i>{{ translate('cmr.badge_pending') }}
+                                    @elseif($cmrStatus === 'confirmed')
+                                        <i class="fas fa-check-circle mr-1"></i>{{ translate('cmr.banner_confirmed_title') }}
+                                    @elseif($cmrStatus === 'rejected')
+                                        <i class="fas fa-exclamation-circle mr-1"></i>{{ translate('cmr.badge_rejected') }}
+                                    @else
+                                        <i class="fas fa-file-contract mr-1"></i>{{ translate('cmr.action_deliver') }}
+                                    @endif
+                                </a>
+                                @endif
                                 @endif
                             </div>
                         </td>
@@ -171,20 +184,33 @@
                         <div class="text-slate-500">{{ translate('my_cargo.picked_label') }} <span class="font-medium text-slate-700">{{ $item->picked_at?->format($dateFmt) ?? '—' }}</span></div>
                     </div>
                 </div>
-                <div class="px-4 pb-4 flex items-center justify-between" onclick="event.stopPropagation()">
+                <div class="px-4 pb-4 flex items-center justify-between gap-2" onclick="event.stopPropagation()">
                     <a href="{{ route('cargo.show', $item) }}"
-                       class="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors">
+                       class="inline-flex items-center px-3 py-1.5 min-h-[44px] bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-lg transition-colors">
                         <i class="fas fa-eye mr-1.5"></i>{{ translate('my_cargo.view_button') }}
                     </a>
-                    @if($item->status === 'picked_up')
-                    <form action="{{ route('cargo.mark-delivered', $item) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit"
-                                class="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
-                                onclick="return confirm('{{ translate('my_cargo.confirm_mark_delivered') }}')">
-                            <i class="fas fa-check-double mr-1.5"></i>{{ translate('my_cargo.mark_delivered') }}
-                        </button>
-                    </form>
+                    @if($item->status === 'in_progress' || $item->status === 'picked_up')
+                    @php $app = $applications->get($item->id); @endphp
+                    @if($app)
+                    @php $cmrStatus = $app->cmr_status ?? 'not_uploaded'; @endphp
+                    <a href="{{ route('my-cargo.applications.show-from-my-cargo', $app) }}"
+                       class="inline-flex items-center px-3 py-1.5 min-h-[44px] text-xs font-semibold rounded-lg transition-colors
+                              @if($cmrStatus === 'pending_review') bg-amber-100 hover:bg-amber-200 text-amber-700
+                              @elseif($cmrStatus === 'confirmed') bg-emerald-100 hover:bg-emerald-200 text-emerald-700
+                              @elseif($cmrStatus === 'rejected') bg-rose-100 hover:bg-rose-200 text-rose-700
+                              @else bg-indigo-600 hover:bg-indigo-700 text-white
+                              @endif">
+                        @if($cmrStatus === 'pending_review')
+                            <i class="fas fa-clock mr-1.5"></i>{{ translate('cmr.badge_pending') }}
+                        @elseif($cmrStatus === 'confirmed')
+                            <i class="fas fa-check-circle mr-1.5"></i>{{ translate('cmr.banner_confirmed_title') }}
+                        @elseif($cmrStatus === 'rejected')
+                            <i class="fas fa-exclamation-circle mr-1.5"></i>{{ translate('cmr.badge_rejected') }}
+                        @else
+                            <i class="fas fa-file-contract mr-1.5"></i>{{ translate('cmr.action_deliver') }}
+                        @endif
+                    </a>
+                    @endif
                     @endif
                 </div>
             </div>

@@ -82,7 +82,7 @@ class CargoController extends Controller
 
         $applications = $user->cargoApplications()
             ->whereIn('cargo_id', $cargo->pluck('id'))
-            ->where('status', 'approved')
+            ->where('status', \App\Models\CargoApplication::STATUS_APPROVED)
             ->get()
             ->keyBy('cargo_id');
 
@@ -150,7 +150,7 @@ class CargoController extends Controller
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
             'created_by'        => auth()->id(),
-            'status'            => 'available',
+            'status'            => Cargo::STATUS_AVAILABLE,
         ]);
 
         return redirect()->route('cargo.index')->with('success', 'Груз успешно создан!');

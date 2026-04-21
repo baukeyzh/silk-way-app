@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cargo extends Model
 {
+    // ── Status constants ──────────────────────────────────────────────────────
+    public const STATUS_AVAILABLE   = 'available';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_DELIVERED   = 'delivered';
+
     protected $table = 'cargo';
 
     protected $fillable = [
@@ -67,19 +72,24 @@ class Cargo extends Model
 
     public function scopeAvailable($query)
     {
-        return $query->where('status', 'available');
+        return $query->where('status', self::STATUS_AVAILABLE);
     }
 
     public function scopeInProgress($query)
     {
-        return $query->where('status', 'in_progress');
+        return $query->where('status', self::STATUS_IN_PROGRESS);
     }
 
     public function scopeDelivered($query)
     {
-        return $query->where('status', 'delivered');
+        return $query->where('status', self::STATUS_DELIVERED);
     }
 
+    /**
+     * Returns cargo that has ever been picked up (picked_by is set).
+     * NOT equivalent to "currently in progress" — use scopeInProgress() for that.
+     * This scope is useful for "has any driver ever been assigned" queries.
+     */
     public function scopePickedUp($query)
     {
         return $query->whereNotNull('picked_by');

@@ -66,7 +66,15 @@ Route::middleware('auth')->group(function () {
         
         Route::post('/{application}/approve', [CargoApplicationController::class, 'approveApplication'])->name('approve');
         Route::post('/{application}/reject', [CargoApplicationController::class, 'rejectApplication'])->name('reject');
+        // mark-delivered is kept for backwards compatibility; it now redirects to the CMR upload form.
         Route::post('/{application}/mark-delivered', [CargoApplicationController::class, 'markAsDelivered'])->name('mark-delivered');
+
+        // CMR flow
+        Route::post('/{application}/cmr/upload',   [CargoApplicationController::class, 'uploadCmr'])->name('cmr.upload');
+        Route::post('/{application}/cmr/confirm',  [CargoApplicationController::class, 'confirmCmr'])->name('cmr.confirm');
+        Route::post('/{application}/cmr/reject',   [CargoApplicationController::class, 'rejectCmr'])->name('cmr.reject');
+        Route::delete('/{application}/cmr',        [CargoApplicationController::class, 'destroyCmr'])->name('cmr.destroy');
+        Route::get('/{application}/cmr/file',      [CargoApplicationController::class, 'cmrFile'])->name('cmr.file');
     });
     
     // Отдельные роуты для заявок из разных разделов

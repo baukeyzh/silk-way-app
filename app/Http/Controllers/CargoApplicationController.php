@@ -1,16 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\HandlesCmrUploads;
 use App\Models\Cargo;
 use App\Models\CargoApplication;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CargoApplicationController extends Controller
 {
+    use HandlesCmrUploads;
     public function index(Request $request): View
     {
         $user = auth()->user();
@@ -26,7 +32,11 @@ class CargoApplicationController extends Controller
         }
 
         // Whitelist allowed status values; anything outside the set is treated as "all"
-        $allowedStatuses = ['pending', 'approved', 'rejected'];
+        $allowedStatuses = [
+            CargoApplication::STATUS_PENDING,
+            CargoApplication::STATUS_APPROVED,
+            CargoApplication::STATUS_REJECTED,
+        ];
         $status = in_array($request->query('status'), $allowedStatuses, true)
             ? $request->query('status')
             : null; // null means "all"
@@ -44,9 +54,9 @@ class CargoApplicationController extends Controller
         // Compute per-status counts on the role-scoped query before applying filters
         $counts = [
             'all'      => (clone $baseQuery)->count(),
-            'pending'  => (clone $baseQuery)->where('status', 'pending')->count(),
-            'approved' => (clone $baseQuery)->where('status', 'approved')->count(),
-            'rejected' => (clone $baseQuery)->where('status', 'rejected')->count(),
+            'pending'  => (clone $baseQuery)->where('status', CargoApplication::STATUS_PENDING)->count(),
+            'approved' => (clone $baseQuery)->where('status', CargoApplication::STATUS_APPROVED)->count(),
+            'rejected' => (clone $baseQuery)->where('status', CargoApplication::STATUS_REJECTED)->count(),
         ];
 
         // Apply status filter
@@ -93,7 +103,7 @@ class CargoApplicationController extends Controller
             $cargo = Cargo::where('id', $cargo->id)->lockForUpdate()->firstOrFail();
 
             // Проверяем, что груз доступен (статус)
-            if ($cargo->status !== 'available') {
+            if ($cargo->status !== Cargo::STATUS_AVAILABLE) {
                 return back()->withErrors(['cargo' => translate('applications.cargo_already_taken')]);
             }
 
@@ -111,7 +121,7 @@ class CargoApplicationController extends Controller
                 'cargo_id'     => $cargo->id,
                 'driver_id'    => $user->id,
                 'car_id'       => $user->cars->first()?->id,
-                'status'       => 'pending',
+                'status'       => CargoApplication::STATUS_PENDING,
                 'driver_notes' => $validated['driver_notes'] ?? null,
             ]);
 
@@ -195,34 +205,51 @@ class CargoApplicationController extends Controller
             'delivery_address' => 'nullable|string|max:500',
         ]);
 
-        // Обновляем заявку
-        $application->update([
-            'status' => 'approved',
-            'warehouse_notes' => $validated['warehouse_notes'] ?? null,
-            'contact_whatsapp' => $validated['contact_whatsapp'] ?? null,
-            'contact_wechat' => $validated['contact_wechat'] ?? null,
-            'pickup_contact' => $validated['pickup_contact'] ?? null,
-            'pickup_address' => $validated['pickup_address'] ?? null,
-            'delivery_contact' => $validated['delivery_contact'] ?? null,
-            'delivery_address' => $validated['delivery_address'] ?? null,
-            'approved_at' => now(),
-            'approved_by' => $user->id,
-        ]);
+        return DB::transaction(function () use ($application, $validated, $user): RedirectResponse {
+            // Re-fetch with a row-level lock to prevent two concurrent approvals
+            // from landing on the same cargo (e.g. two admins approving at the same time).
+            $application = CargoApplication::where('id', $application->id)->lockForUpdate()->firstOrFail();
 
-        // Обновляем статус груза
-        $application->cargo->update([
-            'status' => 'in_progress',
-            'picked_by' => $application->driver_id,
-            'picked_at' => now(),
-        ]);
+            // Defensive re-check: another admin may have acted between the initial
+            // isPending() guard above and acquiring the lock here.
+            if (!$application->isPending()) {
+                return redirect()->back()->withErrors(['application' => 'Эта заявка уже обработана другим пользователем.']);
+            }
 
-        // Отклоняем все остальные заявки на этот груз
-        $application->cargo->applications()
-            ->where('id', '!=', $application->id)
-            ->where('status', 'pending')
-            ->update(['status' => 'rejected']);
+            // Lock the cargo row to prevent the same cargo being approved via
+            // a different concurrent application.
+            $cargo = Cargo::where('id', $application->cargo_id)->lockForUpdate()->firstOrFail();
 
-        return redirect()->back()->with('success', 'Заявка водителя подтверждена!');
+            if ($cargo->status !== Cargo::STATUS_AVAILABLE) {
+                return redirect()->back()->withErrors(['cargo' => 'Груз уже не доступен — другая заявка была подтверждена первой.']);
+            }
+
+            $application->update([
+                'status'           => CargoApplication::STATUS_APPROVED,
+                'warehouse_notes'  => $validated['warehouse_notes'] ?? null,
+                'contact_whatsapp' => $validated['contact_whatsapp'] ?? null,
+                'contact_wechat'   => $validated['contact_wechat'] ?? null,
+                'pickup_contact'   => $validated['pickup_contact'] ?? null,
+                'pickup_address'   => $validated['pickup_address'] ?? null,
+                'delivery_contact' => $validated['delivery_contact'] ?? null,
+                'delivery_address' => $validated['delivery_address'] ?? null,
+                'approved_at'      => now(),
+                'approved_by'      => $user->id,
+            ]);
+
+            $cargo->update([
+                'status'    => Cargo::STATUS_IN_PROGRESS,
+                'picked_by' => $application->driver_id,
+                'picked_at' => now(),
+            ]);
+
+            $cargo->applications()
+                ->where('id', '!=', $application->id)
+                ->where('status', CargoApplication::STATUS_PENDING)
+                ->update(['status' => CargoApplication::STATUS_REJECTED]);
+
+            return redirect()->back()->with('success', 'Заявка водителя подтверждена!');
+        });
     }
 
     public function rejectApplication(CargoApplication $application): RedirectResponse
@@ -249,38 +276,155 @@ class CargoApplicationController extends Controller
             return redirect()->back()->with('error', 'Эта заявка уже обработана.');
         }
 
-        $application->update(['status' => 'rejected']);
+        $application->update(['status' => CargoApplication::STATUS_REJECTED]);
 
         return redirect()->back()->with('success', 'Заявка водителя отклонена.');
     }
 
+    /**
+     * markAsDelivered is superseded by the CMR confirmation flow.
+     * We keep the route alive and redirect the driver to the CMR upload path
+     * so mobile deep-links and existing bookmarks don't 404.
+     */
     public function markAsDelivered(CargoApplication $application): RedirectResponse
     {
         $user = auth()->user();
-        
-        // Проверяем подтверждение аккаунта
+
         if (!$user->isAdmin() && !$user->isApproved()) {
             abort(403, 'Ваш аккаунт еще не подтвержден администратором.');
         }
-        
-        // Только водители могут отмечать грузы как доставленные
+
         if (!$user->isDriver()) {
             abort(403);
         }
-        
-        // Проверяем, что заявка принадлежит этому водителю
+
         if ($application->driver_id !== $user->id) {
             abort(403, 'Вы можете отмечать только свои грузы как доставленные.');
         }
-        
-        // Проверяем, что заявка подтверждена
-        if (!$application->isApproved()) {
-            return redirect()->route('cargo.my-applications')->with('error', 'Эта заявка еще не подтверждена!');
-        }
 
-        // Обновляем статус груза
-        $application->cargo->update(['status' => 'delivered']);
+        // Redirect to the CMR upload form. The UX agent renders the form there.
+        return redirect()->route('applications.show', $application)
+            ->with('info', 'Для завершения доставки загрузите CMR-документ.');
+    }
 
-        return redirect()->route('applications.my-applications')->with('success', 'Груз отмечен как доставленный!');
+    // ── CMR flow ──────────────────────────────────────────────────────────────
+
+    /**
+     * Driver uploads a CMR file. Allowed when application is approved and CMR
+     * is not_uploaded or rejected (i.e. re-upload after rejection).
+     */
+    public function uploadCmr(Request $request, CargoApplication $application): RedirectResponse
+    {
+        $user = auth()->user();
+
+        abort_unless($user->isApproved() || $user->isAdmin(), 403, translate('cmr.access_denied'));
+        abort_unless($user->isDriver(), 403, translate('cmr.access_denied'));
+        abort_unless($application->driver_id === $user->id, 403, translate('cmr.access_denied'));
+        abort_unless($application->canDriverUploadCmr(), 409, translate('cmr.invalid_state'));
+
+        $request->validate([
+            'cmr_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240',
+        ], [
+            'cmr_file.required' => translate('cmr.validation_file_required'),
+        ]);
+
+        $this->performCmrUpload($application, $request->file('cmr_file'));
+
+        return redirect()->back()->with('success', translate('cmr.upload_success'));
+    }
+
+    /**
+     * WE-of-cargo or admin confirms the uploaded CMR. Atomically moves cargo
+     * to delivered status.
+     */
+    public function confirmCmr(Request $request, CargoApplication $application): RedirectResponse
+    {
+        $user = auth()->user();
+
+        abort_unless($user->isApproved() || $user->isAdmin(), 403, translate('cmr.access_denied'));
+        abort_unless(
+            $user->isAdmin() || $application->cargo->created_by === $user->id,
+            403,
+            translate('cmr.access_denied')
+        );
+        abort_unless($application->canReviewerActOnCmr(), 409, translate('cmr.invalid_state'));
+
+        $this->performCmrConfirm($application, $user);
+
+        return redirect()->back()->with('success', translate('cmr.confirmed_success'));
+    }
+
+    /**
+     * WE-of-cargo or admin rejects the CMR with a mandatory reason.
+     */
+    public function rejectCmr(Request $request, CargoApplication $application): RedirectResponse
+    {
+        $user = auth()->user();
+
+        abort_unless($user->isApproved() || $user->isAdmin(), 403, translate('cmr.access_denied'));
+        abort_unless(
+            $user->isAdmin() || $application->cargo->created_by === $user->id,
+            403,
+            translate('cmr.access_denied')
+        );
+        abort_unless($application->canReviewerActOnCmr(), 409, translate('cmr.invalid_state'));
+
+        $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ], [
+            'rejection_reason.required' => translate('cmr.validation_reason_required'),
+        ]);
+
+        $this->performCmrReject($application, $request->input('rejection_reason'));
+
+        return redirect()->back()->with('success', translate('cmr.rejected_success'));
+    }
+
+    /**
+     * Driver deletes their own uploaded CMR before it has been reviewed.
+     * Confirmed CMRs are immutable.
+     */
+    public function destroyCmr(CargoApplication $application): RedirectResponse
+    {
+        $user = auth()->user();
+
+        abort_unless($user->isApproved() || $user->isAdmin(), 403, translate('cmr.access_denied'));
+        abort_unless($user->isDriver(), 403, translate('cmr.access_denied'));
+        abort_unless($application->driver_id === $user->id, 403, translate('cmr.access_denied'));
+        abort_unless(!$application->isCmrLocked(), 409, translate('cmr.already_confirmed'));
+        abort_unless(
+            in_array($application->cmr_status, [
+                CargoApplication::CMR_STATUS_PENDING_REVIEW,
+                CargoApplication::CMR_STATUS_REJECTED,
+            ], true),
+            409,
+            translate('cmr.invalid_state')
+        );
+
+        $this->performCmrDestroy($application);
+
+        return redirect()->back()->with('success', translate('cmr.deleted_success'));
+    }
+
+    /**
+     * Stream the stored CMR file to an authorised viewer.
+     * Authorised: driver-owner, WE-of-cargo, any admin.
+     */
+    public function cmrFile(CargoApplication $application): StreamedResponse
+    {
+        $user = auth()->user();
+
+        $isDriverOwner  = $user->isDriver() && $application->driver_id === $user->id;
+        $isCargoOwner   = $user->isWarehouseEmployee() && $application->cargo->created_by === $user->id;
+        $isAdmin        = $user->isAdmin();
+
+        abort_unless($isDriverOwner || $isCargoOwner || $isAdmin, 403, translate('cmr.access_denied'));
+        abort_unless($application->cmr_file_path, 404);
+        abort_unless(Storage::disk('local')->exists($application->cmr_file_path), 404);
+
+        return Storage::disk('local')->response(
+            $application->cmr_file_path,
+            $application->cmr_original_filename ?? 'cmr_document'
+        );
     }
 }

@@ -14,6 +14,11 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
+    // ── Role constants ────────────────────────────────────────────────────────
+    public const ROLE_ADMIN              = 'admin';
+    public const ROLE_WAREHOUSE_EMPLOYEE = 'warehouse_employee';
+    public const ROLE_DRIVER             = 'driver';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -83,17 +88,17 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === self::ROLE_ADMIN;
     }
 
     public function isWarehouseEmployee(): bool
     {
-        return $this->role === 'warehouse_employee';
+        return $this->role === self::ROLE_WAREHOUSE_EMPLOYEE;
     }
 
     public function isDriver(): bool
     {
-        return $this->role === 'driver';
+        return $this->role === self::ROLE_DRIVER;
     }
 
     public function isApproved(): bool

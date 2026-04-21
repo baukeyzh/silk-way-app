@@ -59,10 +59,22 @@ Route::prefix('v1')->group(function () {
         });
 
         // === APPLICATIONS ===
+        // Static paths must precede wildcard /{application} to avoid prefix collision.
         Route::get('/applications/my',                     [CargoApplicationController::class, 'myApplications']);
         Route::get('/applications/{application}',          [CargoApplicationController::class, 'show']);
         Route::post('/cargo/{cargo}/apply',                [CargoApplicationController::class, 'apply']);
+        // /deliver is kept for backwards compatibility; returns a hint to use the CMR flow.
         Route::post('/applications/{application}/deliver', [CargoApplicationController::class, 'markAsDelivered']);
+
+        // CMR flow (driver-facing, no extra role middleware — controller enforces ownership)
+        Route::post('/applications/{application}/cmr/upload',  [CargoApplicationController::class, 'uploadCmr']);
+        Route::delete('/applications/{application}/cmr',       [CargoApplicationController::class, 'destroyCmr']);
+        Route::get('/applications/{application}/cmr/file',     [CargoApplicationController::class, 'cmrFile']);
+
+        // CMR review (WE-of-cargo or admin — controller enforces ownership; no blanket role middleware
+        // because WE must own the cargo, not just have the role)
+        Route::post('/applications/{application}/cmr/confirm', [CargoApplicationController::class, 'confirmCmr']);
+        Route::post('/applications/{application}/cmr/reject',  [CargoApplicationController::class, 'rejectCmr']);
 
         Route::middleware('role:warehouse_employee|admin')->group(function () {
             Route::get('/applications',                        [CargoApplicationController::class, 'index']);

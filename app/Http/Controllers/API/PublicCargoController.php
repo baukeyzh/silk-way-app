@@ -74,7 +74,7 @@ class PublicCargoController extends Controller
      */
     public function show(Cargo $cargo): JsonResponse
     {
-        if ($cargo->status !== 'available') {
+        if ($cargo->status !== Cargo::STATUS_AVAILABLE) {
             abort(404);
         }
 

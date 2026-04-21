@@ -18,10 +18,17 @@ class AdminController extends Controller
         
         $pendingUsers = User::pendingApproval()->latest()->get();
         $approvedUsers = User::approved()->latest()->get();
+        // Use inProgress() (status = 'in_progress') as the authoritative count rather than
+        // pickedUp() (picked_by IS NOT NULL). Both return the same count today, but status is
+        // the single source of truth — pickedUp() is a legacy proxy that would diverge if a
+        // cargo is ever re-listed after the driver changes. The 'picked_up' key is kept for
+        // backward compatibility with the dashboard Blade view until a view-layer pass is done.
+        $inProgressCount = \App\Models\Cargo::inProgress()->count();
         $cargoStats = [
-            'total' => \App\Models\Cargo::count(),
-            'available' => \App\Models\Cargo::available()->count(),
-            'picked_up' => \App\Models\Cargo::pickedUp()->count(),
+            'total'       => \App\Models\Cargo::count(),
+            'available'   => \App\Models\Cargo::available()->count(),
+            'in_progress' => $inProgressCount,
+            'picked_up'   => $inProgressCount, // alias for Blade view (TODO: update view in next batch)
         ];
 
         return view('admin.dashboard', compact('pendingUsers', 'approvedUsers', 'cargoStats'));

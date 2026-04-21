@@ -191,7 +191,7 @@ class CargoController extends Controller
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
             'created_by'        => $request->user()->id,
-            'status'            => 'available',
+            'status'            => Cargo::STATUS_AVAILABLE,
         ]);
 
         return response()->json(['data' => new CargoResource($cargo)], 201);

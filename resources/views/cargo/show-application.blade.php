@@ -3,7 +3,16 @@
 @section('title', 'Заявка на груз')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-5">
+@php
+    $cmrStatus = $application->cmr_status ?? 'not_uploaded';
+    $cmrIsImage = false;
+    if (!empty($application->cmr_original_filename)) {
+        $cmrExt = strtolower(pathinfo($application->cmr_original_filename, PATHINFO_EXTENSION));
+        $cmrIsImage = in_array($cmrExt, ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+    }
+@endphp
+
+<div class="max-w-4xl mx-auto space-y-5" x-data="cmrPanel()">
 
     {{-- Back --}}
     <button type="button" onclick="history.back()"
@@ -216,19 +225,430 @@
     </div>
     @endif
 
+    {{-- ================================================================
+         CMR (Consignment Note) Section
+         Shown to the driver when the application is approved and cargo
+         is not yet confirmed delivered, OR to WE/admin when cmr_status
+         is not 'not_uploaded'.
+    ================================================================ --}}
+
+    {{-- ---- DRIVER CMR PANEL ---- --}}
+    @if(auth()->user()->isDriver() && $application->isApproved() && $application->cargo->status !== 'delivered')
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+
+        {{-- Coloured top stripe based on CMR state --}}
+        <div class="h-1 w-full
+            @if($cmrStatus === 'pending_review') bg-amber-400
+            @elseif($cmrStatus === 'confirmed') bg-emerald-500
+            @elseif($cmrStatus === 'rejected') bg-rose-500
+            @else bg-slate-200
+            @endif"></div>
+
+        <div class="p-6">
+            <h2 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <div class="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-contract text-indigo-600 text-xs"></i>
+                </div>
+                {{ translate('cmr.label_section_title') }}
+            </h2>
+
+            {{-- STATE: not_uploaded — show upload form --}}
+            @if($cmrStatus === 'not_uploaded')
+            <div class="space-y-4">
+                <p class="text-sm text-slate-500">{{ translate('cmr.label_helper_text') }}</p>
+
+                <form action="{{ route('applications.cmr.upload', $application) }}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                      class="space-y-4">
+                    @csrf
+                    <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl px-4 py-8 cursor-pointer hover:border-indigo-300 hover:bg-slate-50/60 transition-colors"
+                           x-data="{ fileName: '' }"
+                           @dragover.prevent
+                           @drop.prevent="
+                               const f = $event.dataTransfer.files[0];
+                               if (f) { fileName = f.name; $el.querySelector('input[type=file]').files = $event.dataTransfer.files; }
+                           ">
+                        <input type="file"
+                               name="cmr_file"
+                               accept="image/*,.pdf"
+                               class="sr-only"
+                               @change="fileName = $event.target.files[0]?.name ?? ''"
+                               required>
+                        <i class="fas text-3xl mb-3"
+                           :class="fileName ? 'fa-check-circle text-indigo-500' : 'fa-cloud-upload-alt text-slate-300'"></i>
+                        <p class="text-sm font-medium text-slate-600 text-center" x-show="!fileName">
+                            {{ translate('cmr.label_file_types') }}
+                        </p>
+                        <p class="text-xs text-slate-400 mt-1 text-center" x-show="!fileName">
+                            {{ translate('cmr.label_max_size') }}
+                        </p>
+                        <p class="text-sm font-medium text-indigo-700 truncate max-w-full"
+                           x-show="fileName"
+                           x-cloak
+                           x-text="fileName"></p>
+                    </label>
+
+                    <button type="submit"
+                            class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 min-h-[44px] bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                        <i class="fas fa-upload mr-2"></i>{{ translate('cmr.action_upload') }}
+                    </button>
+                </form>
+            </div>
+            @endif
+
+            {{-- STATE: pending_review — amber banner + preview + delete action --}}
+            @if($cmrStatus === 'pending_review')
+            <div class="space-y-4">
+                <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3.5">
+                    <i class="fas fa-clock text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-amber-800">{{ translate('cmr.banner_pending_title') }}</p>
+                        @if($application->cmr_uploaded_at)
+                        <p class="text-xs text-amber-600 mt-0.5">{{ $application->cmr_uploaded_at->diffForHumans() }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- File preview --}}
+                @if($cmrIsImage)
+                <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                   class="block rounded-lg overflow-hidden bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors">
+                    <img src="{{ route('applications.cmr.file', $application) }}"
+                         alt="CMR"
+                         loading="lazy"
+                         class="w-full h-40 sm:h-48 object-cover">
+                </a>
+                @else
+                <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                   class="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors">
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0">
+                        <i class="fas fa-file-pdf text-rose-500"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-700 truncate">{{ $application->cmr_original_filename }}</p>
+                        <p class="text-xs text-slate-500">{{ translate('cmr.action_open') }}</p>
+                    </div>
+                    <i class="fas fa-external-link-alt text-slate-400 text-xs shrink-0"></i>
+                </a>
+                @endif
+
+                {{-- Delete & re-upload --}}
+                <form action="{{ route('applications.cmr.destroy', $application) }}"
+                      method="POST"
+                      onsubmit="return confirm('{{ translate('cmr.action_delete_confirm') }}')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2.5 min-h-[44px] border border-rose-300 text-rose-600 hover:bg-rose-50 text-sm font-medium rounded-lg transition-colors">
+                        <i class="fas fa-trash-alt mr-2"></i>{{ translate('cmr.action_delete_reupload') }}
+                    </button>
+                </form>
+            </div>
+            @endif
+
+            {{-- STATE: confirmed — emerald banner + preview, locked --}}
+            @if($cmrStatus === 'confirmed')
+            <div class="space-y-4">
+                <div class="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3.5">
+                    <i class="fas fa-check-circle text-emerald-500 text-sm mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-emerald-800">{{ translate('cmr.banner_confirmed_title') }}</p>
+                        @if($application->confirmedBy ?? null)
+                        <p class="text-xs text-emerald-700 mt-0.5">
+                            {{ translate('cmr.label_confirmed_by') }}: {{ $application->confirmedBy->name }}
+                            @if($application->cmr_confirmed_at)
+                                &middot; {{ $application->cmr_confirmed_at->diffForHumans() }}
+                            @endif
+                        </p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- File preview --}}
+                @if($cmrIsImage)
+                <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                   class="block rounded-lg overflow-hidden bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors">
+                    <img src="{{ route('applications.cmr.file', $application) }}"
+                         alt="CMR"
+                         loading="lazy"
+                         class="w-full h-40 sm:h-48 object-cover">
+                </a>
+                @else
+                <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                   class="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors">
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0">
+                        <i class="fas fa-file-pdf text-rose-500"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-700 truncate">{{ $application->cmr_original_filename }}</p>
+                        <p class="text-xs text-slate-500">{{ translate('cmr.action_open') }}</p>
+                    </div>
+                    <i class="fas fa-external-link-alt text-slate-400 text-xs shrink-0"></i>
+                </a>
+                @endif
+
+                {{-- Lock notice --}}
+                <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
+                    <i class="fas fa-lock text-slate-400 shrink-0"></i>
+                    <span>{{ translate('cmr.label_locked') }}</span>
+                </div>
+            </div>
+            @endif
+
+            {{-- STATE: rejected — rose banner + preview + re-upload form --}}
+            @if($cmrStatus === 'rejected')
+            <div class="space-y-4">
+                <div class="flex items-start gap-3 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3.5">
+                    <i class="fas fa-times-circle text-rose-500 text-sm mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-rose-800">{{ translate('cmr.banner_rejected_title') }}</p>
+                        @if($application->cmr_rejection_reason)
+                        <p class="text-sm text-rose-700 mt-1">{{ $application->cmr_rejection_reason }}</p>
+                        @endif
+                        @if($application->cmr_rejected_at)
+                        <p class="text-xs text-rose-500 mt-0.5">{{ $application->cmr_rejected_at->diffForHumans() }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Old file preview (for reference) --}}
+                @if($cmrIsImage)
+                <div>
+                    <p class="text-xs font-medium text-slate-500 mb-2">{{ translate('cmr.label_previous_file') }}</p>
+                    <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                       class="block rounded-lg overflow-hidden bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors opacity-60">
+                        <img src="{{ route('applications.cmr.file', $application) }}"
+                             alt="CMR"
+                             loading="lazy"
+                             class="w-full h-40 sm:h-48 object-cover">
+                    </a>
+                </div>
+                @elseif($application->cmr_original_filename)
+                <div>
+                    <p class="text-xs font-medium text-slate-500 mb-2">{{ translate('cmr.label_previous_file') }}</p>
+                    <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+                       class="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors opacity-60">
+                        <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0">
+                            <i class="fas fa-file-pdf text-rose-500"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-700 truncate">{{ $application->cmr_original_filename }}</p>
+                        </div>
+                        <i class="fas fa-external-link-alt text-slate-400 text-xs shrink-0"></i>
+                    </a>
+                </div>
+                @endif
+
+                {{-- Re-upload form --}}
+                <p class="text-sm font-medium text-slate-700">{{ translate('cmr.label_reupload_prompt') }}</p>
+                <form action="{{ route('applications.cmr.upload', $application) }}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                      class="space-y-3">
+                    @csrf
+                    <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl px-4 py-6 cursor-pointer hover:border-indigo-300 hover:bg-slate-50/60 transition-colors"
+                           x-data="{ fileName: '' }"
+                           @dragover.prevent
+                           @drop.prevent="
+                               const f = $event.dataTransfer.files[0];
+                               if (f) { fileName = f.name; $el.querySelector('input[type=file]').files = $event.dataTransfer.files; }
+                           ">
+                        <input type="file"
+                               name="cmr_file"
+                               accept="image/*,.pdf"
+                               class="sr-only"
+                               @change="fileName = $event.target.files[0]?.name ?? ''"
+                               required>
+                        <i class="fas text-2xl mb-2"
+                           :class="fileName ? 'fa-check-circle text-indigo-500' : 'fa-cloud-upload-alt text-slate-300'"></i>
+                        <p class="text-sm text-slate-500 text-center" x-show="!fileName">{{ translate('cmr.label_file_types') }}</p>
+                        <p class="text-xs text-slate-400 text-center" x-show="!fileName">{{ translate('cmr.label_max_size') }}</p>
+                        <p class="text-sm font-medium text-indigo-700 truncate max-w-full"
+                           x-show="fileName"
+                           x-cloak
+                           x-text="fileName"></p>
+                    </label>
+                    <button type="submit"
+                            class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-2.5 min-h-[44px] bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                        <i class="fas fa-upload mr-2"></i>{{ translate('cmr.action_upload') }}
+                    </button>
+                </form>
+            </div>
+            @endif
+
+        </div>
+    </div>
+    @endif
+    {{-- /DRIVER CMR PANEL --}}
+
+    {{-- ---- REVIEWER CMR PANEL (WE / Admin) ---- --}}
+    @if((auth()->user()->isWarehouseEmployee() || auth()->user()->isAdmin()) && $cmrStatus !== 'not_uploaded')
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+
+        {{-- Top stripe --}}
+        <div class="h-1 w-full
+            @if($cmrStatus === 'pending_review') bg-amber-400
+            @elseif($cmrStatus === 'confirmed') bg-emerald-500
+            @elseif($cmrStatus === 'rejected') bg-rose-500
+            @else bg-slate-200
+            @endif"></div>
+
+        <div class="p-6">
+            <h2 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <div class="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-contract text-indigo-600 text-xs"></i>
+                </div>
+                {{ translate('cmr.label_review_section_title') }}
+            </h2>
+
+            {{-- Status banner --}}
+            @if($cmrStatus === 'pending_review')
+            <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3.5 mb-4">
+                <i class="fas fa-clock text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                <div>
+                    <p class="text-sm font-semibold text-amber-800">{{ translate('cmr.banner_pending_reviewer_title') }}</p>
+                    @if($application->cmr_uploaded_at)
+                    <p class="text-xs text-amber-600 mt-0.5">{{ $application->cmr_uploaded_at->diffForHumans() }}</p>
+                    @endif
+                    @if($application->cmr_original_filename)
+                    <p class="text-xs text-amber-700 mt-0.5">{{ $application->cmr_original_filename }}</p>
+                    @endif
+                </div>
+            </div>
+            @elseif($cmrStatus === 'confirmed')
+            <div class="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3.5 mb-4">
+                <i class="fas fa-check-circle text-emerald-500 text-sm mt-0.5 shrink-0"></i>
+                <div>
+                    <p class="text-sm font-semibold text-emerald-800">{{ translate('cmr.banner_confirmed_title') }}</p>
+                    @if($application->confirmedBy ?? null)
+                    <p class="text-xs text-emerald-700 mt-0.5">
+                        {{ translate('cmr.label_confirmed_by') }}: {{ $application->confirmedBy->name }}
+                        @if($application->cmr_confirmed_at)
+                            &middot; {{ $application->cmr_confirmed_at->diffForHumans() }}
+                        @endif
+                    </p>
+                    @endif
+                </div>
+            </div>
+            @elseif($cmrStatus === 'rejected')
+            <div class="flex items-start gap-3 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3.5 mb-4">
+                <i class="fas fa-times-circle text-rose-500 text-sm mt-0.5 shrink-0"></i>
+                <div>
+                    <p class="text-sm font-semibold text-rose-800">{{ translate('cmr.banner_rejected_title') }}</p>
+                    @if($application->cmr_rejection_reason)
+                    <p class="text-sm text-rose-700 mt-1">{{ $application->cmr_rejection_reason }}</p>
+                    @endif
+                    @if($application->cmr_rejected_at)
+                    <p class="text-xs text-rose-500 mt-0.5">{{ $application->cmr_rejected_at->diffForHumans() }}</p>
+                    @endif
+                </div>
+            </div>
+            @endif
+
+            {{-- File preview --}}
+            @if($cmrIsImage)
+            <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+               class="block rounded-lg overflow-hidden bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors mb-4">
+                <img src="{{ route('applications.cmr.file', $application) }}"
+                     alt="CMR"
+                     loading="lazy"
+                     class="w-full h-40 sm:h-48 object-cover">
+            </a>
+            @elseif($application->cmr_original_filename)
+            <a href="{{ route('applications.cmr.file', $application) }}" target="_blank" rel="noopener"
+               class="flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg bg-rose-50 border border-rose-100 hover:bg-rose-100 transition-colors mb-4">
+                <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0">
+                    <i class="fas fa-file-pdf text-rose-500"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-slate-700 truncate">{{ $application->cmr_original_filename }}</p>
+                    <p class="text-xs text-slate-500">{{ translate('cmr.action_open') }}</p>
+                </div>
+                <i class="fas fa-external-link-alt text-slate-400 text-xs shrink-0"></i>
+            </a>
+            @endif
+
+            {{-- Action buttons — only when pending_review --}}
+            @if($cmrStatus === 'pending_review')
+            <div class="space-y-3" x-data="{ showReject: false }">
+
+                {{-- Confirm action --}}
+                <form action="{{ route('applications.cmr.confirm', $application) }}"
+                      method="POST"
+                      x-ref="confirmForm"
+                      @submit.prevent="
+                          if (confirm('{{ addslashes(translate('cmr.action_confirm_dialog')) }}')) {
+                              $refs.confirmForm.submit();
+                          }
+                      ">
+                    @csrf
+                    <button type="submit"
+                            class="inline-flex items-center px-6 py-2.5 min-h-[44px] bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                        <i class="fas fa-check-circle mr-2"></i>{{ translate('cmr.action_confirm') }}
+                    </button>
+                </form>
+
+                {{-- Toggle reject form --}}
+                <div>
+                    <button type="button"
+                            @click="showReject = !showReject"
+                            class="inline-flex items-center px-5 py-2.5 min-h-[44px] border border-rose-300 text-rose-600 hover:bg-rose-50 text-sm font-medium rounded-lg transition-colors">
+                        <i class="fas fa-times-circle mr-2"></i>{{ translate('cmr.action_reject') }}
+                    </button>
+
+                    <div x-show="showReject"
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         class="mt-3">
+                        <form action="{{ route('applications.cmr.reject', $application) }}"
+                              method="POST"
+                              class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                                    {{ translate('cmr.label_rejection_reason') }}
+                                    <span class="text-rose-500 ml-0.5">*</span>
+                                </label>
+                                <textarea name="rejection_reason"
+                                          rows="3"
+                                          required
+                                          placeholder="{{ translate('cmr.label_rejection_reason_placeholder') }}"
+                                          class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-rose-400 focus:border-transparent outline-none resize-none"></textarea>
+                            </div>
+                            <button type="submit"
+                                    class="inline-flex items-center px-5 py-2.5 min-h-[44px] bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                                <i class="fas fa-times mr-2"></i>{{ translate('cmr.action_reject_submit') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            @endif
+            {{-- /action buttons --}}
+
+        </div>
+    </div>
+    @endif
+    {{-- /REVIEWER CMR PANEL --}}
+
     {{-- Actions --}}
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <div class="flex flex-wrap gap-3">
-            @if(auth()->user()->isDriver() && $application->isApproved() && $application->cargo->status !== 'delivered')
-            <form action="{{ route('applications.mark-delivered', $application) }}" method="POST">
-                @csrf
-                <button type="submit"
-                        class="inline-flex items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                    <i class="fas fa-check mr-2"></i>Отметить как доставленный
-                </button>
-            </form>
-            @endif
-
+            {{--
+                Driver "Deliver" action is now replaced by the CMR flow above.
+                The old mark-delivered route is kept for backward compatibility
+                but the UI entry point for this application is the CMR panel.
+                We show the legacy button ONLY if cmr_status is confirmed
+                (CMR confirmed → cargo can be marked delivered by the reviewer,
+                so from the driver's perspective it's already done), or if the
+                application is in a state where CMR is not relevant.
+                TODO for Laravel agent: markAsDelivered should be triggered
+                automatically when CMR is confirmed, not by driver action.
+            --}}
             @if(auth()->user()->isWarehouseEmployee() && $application->isPending())
             <form action="{{ route('applications.approve', $application) }}" method="POST">
                 @csrf
@@ -253,4 +673,10 @@
         </div>
     </div>
 </div>
+
+<script>
+function cmrPanel() {
+    return {};
+}
+</script>
 @endsection

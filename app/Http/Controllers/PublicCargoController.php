@@ -93,7 +93,7 @@ class PublicCargoController extends Controller
         }
 
         // Guest: only available cargo is visible
-        if ($cargo->status !== 'available') {
+        if ($cargo->status !== Cargo::STATUS_AVAILABLE) {
             abort(404);
         }
 

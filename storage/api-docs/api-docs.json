@@ -6,7 +6,7 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.4.0"
+        "version": "1.5.0"
     },
     "servers": [
         {
@@ -1259,8 +1259,8 @@
                 "tags": [
                     "Applications"
                 ],
-                "summary": "Отметить груз как доставленный",
-                "description": "Только для водителя-владельца заявки.",
+                "summary": "[DEPRECATED] Отметить груз как доставленный",
+                "description": "DEPRECATED: This endpoint is no longer operational. The delivery status is now set exclusively via the CMR confirmation flow. Upload a CMR document via POST /api/v1/applications/{id}/cmr/upload, then have the warehouse employee or admin confirm it via POST /api/v1/applications/{id}/cmr/confirm. The route is kept alive so existing clients receive an actionable error instead of 404.",
                 "operationId": "89c970e82d31b6b3ac968c63cbdc959b",
                 "parameters": [
                     {
@@ -1273,15 +1273,19 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Груз отмечен как доставленный",
+                    "410": {
+                        "description": "Endpoint deprecated — use CMR upload flow",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Груз доставлен."
+                                            "example": "This endpoint is deprecated."
+                                        },
+                                        "use_instead": {
+                                            "type": "string",
+                                            "example": "POST /api/v1/applications/{id}/cmr/upload"
                                         }
                                     },
                                     "type": "object"
@@ -1291,6 +1295,300 @@
                     },
                     "403": {
                         "description": "Нет доступа или заявка не подтверждена"
+                    }
+                },
+                "deprecated": true,
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/cmr/upload": {
+            "post": {
+                "tags": [
+                    "CMR"
+                ],
+                "summary": "Загрузить CMR-документ",
+                "description": "Только для водителя-владельца заявки. CMR должен быть в статусе not_uploaded или rejected.",
+                "operationId": "80e61aa732329ffb9ed3742c465d6d7f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "cmr_file"
+                                ],
+                                "properties": {
+                                    "cmr_file": {
+                                        "description": "JPG, PNG или PDF, макс. 10 МБ",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "CMR загружен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "CMR успешно загружен."
+                                        },
+                                        "cmr_status": {
+                                            "type": "string",
+                                            "example": "pending_review"
+                                        },
+                                        "uploaded_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "Неверное состояние CMR"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации файла"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/cmr/confirm": {
+            "post": {
+                "tags": [
+                    "CMR"
+                ],
+                "summary": "Подтвердить CMR",
+                "description": "WE-владелец груза или администратор. CMR должен быть в статусе pending_review. Груз переходит в delivered.",
+                "operationId": "30d3259a6b8e3388f0eaccb9443e80d4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMR подтверждён, груз доставлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "CMR подтверждён."
+                                        },
+                                        "application": {
+                                            "$ref": "#/components/schemas/CargoApplication"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "CMR не в статусе pending_review"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/cmr/reject": {
+            "post": {
+                "tags": [
+                    "CMR"
+                ],
+                "summary": "Отклонить CMR",
+                "description": "WE-владелец груза или администратор. CMR должен быть в статусе pending_review.",
+                "operationId": "0efafd0ae8a658c383ea29acbcfcc2f6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rejection_reason"
+                                ],
+                                "properties": {
+                                    "rejection_reason": {
+                                        "type": "string",
+                                        "example": "Документ нечитаем, переснимите.",
+                                        "maxLength": 1000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "CMR отклонён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "rejection_reason": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "CMR не в статусе pending_review"
+                    },
+                    "422": {
+                        "description": "rejection_reason обязателен"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/cmr": {
+            "delete": {
+                "tags": [
+                    "CMR"
+                ],
+                "summary": "Удалить загруженный CMR",
+                "description": "Только водитель-владелец. Нельзя удалить подтверждённый CMR.",
+                "operationId": "737256341a11f8c01de176cdd5dbb110",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CMR удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "409": {
+                        "description": "CMR уже подтверждён или нет файла для удаления"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/applications/{id}/cmr/file": {
+            "get": {
+                "tags": [
+                    "CMR"
+                ],
+                "summary": "Скачать CMR-файл",
+                "description": "Доступен водителю-владельцу, WE-владельцу груза и администратору.",
+                "operationId": "e4a7447143050efe9b8cc98c3d8861ae",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Бинарный файл CMR",
+                        "content": {
+                            "application/octet-stream": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Файл не найден"
                     }
                 },
                 "security": [
@@ -2688,7 +2986,8 @@
                         "enum": [
                             "pending",
                             "approved",
-                            "rejected"
+                            "rejected",
+                            "delivered"
                         ]
                     },
                     "driver_notes": {
@@ -2725,6 +3024,39 @@
                         "nullable": true
                     },
                     "approved_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "cmr_status": {
+                        "type": "string",
+                        "example": "not_uploaded",
+                        "enum": [
+                            "not_uploaded",
+                            "pending_review",
+                            "confirmed",
+                            "rejected"
+                        ]
+                    },
+                    "cmr_original_filename": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "cmr_uploaded_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "cmr_confirmed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "cmr_rejection_reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "cmr_rejected_at": {
                         "type": "string",
                         "format": "date-time",
                         "nullable": true
@@ -3027,6 +3359,10 @@
         {
             "name": "Documents",
             "description": "Документы водителя"
+        },
+        {
+            "name": "CMR",
+            "description": "CMR"
         },
         {
             "name": "Public Cargo",

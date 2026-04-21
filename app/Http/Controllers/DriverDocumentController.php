@@ -286,11 +286,15 @@ class DriverDocumentController extends Controller
                 'verified_by'      => $admin->id,
             ]);
         } else {
+            // On rejection: do NOT write verified_by — that column is semantically
+            // "who verified/approved this". Leaving it null on rejection preserves
+            // the invariant that verified_by is only set for approved documents.
+            // verified_at is also cleared; rejection_reason carries the audit trail.
             $document->update([
                 'status'           => DriverDocument::STATUS_REJECTED,
                 'rejection_reason' => $request->input('rejection_reason'),
                 'verified_at'      => null,
-                'verified_by'      => $admin->id,
+                'verified_by'      => null,
             ]);
         }
 
