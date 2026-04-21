@@ -10,6 +10,7 @@
         "darkaonline/l5-swagger": "^11.0",
         "doctrine/annotations": "^2.0",
         "laravel/framework": "^12.0",
+        "laravel/mcp": "^0.4.1",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
         "symfony/type-info": "^7.2"

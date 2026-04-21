@@ -75,6 +75,8 @@ return array(
     'Laravel\\Sail\\' => array($vendorDir . '/laravel/sail/src'),
     'Laravel\\Prompts\\' => array($vendorDir . '/laravel/prompts/src'),
     'Laravel\\Pail\\' => array($vendorDir . '/laravel/pail/src'),
+    'Laravel\\Mcp\\Server\\' => array($vendorDir . '/laravel/mcp/src/Server'),
+    'Laravel\\Mcp\\' => array($vendorDir . '/laravel/mcp/src'),
     'L5Swagger\\' => array($vendorDir . '/darkaonline/l5-swagger/src'),
     'Illuminate\\Support\\' => array($vendorDir . '/laravel/framework/src/Illuminate/Macroable', $vendorDir . '/laravel/framework/src/Illuminate/Collections', $vendorDir . '/laravel/framework/src/Illuminate/Conditionable'),
     'Illuminate\\' => array($vendorDir . '/laravel/framework/src/Illuminate'),

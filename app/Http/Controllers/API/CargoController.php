@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
@@ -16,14 +18,15 @@ class CargoController extends Controller
      * @OA\Get(
      *     path="/cargo",
      *     tags={"Cargo"},
-     *     summary="Список грузов",
-     *     description="Публично: все гости видят только available. Сотрудник склада: свои грузы. Иначе: доступные грузы.",
+     *     summary="Список грузов (авторизованный)",
+     *     description="Требует Sanctum-токен. Сотрудник склада видит свои грузы; все остальные — доступные. Поддерживает фильтрацию по статусу.",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(name="search", in="query", description="Поиск по локации или типу", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="status", in="query", description="Фильтр по статусу (игнорируется для гостей)", @OA\Schema(type="string", enum={"available","in_progress","delivered"})),
+     *     @OA\Parameter(name="status", in="query", description="Фильтр по статусу", @OA\Schema(type="string", enum={"available","in_progress","delivered"})),
      *     @OA\Parameter(name="page",   in="query", description="Номер страницы", @OA\Schema(type="integer", default=1)),
      *     @OA\Response(
      *         response=200,
-     *         description="Список грузов (price_usd, created_by, picked_by скрыты для неавторизованных)",
+     *         description="Список грузов с полными данными (price_usd, created_by, picked_by включены)",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Cargo")),
      *             @OA\Property(property="meta", type="object",
@@ -34,7 +37,8 @@ class CargoController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=429, description="Слишком много запросов (30/мин для гостей)")
+     *     @OA\Response(response=401, description="Не авторизован"),
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function index(Request $request): ResourceCollection
@@ -43,9 +47,7 @@ class CargoController extends Controller
         $search = $request->query('search');
         $status = $request->query('status');
 
-        if ($user === null) {
-            $query = Cargo::available();
-        } elseif ($user->isWarehouseEmployee()) {
+        if ($user->isWarehouseEmployee()) {
             $query = $user->createdCargo();
         } else {
             $query = Cargo::available();
@@ -60,7 +62,7 @@ class CargoController extends Controller
             });
         }
 
-        if ($status && $user !== null) {
+        if ($status) {
             $query->where('status', $status);
         }
 
@@ -101,27 +103,22 @@ class CargoController extends Controller
      * @OA\Get(
      *     path="/cargo/{id}",
      *     tags={"Cargo"},
-     *     summary="Детали груза",
-     *     description="Публично: только available. Авторизованные: полный доступ по роли. price_usd, created_by, picked_by скрыты для неавторизованных.",
+     *     summary="Детали груза (авторизованный)",
+     *     description="Требует Sanctum-токен. Сотрудник склада может видеть только свои грузы. Возвращает полные данные, включая price_usd, created_by, picked_by.",
+     *     security={{"sanctum":{}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Детали груза",
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/Cargo"))
      *     ),
+     *     @OA\Response(response=401, description="Не авторизован"),
      *     @OA\Response(response=403, description="Нет доступа"),
      *     @OA\Response(response=404, description="Не найдено"),
-     *     @OA\Response(response=429, description="Слишком много запросов (30/мин для гостей)")
+     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
      * )
      */
     public function show(Request $request, Cargo $cargo): JsonResponse
     {
         $user = $request->user();
-
-        if ($user === null) {
-            if ($cargo->status !== 'available') {
-                abort(404);
-            }
-            return response()->json(['data' => new CargoResource($cargo)]);
-        }
 
         if ($user->isWarehouseEmployee() && $cargo->created_by !== $user->id) {
             return response()->json(['message' => 'Нет доступа к этому грузу.'], 403);

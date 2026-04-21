@@ -27,6 +27,9 @@ class CargoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        // defensive: this resource is only served from auth-required endpoints,
+        // but we keep the auth guard here so a future mis-route cannot leak
+        // price/owner data to unauthenticated callers.
         $isAuth = $request->user() !== null;
 
         return [
@@ -36,15 +39,15 @@ class CargoResource extends JsonResource
             'cargo_type'   => $this->localized_cargo_type,
             'volume'       => $this->volume,
             'weight'       => $this->weight,
-            'price_usd'    => $this->when($isAuth, fn () => $this->price_usd),
+            'price_usd'    => $this->when($isAuth, fn () => $this->price_usd),           // defensive
             'ready_date'   => $this->ready_date?->toDateString(),
             'comment'      => $this->localized_comment,
             'status'       => $this->status,
-            'created_by'   => $this->when(
+            'created_by'   => $this->when(                                                // defensive
                 $isAuth && $this->relationLoaded('createdBy'),
                 fn () => new UserResource($this->createdBy)
             ),
-            'picked_by'    => $this->when(
+            'picked_by'    => $this->when(                                                // defensive
                 $isAuth && $this->relationLoaded('pickedBy'),
                 fn () => new UserResource($this->pickedBy)
             ),

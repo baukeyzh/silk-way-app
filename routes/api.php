@@ -6,6 +6,7 @@ use App\Http\Controllers\API\CarController;
 use App\Http\Controllers\API\CargoApplicationController;
 use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\DriverDocumentController;
+use App\Http\Controllers\API\PublicCargoController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -21,21 +22,22 @@ Route::prefix('v1')->group(function () {
         });
     });
 
-    // === AUTHENTICATED CARGO ROUTES THAT NEED PATH PRECEDENCE ===
-    // /cargo/my must register before the public /cargo/{cargo} catch-all
-    // otherwise /cargo/{cargo} would match "my" as a cargo id.
-    Route::middleware(['auth:sanctum', 'throttle:cargo-auth'])->group(function () {
-        Route::get('/cargo/my', [CargoController::class, 'myCargo']);
-    });
-
-    // === PUBLIC CARGO BROWSE ===
-    Route::middleware('throttle:cargo-guest')->group(function () {
-        Route::get('/cargo',         [CargoController::class, 'index']);
-        Route::get('/cargo/{cargo}', [CargoController::class, 'show']);
+    // === PUBLIC CARGO BROWSE (no token required) ===
+    Route::prefix('public')->middleware('throttle:cargo-guest')->group(function () {
+        Route::get('/cargo',         [PublicCargoController::class, 'index']);
+        Route::get('/cargo/{cargo}', [PublicCargoController::class, 'show']);
     });
 
     // === AUTHENTICATED ROUTES ===
     Route::middleware(['auth:sanctum', 'throttle:cargo-auth'])->group(function () {
+
+        // /cargo/my must register before /cargo/{cargo} to avoid "my" being
+        // matched as a cargo ID by the wildcard route.
+        Route::get('/cargo/my', [CargoController::class, 'myCargo']);
+
+        // === CARGO (read) ===
+        Route::get('/cargo',         [CargoController::class, 'index']);
+        Route::get('/cargo/{cargo}', [CargoController::class, 'show']);
 
         // === CARGO (mutations) ===
         Route::middleware('role:warehouse_employee|admin')->group(function () {

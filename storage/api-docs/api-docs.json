@@ -6,7 +6,7 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.2.0"
+        "version": "1.3.0"
     },
     "servers": [
         {
@@ -1305,8 +1305,8 @@
                 "tags": [
                     "Cargo"
                 ],
-                "summary": "Список грузов",
-                "description": "Публично: все гости видят только available. Сотрудник склада: свои грузы. Иначе: доступные грузы.",
+                "summary": "Список грузов (авторизованный)",
+                "description": "Требует Sanctum-токен. Сотрудник склада видит свои грузы; все остальные — доступные. Поддерживает фильтрацию по статусу.",
                 "operationId": "869bb80d609559fe5c1e389413eca875",
                 "parameters": [
                     {
@@ -1320,7 +1320,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Фильтр по статусу (игнорируется для гостей)",
+                        "description": "Фильтр по статусу",
                         "schema": {
                             "type": "string",
                             "enum": [
@@ -1342,7 +1342,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Список грузов (price_usd, created_by, picked_by скрыты для неавторизованных)",
+                        "description": "Список грузов с полными данными (price_usd, created_by, picked_by включены)",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1376,10 +1376,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "429": {
-                        "description": "Слишком много запросов (30/мин для гостей)"
+                        "description": "Слишком много запросов (120/мин)"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -1528,8 +1536,8 @@
                 "tags": [
                     "Cargo"
                 ],
-                "summary": "Детали груза",
-                "description": "Публично: только available. Авторизованные: полный доступ по роли. price_usd, created_by, picked_by скрыты для неавторизованных.",
+                "summary": "Детали груза (авторизованный)",
+                "description": "Требует Sanctum-токен. Сотрудник склада может видеть только свои грузы. Возвращает полные данные, включая price_usd, created_by, picked_by.",
                 "operationId": "780f52c51bd9b51b0f02b1b8b79f9da9",
                 "parameters": [
                     {
@@ -1557,6 +1565,9 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
                     "403": {
                         "description": "Нет доступа"
                     },
@@ -1564,9 +1575,14 @@
                         "description": "Не найдено"
                     },
                     "429": {
-                        "description": "Слишком много запросов (30/мин для гостей)"
+                        "description": "Слишком много запросов (120/мин)"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -2320,6 +2336,118 @@
                     }
                 ]
             }
+        },
+        "/public/cargo": {
+            "get": {
+                "tags": [
+                    "Public Cargo"
+                ],
+                "summary": "Публичный список грузов",
+                "description": "Доступно без авторизации. Возвращает только грузы со статусом available. Цена, создатель и исполнитель не возвращаются.",
+                "operationId": "45319c230c39ee43a2bbd5ca0fa25f9a",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по локации или типу",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список доступных грузов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PublicCargo"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (30/мин)"
+                    }
+                }
+            }
+        },
+        "/public/cargo/{id}": {
+            "get": {
+                "tags": [
+                    "Public Cargo"
+                ],
+                "summary": "Публичные детали груза",
+                "description": "Доступно без авторизации. Возвращает только грузы со статусом available. Цена, создатель и исполнитель не возвращаются.",
+                "operationId": "9a2d93f91c8c757717aa2483df0ed7b1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали груза",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/PublicCargo"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено или груз недоступен"
+                    },
+                    "429": {
+                        "description": "Слишком много запросов (30/мин)"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -2519,6 +2647,58 @@
                 },
                 "type": "object"
             },
+            "PublicCargo": {
+                "description": "Публичное представление груза. Поля price_usd, created_by, picked_by отсутствуют намеренно.",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "from": {
+                        "type": "string",
+                        "example": "Алматы"
+                    },
+                    "to": {
+                        "type": "string",
+                        "example": "Пекин"
+                    },
+                    "cargo_type": {
+                        "type": "string",
+                        "example": "Электроника"
+                    },
+                    "volume": {
+                        "type": "number",
+                        "example": 20.5
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 5
+                    },
+                    "ready_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-01"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Хрупкий груз",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "available",
+                        "enum": [
+                            "available"
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-04-18T12:00:00.000000Z"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "properties": {
                     "id": {
@@ -2586,6 +2766,10 @@
         {
             "name": "Documents",
             "description": "Документы водителя"
+        },
+        {
+            "name": "Public Cargo",
+            "description": "Public Cargo"
         }
     ]
 }

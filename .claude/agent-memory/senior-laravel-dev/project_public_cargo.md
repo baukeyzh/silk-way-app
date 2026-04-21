@@ -1,13 +1,22 @@
 ---
-name: Public Cargo Listing Architecture
-description: How the public /cargo and /cargo/{id} pages are wired — critical for any future changes to cargo routing
+name: Public Cargo Routing Architecture
+description: Route split between public /public/cargo (no auth) and auth-required /cargo; separate controller and resource for the public surface
 type: project
 ---
 
-`GET /cargo` and `GET /cargo/{cargo}` are served by `PublicCargoController` registered BEFORE the auth middleware group in `routes/web.php`. The existing `Route::resource('cargo', CargoController::class)` inside the auth group now uses `->except(['index', 'show'])` so it does not re-register those two route names.
+Public cargo browse is served from `/api/v1/public/cargo` (and `/{cargo}`) via `PublicCargoController` using `PublicCargoResource`. No token required; middleware stack is `throttle:cargo-guest` only.
 
-`cargo.index` and `cargo.show` named routes both point to `PublicCargoController`.
+The authenticated list/show (`GET /api/v1/cargo`, `GET /api/v1/cargo/{cargo}`) live inside the `auth:sanctum + throttle:cargo-auth` group. The null-user branches in `CargoController::index` and `::show` were deleted — those methods now assume `$user !== null`.
 
-**Why:** Guests need to browse cargo without auth. Auth users hitting the same URL get the full-featured view because `PublicCargoController` checks `auth()->check()` and delegates to private methods that replicate `CargoController` logic, returning `cargo.index` or `cargo.show` views. No redirect was used because redirect to `route('cargo.index')` would loop (same URL).
+**Why:** Separating access models by URL prefix (`/public/`) makes the access contract explicit for mobile consumers and Swagger. A dedicated `PublicCargoController` keeps the auth'd controller unaware of guest concerns (single-responsibility).
 
-**How to apply:** Any future changes to cargo listing/show logic must be applied in BOTH `CargoController` (auth path, private methods in `PublicCargoController` replicate it) AND `PublicCargoController` (guest path). If CargoController's index/show logic changes, update `PublicCargoController::authenticatedIndex()` and `::authenticatedShow()` to match. Consider refactoring into a shared service if the duplication grows.
+**How to apply:** When adding new public-facing API endpoints, place them under the `Route::prefix('public')->middleware('throttle:cargo-guest')` group in `routes/api.php`. Create a matching `Public*Resource` that explicitly omits sensitive fields rather than using `$this->when()`.
+
+Key decisions:
+- Controller: separate `PublicCargoController` (Option A) — different access models, different response shapes.
+- `CargoResource` `$this->when()` guards retained as defensive belt-and-braces; annotated with `// defensive` comment.
+- `status=` query param stripped from public endpoint (hardcoded to `Cargo::available()` scope, no override possible).
+- No eager loading of `createdBy`/`pickedBy` in the public controller — avoids unnecessary JOINs.
+- Swagger version bumped to 1.3.0; `PublicCargo` schema added; auth'd endpoints carry `security={{"sanctum":{}}}`.
+- `/cargo/my` precedence: still registered first inside the auth group before the `/{cargo}` wildcard.
+- Note: web routes (`routes/web.php`) and Blade views were NOT touched — they are a separate concern.
