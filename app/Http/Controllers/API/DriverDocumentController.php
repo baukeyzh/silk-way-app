@@ -6,6 +6,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Concerns\UploadsDriverDocuments;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DriverDocumentResource;
 use App\Models\DriverDocument;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -23,26 +24,15 @@ class DriverDocumentController extends Controller
      * @OA\Get(
      *     path="/documents",
      *     tags={"Documents"},
-     *     summary="Get the authenticated driver's 6 documents",
+     *     summary="Get the authenticated driver's document slots",
+     *     description="Returns all 6 document slots for the authenticated driver, creating placeholder rows for any that do not yet exist. Each slot includes stable type codes, localized labels, upload constraints, and current file state. Locale is resolved from Accept-Language header (ru/kk/zh) or ?lang= query param.",
      *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="lang", in="query", required=false, description="Override locale: ru | kz | cn", @OA\Schema(type="string", enum={"ru","kz","cn"})),
      *     @OA\Response(
      *         response=200,
-     *         description="List of driver documents",
+     *         description="List of driver document slots",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id",                type="integer",  example=1),
-     *                     @OA\Property(property="document_type",     type="string",   example="driver_license"),
-     *                     @OA\Property(property="status",            type="string",   example="pending"),
-     *                     @OA\Property(property="original_filename", type="string",   example="prava.pdf", nullable=true),
-     *                     @OA\Property(property="expires_at",        type="string",   format="date", example="2027-08-15", nullable=true),
-     *                     @OA\Property(property="rejection_reason",  type="string",   example=null, nullable=true),
-     *                     @OA\Property(property="verified_at",       type="string",   format="date-time", example=null, nullable=true),
-     *                     @OA\Property(property="is_optional",       type="boolean",  example=false),
-     *                     @OA\Property(property="created_at",        type="string",   format="date-time"),
-     *                     @OA\Property(property="updated_at",        type="string",   format="date-time")
-     *                 )
-     *             )
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/DriverDocument"))
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthenticated"),
@@ -54,8 +44,123 @@ class DriverDocumentController extends Controller
         $documents = DriverDocument::getOrCreateForDriver($request->user()->id);
 
         return response()->json([
-            'data' => $documents->map(fn (DriverDocument $d) => $this->documentShape($d))->values(),
+            'data' => DriverDocumentResource::collection($documents)->resolve(),
         ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/documents/types",
+     *     tags={"Documents"},
+     *     summary="Catalog of all document type definitions",
+     *     description="Returns the static catalog of all document slot types with localized labels, descriptions, and upload constraints. Useful for onboarding screens that need to show the required document list before the user registers. Requires driver authentication for consistency with the rest of the documents surface.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="lang", in="query", required=false, description="Override locale: ru | kz | cn", @OA\Schema(type="string", enum={"ru","kz","cn"})),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Document type catalog",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/DocumentTypeDefinition"))
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — driver role required")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="DocumentTypeDefinition",
+     *     type="object",
+     *     description="Static definition of a document slot type. Not tied to a specific driver.",
+     *     required={"type","label","description","required","accepted_mime_types","max_file_size_bytes"},
+     *     @OA\Property(property="type",                type="string",  example="driver_license",    description="Stable machine-readable code. Use this in POST /documents/by-type/{type}/upload."),
+     *     @OA\Property(property="label",               type="string",  example="Водительское удостоверение", description="Localized name."),
+     *     @OA\Property(property="description",         type="string",  example="Лицевая и обратная стороны удостоверения", description="Localized upload hint."),
+     *     @OA\Property(property="required",            type="boolean", example=true),
+     *     @OA\Property(property="accepted_mime_types", type="array",   @OA\Items(type="string"), example={"image/jpeg","image/png","application/pdf"}),
+     *     @OA\Property(property="max_file_size_bytes", type="integer", example=5242880)
+     * )
+     */
+    public function types(): JsonResponse
+    {
+        return response()->json([
+            'data' => DriverDocument::typeCatalog(),
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/documents/by-type/{type}/upload",
+     *     tags={"Documents"},
+     *     summary="Upload a file to a document slot by type code",
+     *     description="Semantic alternative to POST /documents/{id}/upload. The driver does not need to first GET /documents to discover the numeric ID — they can upload directly using the stable type code (e.g. 'driver_license'). The server resolves the driver's slot by (authenticated user, type code). Behaves identically to the ID-based upload endpoint.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="type", in="path", required=true, description="Stable document type code", @OA\Schema(type="string", enum={"driver_license","vehicle_passport","trailer_passport","category_cert","green_card","insurance"})),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"file"},
+     *                 @OA\Property(property="file",       type="string", format="binary", description="PDF, JPG, JPEG or PNG, max 5 MB"),
+     *                 @OA\Property(property="expires_at", type="string", format="date",   description="Optional expiry date (YYYY-MM-DD)", example="2027-08-15")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Document updated, status set to pending",
+     *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/DriverDocument"))
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Unknown type code"),
+     *     @OA\Response(response=422, description="Validation error or slot status does not allow upload")
+     * )
+     */
+    public function uploadByType(Request $request, string $type): JsonResponse
+    {
+        // Reject unknown type codes before hitting the DB.
+        abort_unless(
+            in_array($type, DriverDocument::DOCUMENT_TYPES, true),
+            404,
+            'Unknown document type: ' . $type
+        );
+
+        // getOrCreateForDriver ensures the slot exists; then we scope to this type.
+        $document = DriverDocument::where('user_id', $request->user()->id)
+            ->where('document_type', $type)
+            ->first();
+
+        // Slot may not exist yet if getOrCreateForDriver was never called — create it.
+        if ($document === null) {
+            $document = DriverDocument::create([
+                'user_id'       => $request->user()->id,
+                'document_type' => $type,
+                'status'        => DriverDocument::STATUS_NOT_UPLOADED,
+            ]);
+        }
+
+        abort_unless(
+            in_array($document->status, [
+                DriverDocument::STATUS_NOT_UPLOADED,
+                DriverDocument::STATUS_REJECTED,
+            ], true),
+            422,
+            'Document cannot be replaced in its current status. Delete it first.'
+        );
+
+        $request->validate([
+            'file'       => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'expires_at' => ['nullable', 'date', 'after:today'],
+        ]);
+
+        $this->uploadFileToSlot(
+            $document,
+            $request->file('file'),
+            $request->input('expires_at') ?: null
+        );
+
+        return response()->json(['data' => DriverDocumentResource::make($document->fresh())->resolve()]);
     }
 
     /**
@@ -122,7 +227,7 @@ class DriverDocumentController extends Controller
             'expires_at'        => $request->input('expires_at') ?: null,
         ]);
 
-        return response()->json(['data' => $this->documentShape($document->fresh())]);
+        return response()->json(['data' => DriverDocumentResource::make($document->fresh())->resolve()]);
     }
 
     /**
@@ -481,32 +586,6 @@ class DriverDocumentController extends Controller
             ]);
         }
 
-        return response()->json(['data' => $this->documentShape($document->fresh())]);
-    }
-
-    // -------------------------------------------------------------------------
-    // Internal helpers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Canonical JSON shape for a single DriverDocument.
-     * Inlined here intentionally — no dedicated API Resource class per project convention.
-     *
-     * @return array<string, mixed>
-     */
-    private function documentShape(DriverDocument $document): array
-    {
-        return [
-            'id'                => $document->id,
-            'document_type'     => $document->document_type,
-            'status'            => $document->status,
-            'original_filename' => $document->original_filename,
-            'expires_at'        => $document->expires_at?->toDateString(),
-            'rejection_reason'  => $document->rejection_reason,
-            'verified_at'       => $document->verified_at?->toIso8601String(),
-            'is_optional'       => $document->isOptional(),
-            'created_at'        => $document->created_at?->toIso8601String(),
-            'updated_at'        => $document->updated_at?->toIso8601String(),
-        ];
+        return response()->json(['data' => DriverDocumentResource::make($document->fresh())->resolve()]);
     }
 }

@@ -80,13 +80,16 @@ Route::prefix('v1')->group(function () {
         });
 
         // === DOCUMENTS ===
-        Route::get('/documents',                          [DriverDocumentController::class, 'index'])->middleware('role:driver');
-        // batch must be registered before /{document}/upload to avoid "batch" being matched as a document ID
-        Route::post('/documents/batch',                   [DriverDocumentController::class, 'batchUpload'])->middleware('role:driver')->name('api.documents.batchUpload');
-        Route::post('/documents/{document}/upload',       [DriverDocumentController::class, 'upload'])->middleware('role:driver');
-        Route::delete('/documents/{document}',            [DriverDocumentController::class, 'destroy'])->middleware('role:driver');
-        Route::get('/admin/documents',                    [DriverDocumentController::class, 'adminIndex'])->middleware('role:admin');
-        Route::post('/admin/documents/{document}/verify', [DriverDocumentController::class, 'adminVerify'])->middleware('role:admin');
+        // Static routes must be registered before wildcard routes to avoid
+        // "types" or "batch" being matched as a document ID / type code.
+        Route::get('/documents',                                  [DriverDocumentController::class, 'index'])->middleware('role:driver');
+        Route::get('/documents/types',                            [DriverDocumentController::class, 'types'])->middleware('role:driver')->name('api.documents.types');
+        Route::post('/documents/batch',                           [DriverDocumentController::class, 'batchUpload'])->middleware('role:driver')->name('api.documents.batchUpload');
+        Route::post('/documents/by-type/{type}/upload',          [DriverDocumentController::class, 'uploadByType'])->middleware('role:driver')->name('api.documents.uploadByType');
+        Route::post('/documents/{document}/upload',               [DriverDocumentController::class, 'upload'])->middleware('role:driver');
+        Route::delete('/documents/{document}',                    [DriverDocumentController::class, 'destroy'])->middleware('role:driver');
+        Route::get('/admin/documents',                            [DriverDocumentController::class, 'adminIndex'])->middleware('role:admin');
+        Route::post('/admin/documents/{document}/verify',         [DriverDocumentController::class, 'adminVerify'])->middleware('role:admin');
     });
 
 });

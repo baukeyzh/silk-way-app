@@ -6,7 +6,7 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.3.0"
+        "version": "1.4.0"
     },
     "servers": [
         {
@@ -1740,11 +1740,28 @@
                 "tags": [
                     "Documents"
                 ],
-                "summary": "Get the authenticated driver's 6 documents",
+                "summary": "Get the authenticated driver's document slots",
+                "description": "Returns all 6 document slots for the authenticated driver, creating placeholder rows for any that do not yet exist. Each slot includes stable type codes, localized labels, upload constraints, and current file state. Locale is resolved from Accept-Language header (ru/kk/zh) or ?lang= query param.",
                 "operationId": "5ac557e9fe9108f4a41ffe061805e903",
+                "parameters": [
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Override locale: ru | kz | cn",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ru",
+                                "kz",
+                                "cn"
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "List of driver documents",
+                        "description": "List of driver document slots",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1752,55 +1769,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "document_type": {
-                                                        "type": "string",
-                                                        "example": "driver_license"
-                                                    },
-                                                    "status": {
-                                                        "type": "string",
-                                                        "example": "pending"
-                                                    },
-                                                    "original_filename": {
-                                                        "type": "string",
-                                                        "example": "prava.pdf",
-                                                        "nullable": true
-                                                    },
-                                                    "expires_at": {
-                                                        "type": "string",
-                                                        "format": "date",
-                                                        "example": "2027-08-15",
-                                                        "nullable": true
-                                                    },
-                                                    "rejection_reason": {
-                                                        "type": "string",
-                                                        "example": null,
-                                                        "nullable": true
-                                                    },
-                                                    "verified_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": null,
-                                                        "nullable": true
-                                                    },
-                                                    "is_optional": {
-                                                        "type": "boolean",
-                                                        "example": false
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/DriverDocument"
                                             }
                                         }
                                     },
@@ -1814,6 +1783,152 @@
                     },
                     "403": {
                         "description": "Forbidden — driver role required"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents/types": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Catalog of all document type definitions",
+                "description": "Returns the static catalog of all document slot types with localized labels, descriptions, and upload constraints. Useful for onboarding screens that need to show the required document list before the user registers. Requires driver authentication for consistency with the rest of the documents surface.",
+                "operationId": "6f923b73689de5567da0e82e91b9ff87",
+                "parameters": [
+                    {
+                        "name": "lang",
+                        "in": "query",
+                        "description": "Override locale: ru | kz | cn",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ru",
+                                "kz",
+                                "cn"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document type catalog",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DocumentTypeDefinition"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — driver role required"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/documents/by-type/{type}/upload": {
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Upload a file to a document slot by type code",
+                "description": "Semantic alternative to POST /documents/{id}/upload. The driver does not need to first GET /documents to discover the numeric ID — they can upload directly using the stable type code (e.g. 'driver_license'). The server resolves the driver's slot by (authenticated user, type code). Behaves identically to the ID-based upload endpoint.",
+                "operationId": "a7b9034c30c04db31a89e60a9affced8",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Stable document type code",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "driver_license",
+                                "vehicle_passport",
+                                "trailer_passport",
+                                "category_cert",
+                                "green_card",
+                                "insurance"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "PDF, JPG, JPEG or PNG, max 5 MB",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "expires_at": {
+                                        "description": "Optional expiry date (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2027-08-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Document updated, status set to pending",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/DriverDocument"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Unknown type code"
+                    },
+                    "422": {
+                        "description": "Validation error or slot status does not allow upload"
                     }
                 },
                 "security": [
@@ -2452,6 +2567,54 @@
     },
     "components": {
         "schemas": {
+            "DocumentTypeDefinition": {
+                "description": "Static definition of a document slot type. Not tied to a specific driver.",
+                "required": [
+                    "type",
+                    "label",
+                    "description",
+                    "required",
+                    "accepted_mime_types",
+                    "max_file_size_bytes"
+                ],
+                "properties": {
+                    "type": {
+                        "description": "Stable machine-readable code. Use this in POST /documents/by-type/{type}/upload.",
+                        "type": "string",
+                        "example": "driver_license"
+                    },
+                    "label": {
+                        "description": "Localized name.",
+                        "type": "string",
+                        "example": "Водительское удостоверение"
+                    },
+                    "description": {
+                        "description": "Localized upload hint.",
+                        "type": "string",
+                        "example": "Лицевая и обратная стороны удостоверения"
+                    },
+                    "required": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "accepted_mime_types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "image/jpeg",
+                            "image/png",
+                            "application/pdf"
+                        ]
+                    },
+                    "max_file_size_bytes": {
+                        "type": "integer",
+                        "example": 5242880
+                    }
+                },
+                "type": "object"
+            },
             "Car": {
                 "properties": {
                     "id": {
@@ -2643,6 +2806,104 @@
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "DriverDocument": {
+                "description": "A single driver document slot with its current upload state.",
+                "required": [
+                    "id",
+                    "type",
+                    "label",
+                    "description",
+                    "required",
+                    "status",
+                    "accepted_mime_types",
+                    "max_file_size_bytes"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Primary key — use this in POST /documents/{id}/upload",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "type": {
+                        "description": "Stable machine-readable type code. Never localized, never changes between releases.",
+                        "type": "string",
+                        "example": "driver_license"
+                    },
+                    "label": {
+                        "description": "Localized human-readable name. Respects Accept-Language.",
+                        "type": "string",
+                        "example": "Водительское удостоверение"
+                    },
+                    "description": {
+                        "description": "Localized one-line hint for what the user should photograph.",
+                        "type": "string",
+                        "example": "Лицевая и обратная стороны удостоверения"
+                    },
+                    "required": {
+                        "description": "Whether this slot must be verified before the driver can accept cargo.",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending",
+                        "enum": [
+                            "not_uploaded",
+                            "pending",
+                            "verified",
+                            "rejected"
+                        ]
+                    },
+                    "file_url": {
+                        "description": "Auth-scoped URL to fetch/preview the uploaded file. null if not uploaded.",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "original_filename": {
+                        "type": "string",
+                        "example": "prava.pdf",
+                        "nullable": true
+                    },
+                    "uploaded_at": {
+                        "description": "ISO-8601 timestamp of the last upload.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-04-18T10:00:00+00:00",
+                        "nullable": true
+                    },
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2027-08-15",
+                        "nullable": true
+                    },
+                    "rejection_reason": {
+                        "description": "Admin rejection reason. Non-null only when status=rejected.",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "accepted_mime_types": {
+                        "description": "File picker filter for mobile.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "image/jpeg",
+                            "image/png",
+                            "application/pdf"
+                        ]
+                    },
+                    "max_file_size_bytes": {
+                        "description": "Maximum allowed upload size in bytes (5 MB). Validate client-side before upload.",
+                        "type": "integer",
+                        "example": 5242880
                     }
                 },
                 "type": "object"

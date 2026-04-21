@@ -272,8 +272,8 @@
 
                                 {{-- Metadata row --}}
                                 <div class="text-xs text-slate-400 space-y-1">
-                                    @if($doc->uploaded_at ?? $doc->updated_at)
-                                    <p><i class="fas fa-clock mr-1"></i>{{ translate('docs.admin_uploaded') }}: {{ ($doc->uploaded_at ?? $doc->updated_at)?->diffForHumans() }}</p>
+                                    @if($doc->file_path && $doc->updated_at)
+                                    <p><i class="fas fa-clock mr-1"></i>{{ translate('docs.admin_uploaded') }}: {{ $doc->updated_at->diffForHumans() }}</p>
                                     @endif
                                     @if($doc->expires_at)
                                     <p><i class="fas fa-calendar-alt mr-1"></i>{{ translate('docs.expiry_date') }}: {{ $doc->expires_at->format('d.m.Y') }}</p>
@@ -309,36 +309,6 @@
 
                                     @if($status !== 'rejected')
                                     {{-- Reject toggle + form --}}
-                                    <div>
-                                        <button type="button"
-                                                @click="showReject = !showReject"
-                                                class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold rounded-lg transition-colors">
-                                            <i class="fas fa-times"></i>{{ translate('docs.reject') }}
-                                        </button>
-
-                                        <div x-show="showReject" x-transition x-cloak class="mt-2">
-                                            <form method="POST"
-                                                  action="{{ route('admin.documents.verify', $doc) }}"
-                                                  x-data="{ reason: '' }"
-                                                  @submit.prevent="if(reason.trim()){$el.submit()}else{$el.querySelector('textarea').focus()}">
-                                                @csrf
-                                                <input type="hidden" name="action" value="reject">
-                                                <textarea name="rejection_reason"
-                                                          x-model="reason"
-                                                          rows="2"
-                                                          placeholder="{{ translate('docs.rejection_reason') }}"
-                                                          class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none resize-none mb-2"></textarea>
-                                                <button type="submit"
-                                                        class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition-colors">
-                                                    <i class="fas fa-ban"></i>{{ translate('docs.admin_confirm_reject') }}
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    @endif
-
-                                    @if($status === 'verified')
-                                    {{-- Re-reject option for already-verified docs --}}
                                     <div>
                                         <button type="button"
                                                 @click="showReject = !showReject"

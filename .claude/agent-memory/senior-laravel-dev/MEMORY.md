@@ -1,2 +1,3 @@
 - [Public Cargo Routing Architecture](project_public_cargo.md) — PublicCargoController owns cargo.index/show; resource excludes index/show; auth users get full view inline, not via redirect
 - [Driver Document Batch Upload Architecture](project_docs_batch_upload.md) — form= attr pattern, batchUpload() redirect contract, private helper, translation key locations
+- [Driver Document API Mobile Contract](project_docs_api_contract.md) — DriverDocumentResource 13-field shape, type code list, docs.type.{code}.* translation pattern, route order rules, file_url fallback

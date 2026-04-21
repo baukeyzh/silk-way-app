@@ -3077,6 +3077,119 @@ class TranslationSeeder extends Seeder
                 'group'       => 'docs',
                 'description' => 'CTA link in admin documents empty state to clear active filter/search',
             ],
+
+            // ---------------------------------------------------------------
+            // Document type labels and descriptions — mobile API contract
+            // Key pattern: docs.type.{code}.label / docs.type.{code}.description
+            // ---------------------------------------------------------------
+
+            // driver_license
+            [
+                'key'         => 'docs.type.driver_license.label',
+                'ru'          => 'Водительское удостоверение',
+                'kz'          => 'Жүргізушілік куәлік', // TODO: verify with native speaker
+                'cn'          => '驾驶证', // TODO: verify with native speaker
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for driver_license document slot',
+            ],
+            [
+                'key'         => 'docs.type.driver_license.description',
+                'ru'          => 'Лицевая и обратная стороны вашего водительского удостоверения',
+                'kz'          => 'Жүргізушілік куәліктің алдыңғы және артқы беттері', // TODO: verify
+                'cn'          => '驾驶证正面和背面', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for driver_license slot',
+            ],
+
+            // vehicle_passport
+            [
+                'key'         => 'docs.type.vehicle_passport.label',
+                'ru'          => 'Технический паспорт ТС',
+                'kz'          => 'Көлік құралының техникалық паспорты', // TODO: verify
+                'cn'          => '车辆技术证', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for vehicle_passport document slot',
+            ],
+            [
+                'key'         => 'docs.type.vehicle_passport.description',
+                'ru'          => 'Технический паспорт вашего транспортного средства',
+                'kz'          => 'Көлік құралыңыздың техникалық паспорты', // TODO: verify
+                'cn'          => '您车辆的技术护照', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for vehicle_passport slot',
+            ],
+
+            // trailer_passport
+            [
+                'key'         => 'docs.type.trailer_passport.label',
+                'ru'          => 'Технический паспорт прицепа',
+                'kz'          => 'Тіркеменің техникалық паспорты', // TODO: verify
+                'cn'          => '拖车技术证', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for trailer_passport document slot',
+            ],
+            [
+                'key'         => 'docs.type.trailer_passport.description',
+                'ru'          => 'Технический паспорт прицепа или полуприцепа',
+                'kz'          => 'Тіркеме немесе жартылай тіркеменің техникалық паспорты', // TODO: verify
+                'cn'          => '拖车或半挂车的技术护照', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for trailer_passport slot',
+            ],
+
+            // category_cert
+            [
+                'key'         => 'docs.type.category_cert.label',
+                'ru'          => 'Свидетельство о категории',
+                'kz'          => 'Санат куәлігі', // TODO: verify
+                'cn'          => '类别证书', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for category_cert document slot',
+            ],
+            [
+                'key'         => 'docs.type.category_cert.description',
+                'ru'          => 'Свидетельство о допуске к перевозкам соответствующей категории грузов',
+                'kz'          => 'Тиісті санаттағы жүктерді тасымалдауға рұқсат куәлігі', // TODO: verify
+                'cn'          => '相应类别货物运输许可证书', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for category_cert slot',
+            ],
+
+            // green_card
+            [
+                'key'         => 'docs.type.green_card.label',
+                'ru'          => 'Зелёная карта',
+                'kz'          => 'Жасыл карта', // TODO: verify
+                'cn'          => '绿卡保险', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for green_card document slot',
+            ],
+            [
+                'key'         => 'docs.type.green_card.description',
+                'ru'          => 'Международная карта автострахования (Зелёная карта)',
+                'kz'          => 'Халықаралық автокөлік сақтандыру картасы (Жасыл карта)', // TODO: verify
+                'cn'          => '国际汽车保险卡（绿卡）', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for green_card slot',
+            ],
+
+            // insurance (optional)
+            [
+                'key'         => 'docs.type.insurance.label',
+                'ru'          => 'Страховой полис',
+                'kz'          => 'Сақтандыру полисі', // TODO: verify
+                'cn'          => '保险单', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: localized label for insurance document slot (optional)',
+            ],
+            [
+                'key'         => 'docs.type.insurance.description',
+                'ru'          => 'Страховой полис транспортного средства (необязательно)',
+                'kz'          => 'Көлік құралының сақтандыру полисі (міндетті емес)', // TODO: verify
+                'cn'          => '车辆保险单（可选）', // TODO: verify
+                'group'       => 'docs',
+                'description' => 'Mobile API: upload hint for insurance slot (optional)',
+            ],
         ];
 
         foreach ($translations as $translation) {

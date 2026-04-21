@@ -23,6 +23,12 @@ class DriverDocument extends Model
         'insurance',
     ];
 
+    /** Accepted MIME types for every document slot (same policy for all). */
+    public const ACCEPTED_MIME_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+
+    /** Maximum file size in bytes (5 MB). */
+    public const MAX_FILE_SIZE_BYTES = 5_242_880;
+
     public const STATUS_NOT_UPLOADED = 'not_uploaded';
     public const STATUS_PENDING      = 'pending';
     public const STATUS_VERIFIED     = 'verified';
@@ -94,12 +100,85 @@ class DriverDocument extends Model
     // -------------------------------------------------------------------------
 
     /**
+     * Stable machine-readable type code — identical to document_type column.
+     * Exposed via `type` so the mobile contract never references the internal
+     * column name "document_type".
+     */
+    public function getTypeAttribute(): string
+    {
+        return $this->document_type;
+    }
+
+    /**
      * Returns the translated label for this document type using the global
      * translate() helper so it respects the current locale session.
      */
     public function getDocumentTypeLabelAttribute(): string
     {
         return translate('docs.' . $this->document_type);
+    }
+
+    /**
+     * Localized label using the stable `docs.type.{code}.label` key namespace.
+     */
+    public function getLabelAttribute(): string
+    {
+        return translate('docs.type.' . $this->document_type . '.label');
+    }
+
+    /**
+     * Localized one-line hint describing what the user should photograph.
+     */
+    public function getDescriptionAttribute(): string
+    {
+        return translate('docs.type.' . $this->document_type . '.description');
+    }
+
+    /**
+     * Whether this document slot is required for a driver to accept cargo.
+     * Optional types are defined in OPTIONAL_TYPES; all others are required.
+     */
+    public function getRequiredAttribute(): bool
+    {
+        return !$this->isOptional();
+    }
+
+    /**
+     * ISO-8601 timestamp of when the file was last uploaded (updated_at when
+     * a file_path is present), exposed as `uploaded_at` for mobile clarity.
+     */
+    public function getUploadedAtAttribute(): ?string
+    {
+        if ($this->file_path === null) {
+            return null;
+        }
+
+        return $this->updated_at?->toIso8601String();
+    }
+
+    // -------------------------------------------------------------------------
+    // Static catalog
+    // -------------------------------------------------------------------------
+
+    /**
+     * Returns the canonical type catalog used by GET /documents/types.
+     * Each entry describes a document slot without being tied to a specific
+     * driver row — useful for onboarding screens before registration.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function typeCatalog(): array
+    {
+        return collect(self::DOCUMENT_TYPES)->map(function (string $type): array {
+            return [
+                'type'                => $type,
+                'label'               => translate('docs.type.' . $type . '.label'),
+                'description'         => translate('docs.type.' . $type . '.description'),
+                'required'            => !in_array($type, self::OPTIONAL_TYPES, true),
+                'accepted_mime_types' => self::ACCEPTED_MIME_TYPES,
+                'max_file_size_bytes' => self::MAX_FILE_SIZE_BYTES,
+            ];
+        })->values()->all();
     }
 
     // -------------------------------------------------------------------------
