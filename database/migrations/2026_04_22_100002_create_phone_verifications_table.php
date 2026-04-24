@@ -20,9 +20,12 @@ return new class extends Migration
             $table->string('code_hash', 255);
             // Attempt counter; registration is blocked after 5 consecutive wrong codes
             $table->unsignedInteger('attempts')->default(0);
-            $table->timestamp('expires_at');
+            // Nullable to satisfy MySQL strict mode (TIMESTAMP NOT NULL requires a DEFAULT).
+            // Application code always populates these on create — nullability is a schema
+            // detail, not a semantic one. expires_at is set to now()+10min, last_sent_at to now().
+            $table->timestamp('expires_at')->nullable();
             // Used for the 60-second per-phone resend throttle (checked in application code)
-            $table->timestamp('last_sent_at');
+            $table->timestamp('last_sent_at')->nullable();
             $table->timestamps();
 
             // One active verification per phone per purpose — upsert pattern
