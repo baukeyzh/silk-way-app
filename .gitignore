@@ -25,3 +25,6 @@
 # IDE
 .DS_Store
 
+# Internal infra docs (contain example phone numbers + internal hostnames)
+/wa-api.md
+
