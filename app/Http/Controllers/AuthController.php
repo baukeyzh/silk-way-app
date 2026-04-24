@@ -12,8 +12,22 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLogin(): View
+    public function showLogin(Request $request): View|RedirectResponse
     {
+        // ?reset=1 from the "Изменить номер" link — clear OTP-flow session keys
+        // and bounce to a clean URL so a refresh doesn't re-trigger the reset.
+        if ($request->query('reset') === '1') {
+            session()->forget([
+                'driver_login_phone',
+                'driver_login_phone_masked',
+                'driver_reg_phone',
+                'driver_reg_name',
+            ]);
+            return redirect()->route('login', array_filter([
+                'type' => $request->query('type'),
+            ]));
+        }
+
         return view('auth.login');
     }
 
@@ -69,8 +83,21 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function showRegister(): View
+    public function showRegister(Request $request): View|RedirectResponse
     {
+        // ?reset=1 from the "Изменить номер" link — clear OTP-flow session keys.
+        if ($request->query('reset') === '1') {
+            session()->forget([
+                'driver_reg_phone',
+                'driver_reg_name',
+                'driver_login_phone',
+                'driver_login_phone_masked',
+            ]);
+            return redirect()->route('register', array_filter([
+                'type' => $request->query('type'),
+            ]));
+        }
+
         return view('auth.register');
     }
 
