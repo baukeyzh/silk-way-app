@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // WAHA — self-hosted WhatsApp HTTP API
+    // Required env vars: WAHA_URL, WAHA_API_KEY, WA_SESSION (optional, defaults to "default")
+    'waha' => [
+        'url'     => env('WAHA_URL', 'https://wa.fruck.kz'),
+        'api_key' => env('WAHA_API_KEY'),
+        'session' => env('WA_SESSION', 'default'),
+    ],
+
 ];

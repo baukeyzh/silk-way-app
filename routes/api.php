@@ -6,6 +6,8 @@ use App\Http\Controllers\API\CarController;
 use App\Http\Controllers\API\CargoApplicationController;
 use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\DriverDocumentController;
+use App\Http\Controllers\API\DriverLoginController;
+use App\Http\Controllers\API\DriverRegistrationController;
 use App\Http\Controllers\API\PublicCargoController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,24 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login',    [AuthController::class, 'login']);
+
+        // Driver WhatsApp OTP registration — public, no sanctum, IP-throttled
+        Route::prefix('driver/register')
+            ->middleware('throttle:waha-driver-register')
+            ->group(function () {
+                Route::post('/request', [DriverRegistrationController::class, 'requestCode']);
+                Route::post('/verify',  [DriverRegistrationController::class, 'verifyCode']);
+                Route::post('/resend',  [DriverRegistrationController::class, 'resendCode']);
+            });
+
+        // Driver WhatsApp OTP login — public, no sanctum, IP-throttled (separate limiter from register)
+        Route::prefix('driver/login')
+            ->middleware('throttle:waha-driver-login')
+            ->group(function () {
+                Route::post('/request', [DriverLoginController::class, 'requestCode']);
+                Route::post('/verify',  [DriverLoginController::class, 'verifyCode']);
+                Route::post('/resend',  [DriverLoginController::class, 'resendCode']);
+            });
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);

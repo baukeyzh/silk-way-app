@@ -41,4 +41,20 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Driver account registered via WhatsApp OTP.
+     * Drivers have no email and no password — they authenticate via phone + OTP only.
+     */
+    public function driver(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role'              => \App\Models\User::ROLE_DRIVER,
+            'email'             => null,
+            'email_verified_at' => null,
+            'password'          => null,
+            'phone'             => '7700' . fake()->unique()->numerify('#######'),
+            'approved'          => true,
+        ]);
+    }
 }

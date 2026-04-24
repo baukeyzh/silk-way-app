@@ -4426,6 +4426,782 @@ class TranslationSeeder extends Seeder
                 'group'       => 'cmr',
                 'description' => 'Generic CMR authorisation denial message',
             ],
+
+            // Driver registration UI copy
+            [
+                'key'         => 'driver_reg.title',
+                'ru'          => 'Регистрация водителя',
+                'kz'          => 'Жүргізушіні тіркеу', // TODO: verify with native speaker
+                'cn'          => '司机注册', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Page title for driver WhatsApp OTP registration',
+            ],
+            [
+                'key'         => 'driver_reg.subtitle_step1',
+                'ru'          => 'Регистрация через WhatsApp — быстро и безопасно',
+                'kz'          => 'WhatsApp арқылы тіркелу — жылдам және қауіпсіз', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp注册 — 快速安全', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Subtitle shown under logo on step 1 (enter name + phone)',
+            ],
+            [
+                'key'         => 'driver_reg.subtitle_step2',
+                'ru'          => 'Введите код из WhatsApp и задайте пароль',
+                'kz'          => 'WhatsApp кодын енгізіп, құпия сөз орнатыңыз', // TODO: verify with native speaker
+                'cn'          => '输入WhatsApp验证码并设置密码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Subtitle shown under logo on step 2 (enter OTP + password)',
+            ],
+            [
+                'key'         => 'driver_reg.phone_hint',
+                'ru'          => 'Код придёт в WhatsApp на этот номер. Формат: +7 700 123 4567',
+                'kz'          => 'Код осы нөмірге WhatsApp-та келеді. Формат: +7 700 123 4567', // TODO: verify with native speaker
+                'cn'          => '验证码将通过WhatsApp发送到此号码。格式：+7 700 123 4567', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Helper text below the phone input on step 1',
+            ],
+            [
+                'key'         => 'driver_reg.request_button',
+                'ru'          => 'Получить код',
+                'kz'          => 'Код алу', // TODO: verify with native speaker
+                'cn'          => '获取验证码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Submit button label on step 1',
+            ],
+            [
+                'key'         => 'driver_reg.code_sent_to',
+                'ru'          => 'Код отправлен на',
+                'kz'          => 'Код жіберілді:', // TODO: verify with native speaker
+                'cn'          => '验证码已发送至', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Prefix in the info banner on step 2, followed by the phone number',
+            ],
+            [
+                'key'         => 'driver_reg.change_number',
+                'ru'          => 'Изменить номер',
+                'kz'          => 'Нөмірді өзгерту', // TODO: verify with native speaker
+                'cn'          => '更改号码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Link in the step 2 info banner that resets the session back to step 1',
+            ],
+            [
+                'key'         => 'driver_reg.code_label',
+                'ru'          => 'Код из WhatsApp',
+                'kz'          => 'WhatsApp коды', // TODO: verify with native speaker
+                'cn'          => 'WhatsApp验证码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for the 6-digit OTP code input on step 2',
+            ],
+            [
+                'key'         => 'driver_reg.code_hint',
+                'ru'          => '6 цифр, действителен 10 минут',
+                'kz'          => '6 сан, 10 минут ішінде жарамды', // TODO: verify with native speaker
+                'cn'          => '6位数字，有效期10分钟', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Helper text below the OTP input on step 2',
+            ],
+            [
+                'key'         => 'driver_reg.verify_button',
+                'ru'          => 'Завершить регистрацию',
+                'kz'          => 'Тіркеуді аяқтау', // TODO: verify with native speaker
+                'cn'          => '完成注册', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Submit button label on step 2',
+            ],
+            [
+                'key'         => 'driver_reg.resend_prompt',
+                'ru'          => 'Не получили код?',
+                'kz'          => 'Код келген жоқ па?', // TODO: verify with native speaker
+                'cn'          => '没有收到验证码？', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Prompt text above the resend button on step 2',
+            ],
+            [
+                'key'         => 'driver_reg.resend_available_in',
+                'ru'          => 'Повторная отправка через',
+                'kz'          => 'Қайта жіберу арқылы', // TODO: verify with native speaker
+                'cn'          => '重新发送将在', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Countdown prefix text; the seconds value is appended inline via Alpine x-text',
+            ],
+            [
+                'key'         => 'driver_reg.resend_button',
+                'ru'          => 'Отправить код повторно',
+                'kz'          => 'Кодты қайта жіберу', // TODO: verify with native speaker
+                'cn'          => '重新发送验证码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Resend button label; visible after 60-second countdown expires',
+            ],
+            [
+                'key'         => 'driver_reg.success',
+                'ru'          => 'Регистрация успешно завершена. Войдите в аккаунт.',
+                'kz'          => 'Тіркеу сәтті аяқталды. Жүйеге кіріңіз.', // TODO: verify with native speaker
+                'cn'          => '注册成功。请登录。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Flash success message shown on the login page after successful driver registration',
+            ],
+            [
+                'key'         => 'auth.phone',
+                'ru'          => 'Номер телефона',
+                'kz'          => 'Телефон нөмірі', // TODO: verify with native speaker
+                'cn'          => '电话号码', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Phone number field label used on driver registration step 1',
+            ],
+
+            // ── Driver WhatsApp OTP registration — additional keys ─────────────
+
+            [
+                'key'         => 'driver_reg.subtitle',
+                'ru'          => 'Введите ваш номер телефона — мы отправим код подтверждения в WhatsApp.',
+                'kz'          => 'Телефон нөмірін енгізіңіз — растау кодын WhatsApp-қа жібереміз.', // TODO: verify with native speaker
+                'cn'          => '输入手机号码，我们将通过WhatsApp发送验证码。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Subtitle / instruction shown on the first step of driver registration',
+            ],
+            [
+                'key'         => 'driver_reg.field_name',
+                'ru'          => 'Ваше имя',
+                'kz'          => 'Атыңыз', // TODO: verify with native speaker
+                'cn'          => '您的姓名', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for the name input field in driver registration',
+            ],
+            [
+                'key'         => 'driver_reg.field_phone',
+                'ru'          => 'Номер телефона (WhatsApp)',
+                'kz'          => 'Телефон нөмірі (WhatsApp)', // TODO: verify with native speaker
+                'cn'          => '手机号码 (WhatsApp)', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for the phone input field in driver registration step 1',
+            ],
+            [
+                'key'         => 'driver_reg.field_code',
+                'ru'          => 'Код из WhatsApp',
+                'kz'          => 'WhatsApp коды', // TODO: verify with native speaker
+                'cn'          => 'WhatsApp验证码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for the OTP code input in step 2',
+            ],
+            [
+                'key'         => 'driver_reg.field_password',
+                'ru'          => 'Пароль',
+                'kz'          => 'Құпия сөз', // TODO: verify with native speaker
+                'cn'          => '密码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for the password field in driver registration step 2',
+            ],
+            [
+                'key'         => 'driver_reg.field_password_confirmation',
+                'ru'          => 'Повторите пароль',
+                'kz'          => 'Құпия сөзді қайталаңыз', // TODO: verify with native speaker
+                'cn'          => '确认密码', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Label for password_confirmation in step 2',
+            ],
+            [
+                'key'         => 'driver_reg.code_sent',
+                'ru'          => 'Код подтверждения отправлен в WhatsApp. Действителен 10 минут.',
+                'kz'          => 'Растау коды WhatsApp-қа жіберілді. 10 минут бойы жарамды.', // TODO: verify with native speaker
+                'cn'          => '验证码已发送至WhatsApp，有效期10分钟。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Success notice returned after OTP is sent (step 1 / API message field)',
+            ],
+            [
+                'key'         => 'driver_reg.code_resent',
+                'ru'          => 'Новый код отправлен в WhatsApp.',
+                'kz'          => 'Жаңа код WhatsApp-қа жіберілді.', // TODO: verify with native speaker
+                'cn'          => '新验证码已发送至WhatsApp。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'Success notice returned after OTP is resent (resend step)',
+            ],
+            [
+                'key'         => 'driver_reg.error_phone_taken',
+                'ru'          => 'Этот номер телефона уже зарегистрирован.',
+                'kz'          => 'Бұл телефон нөмірі бұрын тіркелген.', // TODO: verify with native speaker
+                'cn'          => '该手机号码已注册。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '409 message when the phone already belongs to a User record',
+            ],
+            [
+                'key'         => 'driver_reg.error_phone_not_whatsapp',
+                'ru'          => 'Номер не найден в WhatsApp. Проверьте номер и попробуйте снова.',
+                'kz'          => 'Нөмір WhatsApp-та табылмады. Нөмірді тексеріп, қайталап көріңіз.', // TODO: verify with native speaker
+                'cn'          => '该号码未在WhatsApp注册，请检查号码后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '422 message when WAHA check-exists returns numberExists: false',
+            ],
+            [
+                'key'         => 'driver_reg.error_code_expired',
+                'ru'          => 'Код истёк. Запросите новый.',
+                'kz'          => 'Код мерзімі өтті. Жаңасын сұраңыз.', // TODO: verify with native speaker
+                'cn'          => '验证码已过期，请重新获取。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '410 message when the OTP expires_at is in the past',
+            ],
+            [
+                'key'         => 'driver_reg.error_code_wrong',
+                'ru'          => 'Неверный код. Проверьте и попробуйте снова.',
+                'kz'          => 'Код қате. Тексеріп, қайталап көріңіз.', // TODO: verify with native speaker
+                'cn'          => '验证码不正确，请检查后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '422 message on wrong OTP (increments attempts counter)',
+            ],
+            [
+                'key'         => 'driver_reg.error_too_many_attempts',
+                'ru'          => 'Превышен лимит попыток. Запросите новый код.',
+                'kz'          => 'Әрекет саны асып кетті. Жаңа код сұраңыз.', // TODO: verify with native speaker
+                'cn'          => '尝试次数过多，请重新获取验证码。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '429 message when attempt counter reaches MAX_ATTEMPTS (5)',
+            ],
+            [
+                'key'         => 'driver_reg.error_service_unavailable',
+                'ru'          => 'Сервис временно недоступен. Попробуйте позже.',
+                'kz'          => 'Қызмет уақытша қолжетімсіз. Кейінірек қайталаңыз.', // TODO: verify with native speaker
+                'cn'          => '服务暂时不可用，请稍后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '503 message when WAHA session is not WORKING — must never expose internal reason',
+            ],
+            [
+                'key'         => 'driver_reg.error_rate_limit',
+                'ru'          => 'Слишком много запросов. Подождите 60 секунд перед повторной отправкой.',
+                'kz'          => 'Өте көп сұраулар. Қайта жіберу алдында 60 секунд күтіңіз.', // TODO: verify with native speaker
+                'cn'          => '请求过于频繁，请等待60秒后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => '429 message for the 60 s per-phone resend throttle',
+            ],
+            [
+                'key'         => 'driver_reg.wa_message',
+                'ru'          => 'Silk Way: ваш код подтверждения :code. Действителен 10 минут.',
+                'kz'          => 'Silk Way: растау кодыңыз :code. 10 минут бойы жарамды.', // TODO: verify with native speaker
+                'cn'          => 'Silk Way: 您的验证码是 :code，有效期10分钟。', // TODO: verify with native speaker
+                'group'       => 'driver_reg',
+                'description' => 'WhatsApp OTP message template; :code is replaced with the actual 6-digit code at runtime',
+            ],
+
+            // ── Driver WhatsApp OTP Login ──────────────────────────────────────────
+            [
+                'key'         => 'driver_login.title',
+                'ru'          => 'Вход через WhatsApp',
+                'kz'          => 'WhatsApp арқылы кіру', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp登录', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Page title and card heading for driver WhatsApp OTP login',
+            ],
+            [
+                'key'         => 'driver_login.subtitle_step1',
+                'ru'          => 'Войдите в аккаунт водителя через WhatsApp',
+                'kz'          => 'WhatsApp арқылы жүргізуші аккаунтына кіріңіз', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp登录司机账户', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Subtitle under logo on step 1 (enter phone)',
+            ],
+            [
+                'key'         => 'driver_login.subtitle_step2',
+                'ru'          => 'Введите код из WhatsApp для входа',
+                'kz'          => 'Кіру үшін WhatsApp кодын енгізіңіз', // TODO: verify with native speaker
+                'cn'          => '输入WhatsApp验证码以登录', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Subtitle under logo on step 2 (enter OTP)',
+            ],
+            [
+                'key'         => 'driver_login.phone_hint',
+                'ru'          => 'Код придёт в WhatsApp на этот номер. Формат: +7 700 123 4567',
+                'kz'          => 'Код осы нөмірге WhatsApp-та келеді. Формат: +7 700 123 4567', // TODO: verify with native speaker
+                'cn'          => '验证码将通过WhatsApp发送到此号码。格式：+7 700 123 4567', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Helper text below the phone input on step 1',
+            ],
+            [
+                'key'         => 'driver_login.request_button',
+                'ru'          => 'Отправить код',
+                'kz'          => 'Код жіберу', // TODO: verify with native speaker
+                'cn'          => '发送验证码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Submit button label on step 1',
+            ],
+            [
+                'key'         => 'driver_login.code_sent_to',
+                'ru'          => 'Код отправлен на',
+                'kz'          => 'Код жіберілді:', // TODO: verify with native speaker
+                'cn'          => '验证码已发送至', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Prefix in the info banner on step 2, followed by the phone number',
+            ],
+            [
+                'key'         => 'driver_login.change_number',
+                'ru'          => 'Изменить номер',
+                'kz'          => 'Нөмірді өзгерту', // TODO: verify with native speaker
+                'cn'          => '更改号码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Link in the step 2 banner that resets the session back to step 1',
+            ],
+            [
+                'key'         => 'driver_login.code_label',
+                'ru'          => 'Код из WhatsApp',
+                'kz'          => 'WhatsApp коды', // TODO: verify with native speaker
+                'cn'          => 'WhatsApp验证码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Label for the 6-digit OTP input on step 2',
+            ],
+            [
+                'key'         => 'driver_login.code_hint',
+                'ru'          => '6-значный код из сообщения WhatsApp',
+                'kz'          => 'WhatsApp хабарламасындағы 6 таңбалы код', // TODO: verify with native speaker
+                'cn'          => 'WhatsApp消息中的6位验证码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Helper text below the OTP code input on step 2',
+            ],
+            [
+                'key'         => 'driver_login.verify_button',
+                'ru'          => 'Войти',
+                'kz'          => 'Кіру', // TODO: verify with native speaker
+                'cn'          => '登录', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Submit button label on step 2 (verify OTP and log in)',
+            ],
+            [
+                'key'         => 'driver_login.resend_prompt',
+                'ru'          => 'Не получили код?',
+                'kz'          => 'Код келмеді ме?', // TODO: verify with native speaker
+                'cn'          => '没有收到验证码？', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Prompt text above the resend countdown/button on step 2',
+            ],
+            [
+                'key'         => 'driver_login.resend_available_in',
+                'ru'          => 'Повторная отправка через',
+                'kz'          => 'Қайта жіберу', // TODO: verify with native speaker
+                'cn'          => '重新发送倒计时', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Countdown label prefix; followed by seconds count and "сек."',
+            ],
+            [
+                'key'         => 'driver_login.resend_button',
+                'ru'          => 'Отправить код повторно',
+                'kz'          => 'Кодты қайта жіберу', // TODO: verify with native speaker
+                'cn'          => '重新发送验证码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Resend button label that appears after 60-second countdown',
+            ],
+            [
+                'key'         => 'driver_login.no_account',
+                'ru'          => 'Нет аккаунта?',
+                'kz'          => 'Аккаунт жоқ па?', // TODO: verify with native speaker
+                'cn'          => '没有账户？', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Footer prompt on driver login page for new users',
+            ],
+            [
+                'key'         => 'driver_login.register_link',
+                'ru'          => 'Зарегистрироваться через WhatsApp',
+                'kz'          => 'WhatsApp арқылы тіркелу', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp注册', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Link text pointing to driver registration from the driver login footer',
+            ],
+            [
+                'key'         => 'driver_login.login_page_prompt',
+                'ru'          => 'Водитель?',
+                'kz'          => 'Жүргізуші ме?', // TODO: verify with native speaker
+                'cn'          => '是司机？', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Prompt text on the main email/password login page pointing drivers to WhatsApp login',
+            ],
+            [
+                'key'         => 'driver_login.login_page_link',
+                'ru'          => 'Войти через WhatsApp',
+                'kz'          => 'WhatsApp арқылы кіру', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp登录', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Link text on the main login page directing drivers to WhatsApp OTP login',
+            ],
+            [
+                'key'         => 'driver_login.already_have_account',
+                'ru'          => 'Уже есть аккаунт?',
+                'kz'          => 'Аккаунт бар ма?', // TODO: verify with native speaker
+                'cn'          => '已有账户？', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Footer prompt on driver register page for existing drivers',
+            ],
+            [
+                'key'         => 'driver_login.login_whatsapp_link',
+                'ru'          => 'Войти через WhatsApp',
+                'kz'          => 'WhatsApp арқылы кіру', // TODO: verify with native speaker
+                'cn'          => '通过WhatsApp登录', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Link text on driver register page pointing to WhatsApp OTP login',
+            ],
+
+            // ── Driver WhatsApp login — service / API keys ─────────────────────
+
+            [
+                'key'         => 'driver_login.field_phone',
+                'ru'          => 'Номер телефона (WhatsApp)',
+                'kz'          => 'Телефон нөмірі (WhatsApp)', // TODO: verify with native speaker
+                'cn'          => '手机号码 (WhatsApp)', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Label for the phone input field in driver login step 1',
+            ],
+            [
+                'key'         => 'driver_login.field_code',
+                'ru'          => 'Код из WhatsApp',
+                'kz'          => 'WhatsApp коды', // TODO: verify with native speaker
+                'cn'          => 'WhatsApp验证码', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Label for the OTP code input in driver login step 2',
+            ],
+            [
+                'key'         => 'driver_login.code_sent',
+                'ru'          => 'Код для входа отправлен в WhatsApp. Действителен 10 минут.',
+                'kz'          => 'Кіру коды WhatsApp-қа жіберілді. 10 минут бойы жарамды.', // TODO: verify with native speaker
+                'cn'          => '登录验证码已发送至WhatsApp，有效期10分钟。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Success notice after OTP is sent on driver login step 1 (also API message field)',
+            ],
+            [
+                'key'         => 'driver_login.code_resent',
+                'ru'          => 'Новый код для входа отправлен в WhatsApp.',
+                'kz'          => 'Жаңа кіру коды WhatsApp-қа жіберілді.', // TODO: verify with native speaker
+                'cn'          => '新登录验证码已发送至WhatsApp。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Success notice after resend on driver login',
+            ],
+            [
+                'key'         => 'driver_login.login_success',
+                'ru'          => 'Вход выполнен успешно.',
+                'kz'          => 'Сәтті кірдіңіз.', // TODO: verify with native speaker
+                'cn'          => '登录成功。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'Success message returned in the API verify response body',
+            ],
+            [
+                'key'         => 'driver_login.error_not_found',
+                'ru'          => 'Аккаунт с таким номером не найден. Зарегистрируйтесь.',
+                'kz'          => 'Мұндай нөмірмен аккаунт табылмады. Тіркеліңіз.', // TODO: verify with native speaker
+                'cn'          => '未找到该号码的账户，请先注册。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '404 message when no driver user matches the phone number',
+            ],
+            [
+                'key'         => 'driver_login.error_not_approved',
+                'ru'          => 'Аккаунт на проверке у администратора.',
+                'kz'          => 'Аккаунт әкімшінің тексеруінде.', // TODO: verify with native speaker
+                'cn'          => '账户正在管理员审核中。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '403 message when driver exists but approved = false',
+            ],
+            [
+                'key'         => 'driver_login.error_no_pending_code',
+                'ru'          => 'Сначала запросите код.',
+                'kz'          => 'Алдымен кодты сұраңыз.', // TODO: verify with native speaker
+                'cn'          => '请先获取验证码。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '422 message when verify/resend called with no active phone_verifications row',
+            ],
+            [
+                'key'         => 'driver_login.error_code_expired',
+                'ru'          => 'Код истёк. Запросите новый.',
+                'kz'          => 'Код мерзімі өтті. Жаңасын сұраңыз.', // TODO: verify with native speaker
+                'cn'          => '验证码已过期，请重新获取。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '410 message when the OTP expires_at is in the past',
+            ],
+            [
+                'key'         => 'driver_login.error_code_wrong',
+                'ru'          => 'Неверный код. Проверьте и попробуйте снова.',
+                'kz'          => 'Код қате. Тексеріп, қайталап көріңіз.', // TODO: verify with native speaker
+                'cn'          => '验证码不正确，请检查后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '422 message on wrong OTP — increments the attempts counter',
+            ],
+            [
+                'key'         => 'driver_login.error_too_many_attempts',
+                'ru'          => 'Превышен лимит попыток. Запросите новый код.',
+                'kz'          => 'Әрекет саны асып кетті. Жаңа код сұраңыз.', // TODO: verify with native speaker
+                'cn'          => '尝试次数过多，请重新获取验证码。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '429 message when attempt counter reaches MAX_ATTEMPTS (5)',
+            ],
+            [
+                'key'         => 'driver_login.error_service_unavailable',
+                'ru'          => 'Сервис временно недоступен. Попробуйте позже.',
+                'kz'          => 'Қызмет уақытша қолжетімсіз. Кейінірек қайталаңыз.', // TODO: verify with native speaker
+                'cn'          => '服务暂时不可用，请稍后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '503 message when WAHA session is not WORKING',
+            ],
+            [
+                'key'         => 'driver_login.error_rate_limit',
+                'ru'          => 'Слишком много запросов. Подождите 60 секунд перед повторной отправкой.',
+                'kz'          => 'Өте көп сұраулар. Қайта жіберу алдында 60 секунд күтіңіз.', // TODO: verify with native speaker
+                'cn'          => '请求过于频繁，请等待60秒后重试。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '429 message for the 60 s per-phone resend throttle on driver login',
+            ],
+            [
+                'key'         => 'driver_login.wa_message',
+                'ru'          => 'Silk Way: код для входа :code. Действителен 10 минут. Не передавайте его никому.',
+                'kz'          => 'Silk Way: кіру кодыңыз :code. 10 минут бойы жарамды. Ешкімге бермеңіз.', // TODO: verify with native speaker
+                'cn'          => 'Silk Way: 您的登录验证码是 :code，有效期10分钟，请勿告知他人。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => 'WhatsApp OTP message template for driver login; :code is replaced with the 6-digit code at runtime',
+            ],
+
+            // ── Unified register UI ────────────────────────────────────────────────
+            [
+                'key'         => 'auth.register_tab_driver_label',
+                'ru'          => 'Я водитель',
+                'kz'          => 'Мен жүргізуші', // TODO: verify with native speaker
+                'cn'          => '我是司机', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector label for the driver (WhatsApp OTP) registration flow',
+            ],
+            [
+                'key'         => 'auth.register_tab_driver_sub',
+                'ru'          => 'Регистрация через WhatsApp-код',
+                'kz'          => 'WhatsApp-код арқылы тіркелу', // TODO: verify with native speaker
+                'cn'          => '通过 WhatsApp 验证码注册', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector subtext for the driver registration tab',
+            ],
+            [
+                'key'         => 'auth.register_tab_warehouse_label',
+                'ru'          => 'Складской сотрудник',
+                'kz'          => 'Қойма қызметкері', // TODO: verify with native speaker
+                'cn'          => '仓库员工', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector label for the warehouse employee (email/password) registration flow',
+            ],
+            [
+                'key'         => 'auth.register_tab_warehouse_sub',
+                'ru'          => 'Вход по email и паролю',
+                'kz'          => 'Email және парольмен кіру', // TODO: verify with native speaker
+                'cn'          => '通过邮箱和密码登录', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector subtext for the warehouse registration tab',
+            ],
+            [
+                'key'         => 'auth.error_heading_generic',
+                'ru'          => 'Не удалось зарегистрироваться',
+                'kz'          => 'Тіркелу сәтсіз аяқталды', // TODO: verify with native speaker
+                'cn'          => '注册失败', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Generic error banner heading shown on registration failure',
+            ],
+            [
+                'key'         => 'auth.error_heading_wa_send',
+                'ru'          => 'Не удалось отправить код',
+                'kz'          => 'Код жіберілмеді', // TODO: verify with native speaker
+                'cn'          => '发送验证码失败', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error banner heading when driver step 1 code send fails',
+            ],
+            [
+                'key'         => 'auth.error_heading_wa_verify',
+                'ru'          => 'Неверный код',
+                'kz'          => 'Код қате', // TODO: verify with native speaker
+                'cn'          => '验证码不正确', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error banner heading when driver step 2 OTP verification fails',
+            ],
+            [
+                'key'         => 'auth.error_waha_down_title',
+                'ru'          => 'Сервис временно недоступен',
+                'kz'          => 'Қызмет уақытша қолжетімсіз', // TODO: verify with native speaker
+                'cn'          => '服务暂时不可用', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Amber warning banner title when WAHA (WhatsApp) is unreachable (503)',
+            ],
+            [
+                'key'         => 'auth.error_waha_down_body',
+                'ru'          => 'Не удаётся подключиться к WhatsApp. Попробуйте через несколько минут. Если проблема не уходит, напишите администратору.',
+                'kz'          => 'WhatsApp-қа қосылу мүмкін болмады. Бірнеше минуттан кейін қайталап көріңіз. Мәселе шешілмесе, әкімшіге хабарласыңыз.', // TODO: verify with native speaker
+                'cn'          => '无法连接 WhatsApp，请稍后几分钟再试。如问题持续，请联系管理员。', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Amber warning banner body when WAHA is unreachable (503)',
+            ],
+            [
+                'key'         => 'auth.error_rate_limit_title',
+                'ru'          => 'Слишком много запросов',
+                'kz'          => 'Өте көп сұраулар', // TODO: verify with native speaker
+                'cn'          => '请求过于频繁', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Amber banner title shown on 429 rate limit response',
+            ],
+            [
+                'key'         => 'auth.error_rate_limit_body',
+                'ru'          => 'Подождите минуту перед повторной попыткой.',
+                'kz'          => 'Қайталамас бұрын бір минут күтіңіз.', // TODO: verify with native speaker
+                'cn'          => '请等待一分钟后再重试。', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Amber banner body shown on 429 rate limit response',
+            ],
+            [
+                'key'         => 'auth.error_phone_taken_cta',
+                'ru'          => 'Этот номер уже зарегистрирован. Войти?',
+                'kz'          => 'Бұл нөмір тіркелген. Кіргіңіз бе?', // TODO: verify with native speaker
+                'cn'          => '该号码已注册，是否登录？', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Inline call-to-action in the rose error banner when the phone number is already taken (409)',
+            ],
+            [
+                'key'         => 'auth.submitting',
+                'ru'          => 'Отправляем...',
+                'kz'          => 'Жіберілуде...', // TODO: verify with native speaker
+                'cn'          => '正在提交…', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Button label while warehouse registration form is submitting',
+            ],
+            [
+                'key'         => 'auth.sending_code',
+                'ru'          => 'Отправляем...',
+                'kz'          => 'Жіберілуде...', // TODO: verify with native speaker
+                'cn'          => '正在发送…', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Button label while WhatsApp OTP code send is in progress',
+            ],
+            [
+                'key'         => 'auth.verifying',
+                'ru'          => 'Проверяем...',
+                'kz'          => 'Тексерілуде...', // TODO: verify with native speaker
+                'cn'          => '正在验证…', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Button label while OTP verify request is in progress',
+            ],
+            [
+                'key'         => 'auth.code_sent_flash',
+                'ru'          => 'Код отправлен в WhatsApp',
+                'kz'          => 'Код WhatsApp-қа жіберілді', // TODO: verify with native speaker
+                'cn'          => '验证码已发送至 WhatsApp', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Emerald success flash banner shown after driver step 1 OTP is sent successfully',
+            ],
+            [
+                'key'         => 'auth.expired_code_cta',
+                'ru'          => 'Запросить новый код',
+                'kz'          => 'Жаңа код сұрау', // TODO: verify with native speaker
+                'cn'          => '重新获取验证码', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Button inside the expired-code error banner that triggers a resend request',
+            ],
+            [
+                'key'         => 'auth.already_have_account',
+                'ru'          => 'Уже есть аккаунт?',
+                'kz'          => 'Тіркелгі бар ма?', // TODO: verify with native speaker
+                'cn'          => '已有账户？', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Prompt text above the login link at the bottom of the register page',
+            ],
+
+            // ── Unified login UI ───────────────────────────────────────────────────
+            [
+                'key'         => 'auth.login_tab_driver_label',
+                'ru'          => 'Я водитель',
+                'kz'          => 'Мен жүргізушімін', // TODO: verify with native speaker
+                'cn'          => '我是司机', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector label for the driver (WhatsApp OTP) login flow on the unified login page',
+            ],
+            [
+                'key'         => 'auth.login_tab_driver_sub',
+                'ru'          => 'Вход через WhatsApp-код',
+                'kz'          => 'WhatsApp-код арқылы кіру', // TODO: verify with native speaker
+                'cn'          => '通过 WhatsApp 验证码登录', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector subtext for the driver login tab on the unified login page',
+            ],
+            [
+                'key'         => 'auth.login_tab_warehouse_label',
+                'ru'          => 'Склад / Админ',
+                'kz'          => 'Қойма / Әкімші', // TODO: verify with native speaker
+                'cn'          => '仓库 / 管理员', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector label for the warehouse/admin (email+password) login flow on the unified login page',
+            ],
+            [
+                'key'         => 'auth.login_tab_warehouse_sub',
+                'ru'          => 'Вход по email и паролю',
+                'kz'          => 'Email және парольмен кіру', // TODO: verify with native speaker
+                'cn'          => '通过邮箱和密码登录', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Tab selector subtext for the warehouse/admin login tab on the unified login page',
+            ],
+            [
+                'key'         => 'auth.login_error_heading_generic',
+                'ru'          => 'Не удалось войти',
+                'kz'          => 'Кіру сәтсіз аяқталды', // TODO: verify with native speaker
+                'cn'          => '登录失败', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Generic error banner heading shown on login failure (warehouse flow or unclassified driver error)',
+            ],
+            [
+                'key'         => 'auth.login_error_heading_wa_send',
+                'ru'          => 'Не удалось отправить код',
+                'kz'          => 'Код жіберілмеді', // TODO: verify with native speaker
+                'cn'          => '发送验证码失败', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error banner heading when driver login step 1 code send fails',
+            ],
+            [
+                'key'         => 'auth.login_error_heading_wa_verify',
+                'ru'          => 'Неверный или просроченный код',
+                'kz'          => 'Код қате немесе мерзімі өткен', // TODO: verify with native speaker
+                'cn'          => '验证码不正确或已过期', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error banner heading when driver login step 2 OTP verification fails',
+            ],
+            [
+                'key'         => 'auth.login_card_heading',
+                'ru'          => 'Вход',
+                'kz'          => 'Кіру', // TODO: verify with native speaker
+                'cn'          => '登录', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Card heading on the unified login page when warehouse/admin tab is active',
+            ],
+            [
+                'key'         => 'auth.login_card_heading_driver',
+                'ru'          => 'Вход водителя',
+                'kz'          => 'Жүргізуші кіруі', // TODO: verify with native speaker
+                'cn'          => '司机登录', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Card heading on the unified login page when driver tab step 1 is active',
+            ],
+            [
+                'key'         => 'auth.login_card_heading_driver_step2',
+                'ru'          => 'Проверка кода',
+                'kz'          => 'Кодты тексеру', // TODO: verify with native speaker
+                'cn'          => '验证码确认', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Card heading and subtitle on the unified login page when driver tab step 2 is active',
+            ],
+            [
+                'key'         => 'auth.login_submitting',
+                'ru'          => 'Входим...',
+                'kz'          => 'Кіруде...', // TODO: verify with native speaker
+                'cn'          => '正在登录…', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Button label while the warehouse/admin login form is submitting',
+            ],
+
+            // ── Driver flow redirects ──────────────────────────────────────────────
+            [
+                'key'         => 'auth.driver_use_whatsapp_register',
+                'ru'          => 'Водители регистрируются через WhatsApp. Откройте форму регистрации для водителей.',
+                'kz'          => 'Жүргізушілер WhatsApp арқылы тіркеледі. Жүргізушілерге арналған тіркелу нысанын ашыңыз.', // TODO: verify with native speaker
+                'cn'          => '司机通过WhatsApp注册。请打开司机注册表单。', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error shown when a driver role is submitted to the legacy /register endpoint; redirects user to the WhatsApp registration flow',
+            ],
+            [
+                'key'         => 'auth.driver_use_whatsapp_login',
+                'ru'          => 'Водители входят через WhatsApp. Откройте форму входа для водителей.',
+                'kz'          => 'Жүргізушілер WhatsApp арқылы кіреді. Жүргізушілерге арналған кіру нысанын ашыңыз.', // TODO: verify with native speaker
+                'cn'          => '司机通过WhatsApp登录。请打开司机登录表单。', // TODO: verify with native speaker
+                'group'       => 'auth',
+                'description' => 'Error shown when a driver tries to log in via the legacy /login endpoint; redirects user to the WhatsApp login flow',
+            ],
         ];
 
         foreach ($translations as $translation) {

@@ -9,6 +9,8 @@ use App\Http\Controllers\CargoApplicationController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\DriverDocumentController;
+use App\Http\Controllers\Auth\DriverLoginController;
+use App\Http\Controllers\Auth\DriverRegistrationController;
 
 // Главная страница
 Route::get('/', function () {
@@ -28,6 +30,29 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    // Driver WhatsApp OTP registration (separate from the existing /register flow).
+    // Gated by features.web_driver_registration — when disabled, all routes in this
+    // group return 404. API endpoints are NOT gated — mobile clients keep working.
+    Route::prefix('register/driver')->name('driver.register.')
+        ->middleware('feature:web_driver_registration')
+        ->group(function () {
+            Route::get('/',         [DriverRegistrationController::class, 'showForm'])->name('show');
+            Route::post('/request', [DriverRegistrationController::class, 'requestCode'])->name('request');
+            Route::post('/verify',  [DriverRegistrationController::class, 'verifyCode'])->name('verify');
+            Route::post('/resend',  [DriverRegistrationController::class, 'resendCode'])->name('resend');
+        });
+
+    // Driver WhatsApp OTP login (parallel to the existing email/password /login flow).
+    // Gated by features.web_driver_login — disabled flow returns 404.
+    Route::prefix('login/driver')->name('driver.login.')
+        ->middleware('feature:web_driver_login')
+        ->group(function () {
+            Route::get('/',         [DriverLoginController::class, 'showForm'])->name('show');
+            Route::post('/request', [DriverLoginController::class, 'requestCode'])->name('request');
+            Route::post('/verify',  [DriverLoginController::class, 'verifyCode'])->name('verify');
+            Route::post('/resend',  [DriverLoginController::class, 'resendCode'])->name('resend');
+        });
 });
 
 Route::middleware('auth')->group(function () {

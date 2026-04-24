@@ -20,13 +20,23 @@ class AuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
+        // Detect driver accounts before Auth::attempt() to avoid timing oracles
+        // and to surface a helpful redirect regardless of whether a password
+        // happens to match. Drivers always authenticate via WhatsApp OTP only.
+        $targetUser = \App\Models\User::where('email', $credentials['email'])->first();
+        if ($targetUser && $targetUser->isDriver()) {
+            return back()->withErrors([
+                'email' => translate('auth.driver_use_whatsapp_login'),
+            ])->onlyInput('email');
+        }
+
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            
+
             // Проверяем, подтвержден ли аккаунт (кроме администраторов)
             if (!$user->isAdmin() && !$user->isApproved()) {
                 Auth::logout();
@@ -66,22 +76,31 @@ class AuthController extends Controller
 
     public function register(Request $request): RedirectResponse
     {
+        // Reject driver role submissions before running full validation — drivers
+        // must use the WhatsApp OTP path. Check raw input to avoid leaking timing
+        // information from the validator on an otherwise-valid payload.
+        if ($request->input('role') === User::ROLE_DRIVER) {
+            return back()
+                ->withErrors(['role' => translate('auth.driver_use_whatsapp_register')])
+                ->withInput($request->except('password', 'password_confirmation'));
+        }
+
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => ['required', Rule::in([User::ROLE_WAREHOUSE_EMPLOYEE, User::ROLE_DRIVER])],
+            'role'     => ['required', Rule::in([User::ROLE_WAREHOUSE_EMPLOYEE])],
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
+        User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'approved' => false, // По умолчанию не подтвержден
+            'role'     => $validated['role'],
+            'approved' => false,
         ]);
 
-        return redirect()->route('login')->with('success', 
+        return redirect()->route('login')->with('success',
             'Регистрация успешна! Ваш аккаунт будет активирован администратором в ближайшее время.'
         );
     }

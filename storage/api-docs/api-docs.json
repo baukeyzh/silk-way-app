@@ -6,7 +6,7 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.5.0"
+        "version": "1.8.0"
     },
     "servers": [
         {
@@ -300,10 +300,9 @@
                                     },
                                     "role": {
                                         "type": "string",
-                                        "example": "driver",
+                                        "example": "warehouse_employee",
                                         "enum": [
-                                            "warehouse_employee",
-                                            "driver"
+                                            "warehouse_employee"
                                         ]
                                     }
                                 },
@@ -2750,6 +2749,444 @@
                 ]
             }
         },
+        "/auth/driver/login/request": {
+            "post": {
+                "tags": [
+                    "DriverLogin"
+                ],
+                "summary": "Шаг 1 — Запрос OTP-кода для входа через WhatsApp",
+                "description": "Находит водителя по номеру телефона, проверяет статус аккаунта и отправляет 6-значный код в WhatsApp. Повторная отправка — не чаще 1 раза в 60 секунд.",
+                "operationId": "fe1cefae8e14e206b1595a655071795d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+7 700 120 00 13"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Код отправлен в WhatsApp",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Код для входа отправлен"
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "77001200013"
+                                        },
+                                        "phone_masked": {
+                                            "type": "string",
+                                            "example": "+7 ••• ••• **-13"
+                                        },
+                                        "expires_in_seconds": {
+                                            "type": "integer",
+                                            "example": 600
+                                        },
+                                        "resend_available_in_seconds": {
+                                            "type": "integer",
+                                            "example": 60
+                                        },
+                                        "register_url": {
+                                            "type": "string",
+                                            "example": "https://example.com/register/driver"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Аккаунт ещё не подтверждён администратором"
+                    },
+                    "404": {
+                        "description": "Водитель с таким номером не найден"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    },
+                    "429": {
+                        "description": "Слишком часто — подождите 60 секунд"
+                    },
+                    "503": {
+                        "description": "WAHA-сессия не готова"
+                    }
+                }
+            }
+        },
+        "/auth/driver/login/verify": {
+            "post": {
+                "tags": [
+                    "DriverLogin"
+                ],
+                "summary": "Шаг 2 — Верификация кода и вход водителя",
+                "description": "Проверяет OTP-код. При успехе удаляет верификационную строку и возвращает Sanctum-токен. Пароль не требуется — OTP является фактором аутентификации.",
+                "operationId": "d721fc3e1c8f0dafcb48f565c88abd1d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone",
+                                    "code"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "77001200013"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Вход выполнен успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Вход выполнен успешно."
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abc123..."
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Аккаунт не подтверждён (статус изменён между шагами)"
+                    },
+                    "404": {
+                        "description": "Водитель не найден (аккаунт удалён между шагами)"
+                    },
+                    "410": {
+                        "description": "Код истёк — запросите новый"
+                    },
+                    "422": {
+                        "description": "Неверный код или ошибка валидации"
+                    },
+                    "429": {
+                        "description": "Превышен лимит попыток (5)"
+                    }
+                }
+            }
+        },
+        "/auth/driver/login/resend": {
+            "post": {
+                "tags": [
+                    "DriverLogin"
+                ],
+                "summary": "Шаг 3 — Повторная отправка кода для входа",
+                "description": "Генерирует новый код и отправляет повторно. Не чаще 1 раза в 60 секунд на номер.",
+                "operationId": "fc59fb213ac99c2acd76c3f7a59ad990",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "77001200013"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Код отправлен повторно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Новый код для входа отправлен"
+                                        },
+                                        "phone_masked": {
+                                            "type": "string",
+                                            "example": "+7 ••• ••• **-13"
+                                        },
+                                        "expires_in_seconds": {
+                                            "type": "integer",
+                                            "example": 600
+                                        },
+                                        "resend_available_in_seconds": {
+                                            "type": "integer",
+                                            "example": 60
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нет активной верификации для этого номера"
+                    },
+                    "429": {
+                        "description": "Слишком рано — подождите 60 секунд"
+                    },
+                    "503": {
+                        "description": "WAHA-сессия не готова"
+                    }
+                }
+            }
+        },
+        "/auth/driver/register/request": {
+            "post": {
+                "tags": [
+                    "DriverRegistration"
+                ],
+                "summary": "Шаг 1 — Запрос OTP-кода через WhatsApp",
+                "description": "Проверяет номер телефона, отправляет 6-значный код в WhatsApp. Повторная отправка — не чаще 1 раза в 60 секунд.",
+                "operationId": "aa15dc2aade27ef6ecf03174c965691b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов",
+                                        "maxLength": 255
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+7 700 120 00 13"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Код отправлен в WhatsApp",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Код отправлен"
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "77001200013"
+                                        },
+                                        "expires_in_seconds": {
+                                            "type": "integer",
+                                            "example": 600
+                                        },
+                                        "resend_available_in_seconds": {
+                                            "type": "integer",
+                                            "example": 60
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Номер уже зарегистрирован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации / номер не найден в WhatsApp"
+                    },
+                    "429": {
+                        "description": "Слишком часто — подождите 60 секунд"
+                    },
+                    "503": {
+                        "description": "WAHA-сессия не готова"
+                    }
+                }
+            }
+        },
+        "/auth/driver/register/verify": {
+            "post": {
+                "tags": [
+                    "DriverRegistration"
+                ],
+                "summary": "Шаг 2 — Верификация кода и создание аккаунта водителя",
+                "description": "Проверяет OTP, создаёт пользователя с role=driver, approved=false, password=null. Токен НЕ выдаётся — требуется подтверждение администратора. Пароль не нужен — вход только через WhatsApp OTP.",
+                "operationId": "9e3dacaaed6bf60516369fbcb69cd7fe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone",
+                                    "code",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "77001200013"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Аккаунт создан, ожидает подтверждения администратора",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Регистрация успешна. Ожидайте подтверждения администратора."
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Номер уже зарегистрирован (race condition)"
+                    },
+                    "410": {
+                        "description": "Код истёк — запросите новый"
+                    },
+                    "422": {
+                        "description": "Неверный код или ошибка валидации"
+                    },
+                    "429": {
+                        "description": "Превышен лимит попыток"
+                    }
+                }
+            }
+        },
+        "/auth/driver/register/resend": {
+            "post": {
+                "tags": [
+                    "DriverRegistration"
+                ],
+                "summary": "Шаг 3 — Повторная отправка кода",
+                "description": "Генерирует новый код и отправляет его повторно. Не чаще 1 раза в 60 секунд на номер.",
+                "operationId": "e668987ebc50f2d065f4f86a128b2d85",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "77001200013"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Код отправлен повторно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Код повторно отправлен"
+                                        },
+                                        "expires_in_seconds": {
+                                            "type": "integer",
+                                            "example": 600
+                                        },
+                                        "resend_available_in_seconds": {
+                                            "type": "integer",
+                                            "example": 60
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нет активной верификации для этого номера"
+                    },
+                    "429": {
+                        "description": "Слишком рано — подождите 60 секунд"
+                    },
+                    "503": {
+                        "description": "WAHA-сессия не готова"
+                    }
+                }
+            }
+        },
         "/public/cargo": {
             "get": {
                 "tags": [
@@ -3359,6 +3796,14 @@
         {
             "name": "Documents",
             "description": "Документы водителя"
+        },
+        {
+            "name": "DriverRegistration",
+            "description": "Регистрация водителя через WhatsApp OTP"
+        },
+        {
+            "name": "DriverLogin",
+            "description": "Вход водителя через WhatsApp OTP"
         },
         {
             "name": "CMR",

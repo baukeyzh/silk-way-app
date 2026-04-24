@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * @OA\Info(
  *     title="Silk Way API",
- *     version="1.5.0",
+ *     version="1.8.0",
  *     description="REST API для мобильного приложения Silk Way. Авторизация через Bearer токен (Sanctum).",
  *     @OA\Contact(email="admin@silkway.kz")
  * )
@@ -38,7 +38,9 @@ use Illuminate\Validation\ValidationException;
  * @OA\Tag(name="Cars",         description="Транспортные средства")
  * @OA\Tag(name="Applications", description="Заявки на грузы")
  * @OA\Tag(name="Admin",        description="Администрирование")
- * @OA\Tag(name="Documents",    description="Документы водителя")
+ * @OA\Tag(name="Documents",            description="Документы водителя")
+ * @OA\Tag(name="DriverRegistration",  description="Регистрация водителя через WhatsApp OTP")
+ * @OA\Tag(name="DriverLogin",         description="Вход водителя через WhatsApp OTP")
  */
 class AuthController extends Controller
 {
@@ -55,7 +57,7 @@ class AuthController extends Controller
      *             @OA\Property(property="email",                 type="string",  format="email", example="ivan@example.com"),
      *             @OA\Property(property="password",              type="string",  format="password", example="secret123"),
      *             @OA\Property(property="password_confirmation", type="string",  format="password", example="secret123"),
-     *             @OA\Property(property="role",                  type="string",  enum={"warehouse_employee","driver"}, example="driver")
+     *             @OA\Property(property="role",                  type="string",  enum={"warehouse_employee"}, example="warehouse_employee")
      *         )
      *     ),
      *     @OA\Response(
@@ -70,11 +72,19 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
+        // Drivers must register via /api/v1/auth/driver/register — never via this endpoint.
+        if ($request->input('role') === User::ROLE_DRIVER) {
+            return response()->json([
+                'message' => translate('auth.driver_use_whatsapp_register'),
+                'redirect' => '/api/v1/auth/driver/register/request',
+            ], 422);
+        }
+
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => ['required', Rule::in([User::ROLE_WAREHOUSE_EMPLOYEE, User::ROLE_DRIVER])],
+            'role'     => ['required', Rule::in([User::ROLE_WAREHOUSE_EMPLOYEE])],
         ]);
 
         User::create([
@@ -121,6 +131,17 @@ class AuthController extends Controller
             'email'    => 'required|email',
             'password' => 'required',
         ]);
+
+        // Detect driver accounts before Auth::attempt() — consistent rejection
+        // regardless of password match, eliminating any timing oracle.
+        // Drivers authenticate exclusively via /api/v1/auth/driver/login.
+        $targetUser = User::where('email', $request->input('email'))->first();
+        if ($targetUser && $targetUser->isDriver()) {
+            return response()->json([
+                'message'  => translate('auth.driver_use_whatsapp_login'),
+                'redirect' => '/api/v1/auth/driver/login/request',
+            ], 403);
+        }
 
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Неверные учётные данные.'], 401);

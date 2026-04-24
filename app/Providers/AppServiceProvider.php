@@ -44,5 +44,21 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('cargo-auth', function (Request $request) {
             return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Rate limiter for the WhatsApp driver registration API endpoints.
+        // Caps total requests per IP to prevent automated abuse.
+        // Per-phone 60s throttle is enforced separately in DriverRegistrationService
+        // via the last_sent_at column — this limiter is IP-scoped only.
+        RateLimiter::for('waha-driver-register', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        // Rate limiter for the WhatsApp driver login API endpoints.
+        // Slightly more permissive than registration (20/min vs 10/min) — legitimate
+        // users can retry on wrong codes without being locked out at the IP level.
+        // Per-phone 60s throttle is still enforced in DriverLoginService via last_sent_at.
+        RateLimiter::for('waha-driver-login', function (Request $request) {
+            return Limit::perMinute(20)->by($request->ip());
+        });
     }
 }
