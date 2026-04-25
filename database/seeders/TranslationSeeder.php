@@ -1969,6 +1969,14 @@ class TranslationSeeder extends Seeder
                 'cn' => '您已经为此货物提交了申请。',
 
             ],
+            [
+                'key' => 'applications.no_car_first',
+                'group' => 'applications',
+                'ru' => 'Сначала добавьте автомобиль в профиле, затем подавайте заявки на грузы.',
+                'kz' => 'Алдымен профильге көлік қосыңыз, содан кейін жүктерге өтінім беріңіз.', // TODO: verify with native speaker
+                'cn' => '请先在个人资料中添加车辆，然后再申请货物。', // TODO: verify with native speaker
+                'description' => 'Driver tries to apply for cargo but has no cars registered',
+            ],
 
             // Формы создания и редактирования грузов
             [
@@ -4886,11 +4894,19 @@ class TranslationSeeder extends Seeder
             ],
             [
                 'key'         => 'driver_login.error_not_approved',
-                'ru'          => 'Аккаунт на проверке у администратора.',
-                'kz'          => 'Аккаунт әкімшінің тексеруінде.', // TODO: verify with native speaker
-                'cn'          => '账户正在管理员审核中。', // TODO: verify with native speaker
+                'ru'          => 'Регистрация завершена. Ожидайте подтверждения администратора — мы напишем в WhatsApp, когда аккаунт активируют.',
+                'kz'          => 'Тіркелу аяқталды. Әкімшінің растауын күтіңіз — есептік жазба белсендірілгенде WhatsApp-та хабарлама жібереміз.', // TODO: verify with native speaker
+                'cn'          => '注册已完成。请等待管理员确认 — 账户激活后我们将通过 WhatsApp 通知您。', // TODO: verify with native speaker
                 'group'       => 'driver_login',
-                'description' => '403 message when driver exists but approved = false',
+                'description' => '403 message after OTP verify when account is not yet admin-approved (covers both newly auto-registered and previously rejected accounts)',
+            ],
+            [
+                'key'         => 'driver_login.error_phone_conflict',
+                'ru'          => 'Этот номер уже зарегистрирован под другим типом аккаунта. Войдите через email/пароль.',
+                'kz'          => 'Бұл нөмір басқа есептік жазба түрімен тіркелген. Email/құпия сөз арқылы кіріңіз.', // TODO: verify with native speaker
+                'cn'          => '此号码已注册为其他类型账户。请使用邮箱/密码登录。', // TODO: verify with native speaker
+                'group'       => 'driver_login',
+                'description' => '409 — phone belongs to a non-driver account (admin / warehouse_employee)',
             ],
             [
                 'key'         => 'driver_login.error_no_pending_code',
@@ -5201,6 +5217,294 @@ class TranslationSeeder extends Seeder
                 'cn'          => '司机通过WhatsApp登录。请打开司机登录表单。', // TODO: verify with native speaker
                 'group'       => 'auth',
                 'description' => 'Error shown when a driver tries to log in via the legacy /login endpoint; redirects user to the WhatsApp login flow',
+            ],
+
+            // ── Profile UI copy ───────────────────────────────────────────────────
+            [
+                'key'         => 'profile.page_title',
+                'ru'          => 'Профиль',
+                'kz'          => 'Профиль', // TODO: verify with native speaker
+                'cn'          => '个人资料', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Browser tab title and page heading for the profile page',
+            ],
+            [
+                'key'         => 'profile.subtitle_driver_placeholder',
+                'ru'          => 'Заполните своё имя — оно будет видно складским сотрудникам при подаче заявок.',
+                'kz'          => 'Атыңызды толтырыңыз — ол қоймадағы қызметкерлерге өтініш беру кезінде көрінеді.', // TODO: verify with native speaker
+                'cn'          => '请填写您的姓名——提交申请时仓库员工将看到它。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Page subtitle shown to drivers whose name is still an auto-generated placeholder (starts with "Водитель ")',
+            ],
+            [
+                'key'         => 'profile.subtitle_driver',
+                'ru'          => 'Ваши данные.',
+                'kz'          => 'Сіздің деректеріңіз.', // TODO: verify with native speaker
+                'cn'          => '您的资料。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Page subtitle shown to drivers who have already set a real name',
+            ],
+            [
+                'key'         => 'profile.subtitle_staff',
+                'ru'          => 'Управление аккаунтом.',
+                'kz'          => 'Аккаунтты басқару.', // TODO: verify with native speaker
+                'cn'          => '账号管理。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Page subtitle shown to admins and warehouse employees',
+            ],
+            [
+                'key'         => 'profile.role_admin',
+                'ru'          => 'Администратор',
+                'kz'          => 'Әкімші', // TODO: verify with native speaker
+                'cn'          => '管理员', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Role badge label for admin users on the profile page',
+            ],
+            [
+                'key'         => 'profile.role_warehouse',
+                'ru'          => 'Складской сотрудник',
+                'kz'          => 'Қойма қызметкері', // TODO: verify with native speaker
+                'cn'          => '仓库员工', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Role badge label for warehouse employee users on the profile page',
+            ],
+            [
+                'key'         => 'profile.role_driver',
+                'ru'          => 'Водитель',
+                'kz'          => 'Жүргізуші', // TODO: verify with native speaker
+                'cn'          => '司机', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Role badge label for driver users on the profile page',
+            ],
+            [
+                'key'         => 'profile.status_approved',
+                'ru'          => 'Подтверждён администратором',
+                'kz'          => 'Әкімші растады', // TODO: verify with native speaker
+                'cn'          => '已由管理员确认', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Approval status pill shown on driver profile when approved = true',
+            ],
+            [
+                'key'         => 'profile.status_pending',
+                'ru'          => 'На проверке',
+                'kz'          => 'Тексерілуде', // TODO: verify with native speaker
+                'cn'          => '审核中', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Approval status pill shown on driver profile when approved = false',
+            ],
+            [
+                'key'         => 'profile.phone_label',
+                'ru'          => 'Телефон',
+                'kz'          => 'Телефон', // TODO: verify with native speaker
+                'cn'          => '电话', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label above the locked phone chip on the driver profile page',
+            ],
+            [
+                'key'         => 'profile.phone_locked_hint',
+                'ru'          => 'Используется для входа через WhatsApp — изменить нельзя.',
+                'kz'          => 'WhatsApp арқылы кіру үшін пайдаланылады — өзгертуге болмайды.', // TODO: verify with native speaker
+                'cn'          => '用于WhatsApp登录——无法更改。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Hint text below the locked phone chip on the driver profile page explaining it is their auth identity',
+            ],
+            [
+                'key'         => 'profile.placeholder_name_callout',
+                'ru'          => 'У вас временное имя. Укажите настоящее — оно будет отображаться при подаче заявок на грузы.',
+                'kz'          => 'Сізде уақытша ат бар. Нақты атыңызды енгізіңіз — ол жүк өтінімдерінде көрсетіледі.', // TODO: verify with native speaker
+                'cn'          => '您有一个临时名称。请输入真实姓名——它将在货物申请中显示。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Invitation callout shown inside the form when a driver still has an auto-generated placeholder name',
+            ],
+            [
+                'key'         => 'profile.field_name',
+                'ru'          => 'Имя',
+                'kz'          => 'Аты-жөні', // TODO: verify with native speaker
+                'cn'          => '姓名', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label for the name input on the profile form',
+            ],
+            [
+                'key'         => 'profile.field_name_placeholder',
+                'ru'          => 'Введите ваше имя',
+                'kz'          => 'Атыңызды енгізіңіз', // TODO: verify with native speaker
+                'cn'          => '请输入您的姓名', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Placeholder for the name input on the profile form',
+            ],
+            [
+                'key'         => 'profile.field_name_hint_driver',
+                'ru'          => 'Это имя увидят складские сотрудники при подаче заявок.',
+                'kz'          => 'Бұл атты қойма қызметкерлері өтініш беру кезінде көреді.', // TODO: verify with native speaker
+                'cn'          => '仓库员工在提交申请时将看到此名称。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Helper text below the name input on the driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_email',
+                'ru'          => 'Email',
+                'kz'          => 'Email', // TODO: verify with native speaker
+                'cn'          => '电子邮件', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label for the email input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_email_placeholder',
+                'ru'          => 'your@email.com',
+                'kz'          => 'your@email.com', // TODO: verify with native speaker
+                'cn'          => 'your@email.com', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Placeholder for the email input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.section_password',
+                'ru'          => 'Смена пароля',
+                'kz'          => 'Құпия сөзді өзгерту', // TODO: verify with native speaker
+                'cn'          => '修改密码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Section divider label above the password fields on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_password_new',
+                'ru'          => 'Новый пароль',
+                'kz'          => 'Жаңа құпия сөз', // TODO: verify with native speaker
+                'cn'          => '新密码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label for the new password input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_password_placeholder',
+                'ru'          => 'Минимум 8 символов',
+                'kz'          => 'Кемінде 8 таңба', // TODO: verify with native speaker
+                'cn'          => '至少8个字符', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Placeholder for the new password input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_password_hint',
+                'ru'          => 'Оставьте пустым, чтобы не менять.',
+                'kz'          => 'Өзгертпеу үшін бос қалдырыңыз.', // TODO: verify with native speaker
+                'cn'          => '留空则不更改。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Helper text below the new password input indicating blank = unchanged',
+            ],
+            [
+                'key'         => 'profile.field_password_confirm',
+                'ru'          => 'Подтверждение пароля',
+                'kz'          => 'Құпия сөзді растаңыз', // TODO: verify with native speaker
+                'cn'          => '确认密码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label for the password confirmation input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.field_password_confirm_placeholder',
+                'ru'          => 'Повторите пароль',
+                'kz'          => 'Құпия сөзді қайталаңыз', // TODO: verify with native speaker
+                'cn'          => '重复密码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Placeholder for the password confirmation input on the non-driver profile form',
+            ],
+            [
+                'key'         => 'profile.save_button',
+                'ru'          => 'Сохранить',
+                'kz'          => 'Сақтау', // TODO: verify with native speaker
+                'cn'          => '保存', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Submit button label on the profile form',
+            ],
+            [
+                'key'         => 'profile.save_submitting',
+                'ru'          => 'Сохраняем...',
+                'kz'          => 'Сақталуда...', // TODO: verify with native speaker
+                'cn'          => '保存中…', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Submit button label while the profile form is submitting',
+            ],
+            [
+                'key'         => 'profile.save_success',
+                'ru'          => 'Профиль успешно обновлён.',
+                'kz'          => 'Профиль сәтті жаңартылды.', // TODO: verify with native speaker
+                'cn'          => '个人资料已成功更新。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Success banner text shown inside the profile card after a successful save',
+            ],
+            [
+                'key'         => 'profile.error_heading',
+                'ru'          => 'Пожалуйста, исправьте ошибки ниже.',
+                'kz'          => 'Төмендегі қателерді түзетіңіз.', // TODO: verify with native speaker
+                'cn'          => '请更正以下错误。', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Heading inside the rose error banner on the profile form when validation fails',
+            ],
+
+            // ── Profile page (spec keys — canonical aliases used by the spec) ─────
+            [
+                'key'         => 'profile.title',
+                'ru'          => 'Профиль — Silk Way',
+                'kz'          => 'Профиль — Silk Way', // TODO: verify with native speaker
+                'cn'          => '个人资料 — Silk Way', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Browser tab <title> for the profile page (spec key)',
+            ],
+            [
+                'key'         => 'profile.heading',
+                'ru'          => 'Мой профиль',
+                'kz'          => 'Менің профилім', // TODO: verify with native speaker
+                'cn'          => '我的资料', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'H1 page heading on the profile page (spec key)',
+            ],
+            [
+                'key'         => 'profile.field_phone_label',
+                'ru'          => 'Номер телефона',
+                'kz'          => 'Телефон нөмірі', // TODO: verify with native speaker
+                'cn'          => '手机号码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label above the read-only phone chip on the driver profile (spec key)',
+            ],
+            [
+                'key'         => 'profile.field_phone_hint',
+                'ru'          => 'Используется для входа через WhatsApp',
+                'kz'          => 'WhatsApp арқылы кіру үшін пайдаланылады', // TODO: verify with native speaker
+                'cn'          => '用于通过WhatsApp登录', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Hint under the locked phone number on the driver profile (spec key)',
+            ],
+            [
+                'key'         => 'profile.field_password_confirmation',
+                'ru'          => 'Подтверждение пароля',
+                'kz'          => 'Құпия сөзді растау', // TODO: verify with native speaker
+                'cn'          => '确认密码', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Label for password_confirmation field on the profile form (spec key)',
+            ],
+            [
+                'key'         => 'profile.update_success',
+                'ru'          => 'Профиль обновлён',
+                'kz'          => 'Профиль жаңартылды', // TODO: verify with native speaker
+                'cn'          => '资料已更新', // TODO: verify with native speaker
+                'group'       => 'profile',
+                'description' => 'Flash success message after a profile update (spec key)',
+            ],
+
+            // ── Notifications ────────────────────────────────────────────────────
+            [
+                'key'         => 'notifications.driver_approved',
+                'ru'          => 'Silk Way: ваш аккаунт активирован. Теперь можно принимать заказы.',
+                'kz'          => 'Silk Way: сіздің аккаунтыңыз белсендірілді. Енді тапсырыстарды қабылдауға болады.', // TODO: verify with native speaker
+                'cn'          => 'Silk Way：您的账户已激活。现在可以接受订单了。', // TODO: verify with native speaker
+                'group'       => 'notifications',
+                'description' => 'WhatsApp text sent to a driver when admin approves their account',
+            ],
+
+            // ── Navigation (user dropdown) ─────────────────────────────────────
+            [
+                'key'         => 'nav.profile',
+                'ru'          => 'Профиль',
+                'kz'          => 'Профиль', // TODO: verify with native speaker
+                'cn'          => '个人资料', // TODO: verify with native speaker
+                'group'       => 'nav',
+                'description' => 'User-dropdown link label pointing to the profile page',
             ],
         ];
 

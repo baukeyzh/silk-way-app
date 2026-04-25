@@ -2,3 +2,11 @@
 - [Project: Documents Feature](project_documents_feature.md) — Driver documents section: 6 doc types, 4 states, card grid UI with inline upload interaction
 - [Project: Public Cargo Listing Page](project_public_cargo_page.md) — Guest /cargo page UX: price-hidden pill, card layout, filter chips, unapproved-driver bottom sheet, v1 exclusions
 - [Project: Admin Document Review Page](project_admin_documents_review.md) — Accordion layout, inline file previews, filter tabs, approve/reject, private file-serving routes added
+- [Project: Admin Translation Detail Page](project_admin_translation_detail.md) — Locale pill colors (slate/emerald/amber), empty-state per card, Alpine clipboard, {{}} trap pattern
+- [Project: Admin Translation Create & Edit Pages](project_admin_translation_create_edit.md) — 2-section card, Alpine group autocomplete, 3-col locale grid, char counters, 26 seeder keys added
+- [Project: CMR Upload & Confirmation Flow](project_cmr_flow.md) — CMR Blade views: driver upload, WE/admin review, inline in show-application detail, 20 translation keys, routes consumed
+- [Project: Driver WhatsApp OTP Registration](project_driver_whatsapp_registration.md) — Single Blade view, session-based step detection, Alpine countdown, 15 translation keys, links added to login+register
+- [Project: Driver WhatsApp OTP Login](project_driver_whatsapp_login.md) — Mirror of register flow: phone-only step 1, code-only step 2, no name/password, 15 driver_login.* keys, links added to login+register views
+- [Project: Unified Register Page](project_unified_register.md) — Single register.blade.php, server-side ?type= toggle, tab selector, improved error UX, 17 auth.* keys, controller redirects to unified page
+- [Project: Unified Login Page](project_unified_login.md) — Single login.blade.php, driver/warehouse tab toggle, WhatsApp OTP driver flow, 11 auth.login_* keys, DriverLoginController redirects to unified page
+- [Project: Driver & Staff Profile Page](project_profile_page.md) — 2-col card, role identity panel, driver phone lock, placeholder name detection, 22 profile.* keys, PATCH profile.update route needed from Laravel agent

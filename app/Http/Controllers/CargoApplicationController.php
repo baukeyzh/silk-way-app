@@ -94,11 +94,21 @@ class CargoApplicationController extends Controller
             abort(403, 'Только водители могут подавать заявки на грузы.');
         }
 
+        // Driver must have at least one car — cargo_applications.car_id is NOT NULL.
+        // Redirect to the add-car form with a friendly flash so the driver can fix it
+        // in one click instead of bouncing back to the cargo page with an error.
+        $car = $user->cars()->first();
+        if (!$car) {
+            return redirect()
+                ->route('cars.create')
+                ->with('warning', translate('applications.no_car_first'));
+        }
+
         $validated = $request->validate([
             'driver_notes' => 'nullable|string|max:1000',
         ]);
 
-        return DB::transaction(function () use ($cargo, $user, $validated) {
+        return DB::transaction(function () use ($cargo, $user, $car, $validated) {
             // Блокируем строку груза для предотвращения гонки потоков
             $cargo = Cargo::where('id', $cargo->id)->lockForUpdate()->firstOrFail();
 
@@ -120,7 +130,7 @@ class CargoApplicationController extends Controller
             CargoApplication::create([
                 'cargo_id'     => $cargo->id,
                 'driver_id'    => $user->id,
-                'car_id'       => $user->cars->first()?->id,
+                'car_id'       => $car->id,
                 'status'       => CargoApplication::STATUS_PENDING,
                 'driver_notes' => $validated['driver_notes'] ?? null,
             ]);

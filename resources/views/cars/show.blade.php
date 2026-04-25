@@ -107,25 +107,6 @@
         </div>
     </div>
 
-    {{-- Document --}}
-    @if($car->vehicle_document)
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-file-pdf text-rose-500 text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold text-slate-900">Документ ПДД</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Транспортное средство</p>
-                </div>
-            </div>
-            <a href="{{ Storage::url($car->vehicle_document) }}" target="_blank"
-               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                <i class="fas fa-download text-xs"></i>
-                Скачать PDF
-            </a>
-        </div>
-    @endif
 
     {{-- Actions --}}
     @if(auth()->user()->id === $car->user_id)

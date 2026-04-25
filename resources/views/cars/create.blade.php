@@ -137,25 +137,6 @@
         </div>
 
         {{-- Document Upload --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                    <i class="fas fa-file-pdf text-rose-500"></i>
-                    Документ ПДД
-                </h2>
-            </div>
-            <div class="p-6">
-                <label for="vehicle_document"
-                       class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors group">
-                    <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 group-hover:text-indigo-500 transition-colors mb-2"></i>
-                    <span class="text-sm text-slate-600 group-hover:text-indigo-600">Нажмите для загрузки PDF</span>
-                    <span class="text-xs text-slate-400 mt-1">Макс. 10 МБ</span>
-                    <input type="file" id="vehicle_document" name="vehicle_document" accept=".pdf" class="hidden">
-                </label>
-                <p id="file_name" class="text-xs text-slate-500 mt-2 hidden"></p>
-            </div>
-        </div>
-
         {{-- Actions --}}
         <div class="flex justify-end gap-3 pb-6">
             <button type="button" onclick="history.back()"
@@ -170,14 +151,4 @@
         </div>
     </form>
 </div>
-
-<script>
-document.getElementById('vehicle_document').addEventListener('change', function(e) {
-    const label = document.getElementById('file_name');
-    if (e.target.files.length > 0) {
-        label.textContent = 'Выбран файл: ' + e.target.files[0].name;
-        label.classList.remove('hidden');
-    }
-});
-</script>
 @endsection

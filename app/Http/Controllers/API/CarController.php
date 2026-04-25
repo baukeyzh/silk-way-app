@@ -8,7 +8,6 @@ use App\Models\Car;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class CarController extends Controller
@@ -93,8 +92,7 @@ class CarController extends Controller
      *                 @OA\Property(property="trailer_length",  type="number",  example=13.6),
      *                 @OA\Property(property="trailer_width",   type="number",  example=2.4),
      *                 @OA\Property(property="trailer_height",  type="number",  example=2.7),
-     *                 @OA\Property(property="trailer_type",    type="string",  enum={"tral","refrigerator","tent"}),
-     *                 @OA\Property(property="vehicle_document",type="string",  format="binary", description="PDF документ, макс. 10MB")
+     *                 @OA\Property(property="trailer_type",    type="string",  enum={"tral","refrigerator","tent"})
      *             )
      *         )
      *     ),
@@ -118,16 +116,11 @@ class CarController extends Controller
             'trailer_width'    => 'required|numeric|min:0.1|max:10',
             'trailer_height'   => 'required|numeric|min:0.1|max:10',
             'trailer_type'     => ['required', Rule::in(array_keys(Car::getTrailerTypes()))],
-            'vehicle_document' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         $validated['trailer_volume']   = $validated['trailer_length'] * $validated['trailer_width'] * $validated['trailer_height'];
         $validated['trailer_type_rus'] = Car::getTrailerTypes()[$validated['trailer_type']];
         $validated['user_id']          = $request->user()->id;
-
-        if ($request->hasFile('vehicle_document')) {
-            $validated['vehicle_document'] = $request->file('vehicle_document')->store('vehicle_documents', 'public');
-        }
 
         $car = Car::create($validated);
         $car->saveLocalizedFields($validated);
@@ -156,8 +149,7 @@ class CarController extends Controller
      *                 @OA\Property(property="trailer_length",  type="number"),
      *                 @OA\Property(property="trailer_width",   type="number"),
      *                 @OA\Property(property="trailer_height",  type="number"),
-     *                 @OA\Property(property="trailer_type",    type="string", enum={"tral","refrigerator","tent"}),
-     *                 @OA\Property(property="vehicle_document",type="string", format="binary")
+     *                 @OA\Property(property="trailer_type",    type="string", enum={"tral","refrigerator","tent"})
      *             )
      *         )
      *     ),
@@ -185,18 +177,10 @@ class CarController extends Controller
             'trailer_width'    => 'required|numeric|min:0.1|max:10',
             'trailer_height'   => 'required|numeric|min:0.1|max:10',
             'trailer_type'     => ['required', Rule::in(array_keys(Car::getTrailerTypes()))],
-            'vehicle_document' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         $validated['trailer_volume']   = $validated['trailer_length'] * $validated['trailer_width'] * $validated['trailer_height'];
         $validated['trailer_type_rus'] = Car::getTrailerTypes()[$validated['trailer_type']];
-
-        if ($request->hasFile('vehicle_document')) {
-            if ($car->vehicle_document) {
-                Storage::disk('public')->delete($car->vehicle_document);
-            }
-            $validated['vehicle_document'] = $request->file('vehicle_document')->store('vehicle_documents', 'public');
-        }
 
         $car->update($validated);
         $car->saveLocalizedFields($validated);
@@ -224,10 +208,6 @@ class CarController extends Controller
     {
         if ($car->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Нет доступа к этой машине.'], 403);
-        }
-
-        if ($car->vehicle_document) {
-            Storage::disk('public')->delete($car->vehicle_document);
         }
 
         $car->delete();

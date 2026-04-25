@@ -27,7 +27,6 @@ class Car extends Model
         'trailer_type_rus',
         'trailer_type_kaz',
         'trailer_type_chn',
-        'vehicle_document',
         'is_active',
     ];
 

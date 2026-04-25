@@ -162,6 +162,10 @@
                                     {{ user_role_name() }}
                                 </span>
                             </div>
+                            <a href="{{ route('profile.show') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-circle mr-2.5 w-4 text-slate-400"></i>
+                                {{ \App\Helpers\LocalizationHelper::t('nav.profile') }}
+                            </a>
                             <form method="POST" action="{{ route('logout') }}" class="block">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors flex items-center">
@@ -237,6 +241,13 @@
             <div class="mb-5 flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl">
                 <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0"></i>
                 <span class="text-sm font-medium">{{ session('error') }}</span>
+            </div>
+            @endif
+
+            @if(session('warning'))
+            <div class="mb-5 flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl">
+                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 shrink-0"></i>
+                <span class="text-sm font-medium">{{ session('warning') }}</span>
             </div>
             @endif
 
@@ -350,6 +361,9 @@
                             <p class="text-sm font-medium text-slate-900">{{ auth()->user()->name }}</p>
                             <span class="mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">{{ \App\Helpers\LocalizationHelper::t('admin.driver') }}</span>
                         </div>
+                        <a href="{{ route('profile.show') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                            <i class="fas fa-user-circle mr-2.5 text-slate-400"></i>{{ \App\Helpers\LocalizationHelper::t('nav.profile') }}
+                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors flex items-center">
@@ -374,6 +388,13 @@
         <div class="mb-5 flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl">
             <i class="fas fa-exclamation-circle text-rose-500 mt-0.5 shrink-0"></i>
             <span class="text-sm font-medium">{{ session('error') }}</span>
+        </div>
+        @endif
+
+        @if(session('warning'))
+        <div class="mb-5 flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl">
+            <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 shrink-0"></i>
+            <span class="text-sm font-medium">{{ session('warning') }}</span>
         </div>
         @endif
 

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -51,9 +53,11 @@ class AdminController extends Controller
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Доступ запрещен. Требуются права администратора.');
         }
-        
+
         $user->update(['approved' => true]);
-        
+
+        $this->notifyDriverApproved($user);
+
         return redirect()->back()->with('success', "Пользователь {$user->name} подтвержден!");
     }
 
@@ -75,11 +79,38 @@ class AdminController extends Controller
         if (!auth()->user()->isAdmin()) {
             abort(403, 'Доступ запрещен. Требуются права администратора.');
         }
-        
-        $user->update(['approved' => !$user->approved]);
-        
+
+        $wasApproved = $user->approved;
+        $user->update(['approved' => ! $wasApproved]);
+
+        // Only fire the notification on the false → true transition.
+        if (! $wasApproved && $user->approved) {
+            $this->notifyDriverApproved($user);
+        }
+
         $status = $user->approved ? 'подтвержден' : 'отклонен';
         return redirect()->back()->with('success', "Пользователь {$user->name} {$status}!");
+    }
+
+    /**
+     * Sends a WhatsApp approval notification to a driver.
+     * Fires silently — if WAHA is down the admin action still succeeds.
+     */
+    private function notifyDriverApproved(User $user): void
+    {
+        if (! $user->isDriver() || empty($user->phone)) {
+            return;
+        }
+
+        try {
+            $message = translate('notifications.driver_approved');
+            app(WhatsAppService::class)->sendNotification($user->phone, $message);
+        } catch (\Throwable $e) {
+            Log::warning('Driver approval WhatsApp notification failed', [
+                'user_id' => $user->id,
+                'error'   => $e->getMessage(),
+            ]);
+        }
     }
 
     public function deleteUser(User $user): RedirectResponse

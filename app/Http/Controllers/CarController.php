@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 
@@ -43,19 +42,12 @@ class CarController extends Controller
             'trailer_width' => 'required|numeric|min:0.1|max:10',
             'trailer_height' => 'required|numeric|min:0.1|max:10',
             'trailer_type' => ['required', Rule::in(array_keys(Car::getTrailerTypes()))],
-            'vehicle_document' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
         ]);
 
         // Вычисляем объем прицепа
         $validated['trailer_volume'] = $validated['trailer_length'] * $validated['trailer_width'] * $validated['trailer_height'];
         $validated['trailer_type_rus'] = Car::getTrailerTypes()[$validated['trailer_type']];
         $validated['user_id'] = Auth::id();
-
-        // Загружаем документ если есть
-        if ($request->hasFile('vehicle_document')) {
-            $path = $request->file('vehicle_document')->store('vehicle_documents', 'public');
-            $validated['vehicle_document'] = $path;
-        }
 
         $car = Car::create($validated);
         
@@ -103,22 +95,11 @@ class CarController extends Controller
             'trailer_width' => 'required|numeric|min:0.1|max:10',
             'trailer_height' => 'required|numeric|min:0.1|max:10',
             'trailer_type' => ['required', Rule::in(array_keys(Car::getTrailerTypes()))],
-            'vehicle_document' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         // Вычисляем объем прицепа
         $validated['trailer_volume'] = $validated['trailer_length'] * $validated['trailer_width'] * $validated['trailer_height'];
         $validated['trailer_type_rus'] = Car::getTrailerTypes()[$validated['trailer_type']];
-
-        // Загружаем новый документ если есть
-        if ($request->hasFile('vehicle_document')) {
-            // Удаляем старый документ
-            if ($car->vehicle_document) {
-                Storage::disk('public')->delete($car->vehicle_document);
-            }
-            $path = $request->file('vehicle_document')->store('vehicle_documents', 'public');
-            $validated['vehicle_document'] = $path;
-        }
 
         $car->update($validated);
         
@@ -137,12 +118,7 @@ class CarController extends Controller
     public function destroy(string $id)
     {
         $car = Car::where('user_id', Auth::id())->findOrFail($id);
-        
-        // Удаляем документ если есть
-        if ($car->vehicle_document) {
-            Storage::disk('public')->delete($car->vehicle_document);
-        }
-        
+
         $car->delete();
 
         if (Auth::user()->isDriver()) {

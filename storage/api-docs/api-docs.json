@@ -6,7 +6,7 @@
         "contact": {
             "email": "admin@silkway.kz"
         },
-        "version": "1.8.0"
+        "version": "1.9.0"
     },
     "servers": [
         {
@@ -567,11 +567,6 @@
                                             "refrigerator",
                                             "tent"
                                         ]
-                                    },
-                                    "vehicle_document": {
-                                        "description": "PDF документ, макс. 10MB",
-                                        "type": "string",
-                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -759,10 +754,6 @@
                                             "refrigerator",
                                             "tent"
                                         ]
-                                    },
-                                    "vehicle_document": {
-                                        "type": "string",
-                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -3187,6 +3178,116 @@
                 }
             }
         },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Получить профиль текущего пользователя",
+                "operationId": "ba77fb1a2bb44ad4937210a8e82bc344",
+                "responses": {
+                    "200": {
+                        "description": "Данные профиля",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Обновить профиль текущего пользователя",
+                "operationId": "048d08d14976ae7214bfc54d17a659f3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "email": {
+                                        "description": "Только для warehouse_employee / admin",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "description": "Только для warehouse_employee / admin; не заполнять — пароль не меняется",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newSecret123"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Только для warehouse_employee / admin",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newSecret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Профиль обновлён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Профиль обновлён."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/public/cargo": {
             "get": {
                 "tags": [
@@ -3399,11 +3500,6 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
-                    },
-                    "vehicle_document": {
-                        "type": "string",
-                        "example": "https://example.com/storage/doc.pdf",
-                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
@@ -3804,6 +3900,10 @@
         {
             "name": "DriverLogin",
             "description": "Вход водителя через WhatsApp OTP"
+        },
+        {
+            "name": "Profile",
+            "description": "Профиль пользователя"
         },
         {
             "name": "CMR",

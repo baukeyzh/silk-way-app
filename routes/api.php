@@ -8,6 +8,7 @@ use App\Http\Controllers\API\CargoController;
 use App\Http\Controllers\API\DriverDocumentController;
 use App\Http\Controllers\API\DriverLoginController;
 use App\Http\Controllers\API\DriverRegistrationController;
+use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicCargoController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +51,10 @@ Route::prefix('v1')->group(function () {
 
     // === AUTHENTICATED ROUTES ===
     Route::middleware(['auth:sanctum', 'throttle:cargo-auth'])->group(function () {
+
+        // Profile
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::put('/profile', [ProfileController::class, 'update']);
 
         // /cargo/my must register before /cargo/{cargo} to avoid "my" being
         // matched as a cargo ID by the wildcard route.

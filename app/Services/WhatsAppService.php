@@ -77,6 +77,47 @@ class WhatsAppService
     }
 
     /**
+     * Sends a free-form notification text to the given phone via WhatsApp.
+     *
+     * Unlike sendOtp(), this method has no OTP-specific concerns (no code parameter,
+     * no OTP template lookup). Use it for transactional messages such as account
+     * approval confirmations.
+     *
+     * Callers MUST wrap this in try/catch — a WhatsAppServiceException here should
+     * never block the primary business action (e.g. user approval).
+     *
+     * @param string $phone   digits only, e.g. "77001234567"
+     * @param string $message fully-rendered message text
+     * @throws WhatsAppServiceException on transport or server error
+     */
+    public function sendNotification(string $phone, string $message): bool
+    {
+        $chatId = "{$phone}@c.us";
+
+        $response = Http::withHeaders(['X-Api-Key' => $this->apiKey])
+            ->timeout(15)
+            ->post("{$this->baseUrl}/api/sendText", [
+                'session' => $this->session,
+                'chatId'  => $chatId,
+                'text'    => $message,
+            ]);
+
+        if ($response->failed()) {
+            Log::warning('WhatsApp sendNotification failed', [
+                'status' => $response->status(),
+                'phone'  => substr($phone, 0, 4) . '****',
+            ]);
+            throw new WhatsAppServiceException(
+                'WAHA sendText (notification) failed',
+                $response->status(),
+                $response->body(),
+            );
+        }
+
+        return true;
+    }
+
+    /**
      * Sends a 6-digit OTP to the given phone via WhatsApp.
      *
      * @param string      $phone          digits only, e.g. "77001234567"

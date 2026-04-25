@@ -43,19 +43,28 @@ class DriverLoginService
     {
         $phone = $this->normalizePhone($phone);
 
-        // 1. Driver must exist
+        // 1. Look up driver by phone. If none exists, auto-register a new
+        //    unapproved account so the user can verify ownership in the same
+        //    flow. The admin-approval gate still blocks access until approved
+        //    (enforced at verifyCode), so this is not a security regression.
         $user = User::where('phone', $phone)
             ->where('role', User::ROLE_DRIVER)
             ->first();
 
         if (!$user) {
-            abort(404, translate('driver_login.error_not_found'));
+            // Guard against phone collision with non-driver accounts (admin / WE).
+            // users.phone is UNIQUE — without this check the create() below would
+            // throw a generic integrity constraint error.
+            if (User::where('phone', $phone)->exists()) {
+                abort(409, translate('driver_login.error_phone_conflict'));
+            }
+
+            $user = $this->autoRegisterDriver($phone);
         }
 
-        // 2. Driver must be approved
-        if (!$user->approved) {
-            abort(403, translate('driver_login.error_not_approved'));
-        }
+        // 2. Approval gate moved to verifyCode so newly-created users can still
+        //    verify their phone in this same flow. After verification they get
+        //    a friendly "pending approval" message.
 
         // 3. WAHA session must be ready
         $this->requireSessionReady(translate('driver_login.error_service_unavailable'));
@@ -191,6 +200,24 @@ class DriverLoginService
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    /**
+     * Auto-register a driver whose phone is not yet in the system.
+     * Placeholder name is "Водитель {last 4 digits}" — the driver can update it
+     * later in their profile. Account is created unapproved; admin must verify
+     * before they can pick up cargo.
+     */
+    private function autoRegisterDriver(string $phone): User
+    {
+        return User::create([
+            'name'     => 'Водитель ' . substr($phone, -4),
+            'phone'    => $phone,
+            'email'    => null,
+            'password' => null,
+            'role'     => User::ROLE_DRIVER,
+            'approved' => false,
+        ]);
+    }
 
     /**
      * Upsert the PhoneVerification row and send the OTP.

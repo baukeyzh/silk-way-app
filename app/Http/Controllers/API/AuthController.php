@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * @OA\Info(
  *     title="Silk Way API",
- *     version="1.8.0",
+ *     version="1.9.0",
  *     description="REST API для мобильного приложения Silk Way. Авторизация через Bearer токен (Sanctum).",
  *     @OA\Contact(email="admin@silkway.kz")
  * )
@@ -41,6 +41,7 @@ use Illuminate\Validation\ValidationException;
  * @OA\Tag(name="Documents",            description="Документы водителя")
  * @OA\Tag(name="DriverRegistration",  description="Регистрация водителя через WhatsApp OTP")
  * @OA\Tag(name="DriverLogin",         description="Вход водителя через WhatsApp OTP")
+ * @OA\Tag(name="Profile",             description="Профиль пользователя")
  */
 class AuthController extends Controller
 {

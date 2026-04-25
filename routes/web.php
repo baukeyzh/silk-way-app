@@ -9,6 +9,7 @@ use App\Http\Controllers\CargoApplicationController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\DriverDocumentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\DriverLoginController;
 use App\Http\Controllers\Auth\DriverRegistrationController;
 
@@ -57,6 +58,10 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     
     // Админ-панель
     Route::prefix('admin')->name('admin.')->group(function () {

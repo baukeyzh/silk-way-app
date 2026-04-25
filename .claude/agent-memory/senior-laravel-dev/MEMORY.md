@@ -1,3 +1,9 @@
 - [Public Cargo Routing Architecture](project_public_cargo.md) — PublicCargoController owns cargo.index/show; resource excludes index/show; auth users get full view inline, not via redirect
 - [Driver Document Batch Upload Architecture](project_docs_batch_upload.md) — form= attr pattern, batchUpload() redirect contract, private helper, translation key locations
 - [Driver Document API Mobile Contract](project_docs_api_contract.md) — DriverDocumentResource 13-field shape, type code list, docs.type.{code}.* translation pattern, route order rules, file_url fallback
+- [CMR Upload & Confirmation Flow](project_cmr_flow.md) — state machine, column contracts, HandlesCmrUploads trait, markAsDelivered redirect, API 1.5.0
+- [Status Handling Audit Fixes (S1–S10)](project_status_audit.md) — constants, DB::transaction+lockForUpdate, enum→string, 410 on deliver, verified_by semantics
+- [WhatsApp OTP Driver Registration](project_whatsapp_otp_driver_reg.md) — DriverRegistrationService, WAHA client, phone_verifications table, email=nullable on users, session keys, API 1.6.0
+- [WhatsApp OTP Driver Login](project_driver_login_flow.md) — DriverLoginService, HandlesPhoneOtp trait, PURPOSE_DRIVER_LOGIN, 33 translation keys, token=mobile-wa, API 1.7.0
+- [Driver Passwordless Auth (API 1.8.0)](project_driver_passwordless.md) — users.password nullable, driver blocked from /register+/login, OTP-only, 2 translation keys, factory note
+- [Driver Profile & Approval Notification (API 1.9.0)](project_profile_and_approval_notify.md) — UpdateProfileRequest, web+API ProfileController, sendNotification(), notifyDriverApproved() hooks, 19 translation keys

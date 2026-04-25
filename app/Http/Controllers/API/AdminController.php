@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -81,6 +83,8 @@ class AdminController extends Controller
     {
         $user->update(['approved' => true]);
 
+        $this->notifyDriverApproved($user);
+
         return response()->json([
             'message' => 'Аккаунт подтверждён.',
             'data'    => new UserResource($user),
@@ -106,7 +110,13 @@ class AdminController extends Controller
      */
     public function toggleApproval(User $user): JsonResponse
     {
-        $user->update(['approved' => !$user->approved]);
+        $wasApproved = $user->approved;
+        $user->update(['approved' => ! $wasApproved]);
+
+        // Only fire the notification on the false → true transition.
+        if (! $wasApproved && $user->approved) {
+            $this->notifyDriverApproved($user);
+        }
 
         $status = $user->approved ? 'подтверждён' : 'заблокирован';
 
@@ -115,6 +125,27 @@ class AdminController extends Controller
             'is_approved' => $user->approved,
             'data'        => new UserResource($user),
         ]);
+    }
+
+    /**
+     * Sends a WhatsApp approval notification to a driver.
+     * Fires silently — if WAHA is down the approval response still succeeds.
+     */
+    private function notifyDriverApproved(User $user): void
+    {
+        if (! $user->isDriver() || empty($user->phone)) {
+            return;
+        }
+
+        try {
+            $message = translate('notifications.driver_approved');
+            app(WhatsAppService::class)->sendNotification($user->phone, $message);
+        } catch (\Throwable $e) {
+            Log::warning('Driver approval WhatsApp notification failed (API)', [
+                'user_id' => $user->id,
+                'error'   => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

@@ -134,45 +134,6 @@
             </div>
         </div>
 
-        {{-- Document Upload --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                    <i class="fas fa-file-pdf text-rose-500"></i>
-                    Документ ПДД
-                </h2>
-            </div>
-            <div class="p-6 space-y-4">
-                @if($car->vehicle_document)
-                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-file-pdf text-rose-500 text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-medium text-slate-700">Текущий документ</p>
-                                <p class="text-xs text-slate-500">{{ basename($car->vehicle_document) }}</p>
-                            </div>
-                        </div>
-                        <a href="{{ Storage::url($car->vehicle_document) }}" target="_blank"
-                           class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
-                            Просмотреть
-                        </a>
-                    </div>
-                @endif
-
-                <label for="vehicle_document"
-                       class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors group">
-                    <i class="fas fa-cloud-upload-alt text-xl text-slate-400 group-hover:text-indigo-500 transition-colors mb-1.5"></i>
-                    <span class="text-sm text-slate-600 group-hover:text-indigo-600">
-                        {{ $car->vehicle_document ? 'Заменить документ' : 'Загрузить PDF' }}
-                    </span>
-                    <span class="text-xs text-slate-400 mt-0.5">Оставьте пустым, чтобы сохранить текущий</span>
-                    <input type="file" id="vehicle_document" name="vehicle_document" accept=".pdf" class="hidden">
-                </label>
-            </div>
-        </div>
-
         {{-- Actions --}}
         <div class="flex justify-end gap-3 pb-6">
             <button type="button" onclick="history.back()"
