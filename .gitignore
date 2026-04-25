@@ -9,6 +9,10 @@
 # Логи (могут быть большими)
 /storage/logs/*.log
 
+# User-uploaded private files (driver documents, CMR scans, etc.) — never commit
+/storage/app/private/*
+!/storage/app/private/.gitkeep
+
 # База данных SQLite (чувствительные данные)
 /database/database.sqlite
 
