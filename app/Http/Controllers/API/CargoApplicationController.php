@@ -127,7 +127,15 @@ class CargoApplicationController extends Controller
      *         @OA\JsonContent(@OA\Property(property="data", ref="#/components/schemas/CargoApplication"))
      *     ),
      *     @OA\Response(response=403, description="Нет доступа"),
-     *     @OA\Response(response=409, description="Груз уже взят другим водителем или повторная заявка")
+     *     @OA\Response(response=409, description="Груз уже взят другим водителем или повторная заявка"),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Не пройдены предусловия: нет автомобиля или не подтверждены обязательные документы. На случай missing-docs тело содержит missing_document_types: string[].",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="missing_document_types", type="array", @OA\Items(type="string"), example={"driver_license","vehicle_passport"})
+     *         )
+     *     )
      * )
      */
     public function apply(Request $request, Cargo $cargo): JsonResponse
@@ -143,6 +151,15 @@ class CargoApplicationController extends Controller
         if (!$car) {
             return response()->json([
                 'message' => translate('applications.no_car_first'),
+            ], 422);
+        }
+
+        // Driver must have all REQUIRED documents admin-verified before applying.
+        $missingDocs = $user->unverifiedRequiredDocumentTypes();
+        if (!empty($missingDocs)) {
+            return response()->json([
+                'message'                 => translate('applications.documents_required'),
+                'missing_document_types'  => $missingDocs,
             ], 422);
         }
 

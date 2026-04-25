@@ -30,13 +30,21 @@
 
 **How to apply:** Don't add per-car file uploads. Use `DriverDocument` slots if a per-vehicle document is needed (would require adding `car_id` FK to `driver_documents` — currently not designed for this).
 
-## Apply-flow guard
+## Apply-flow guards (in order)
 
-`CargoApplicationController::apply()` (web + API) checks `$user->cars()->first()` before creating the application. If null:
-- Web: `redirect()->route('cars.create')->with('warning', translate('applications.no_car_first'))`
-- API: `422` with `{message: translate('applications.no_car_first')}`
+`CargoApplicationController::apply()` (web + API) runs preconditions in this order. First failure short-circuits:
 
-This prevents the historical 500-error from null `car_id` insert.
+1. **Account approved + role=driver** — basic auth gate.
+2. **Has at least one car.** `$user->cars()->first()`. If null:
+   - Web: `redirect()->route('cars.create')->with('warning', translate('applications.no_car_first'))`
+   - API: `422 {message: translate('applications.no_car_first')}`
+   - Prevents the historical 500-error from null `car_id` insert.
+3. **All required documents admin-verified.** `$user->unverifiedRequiredDocumentTypes()` returns the list of `DOCUMENT_TYPES` minus `OPTIONAL_TYPES` that don't have a `STATUS_VERIFIED` document. If non-empty:
+   - Web: `redirect()->route('documents.index')->with('warning', translate('applications.documents_required'))`
+   - API: `422 {message, missing_document_types: ['passport', ...]}`
+   - Order is intentional: car-missing is the easier fix (one form), so it's surfaced first.
+
+Helper: `User::unverifiedRequiredDocumentTypes(): array` — defined on User model, returns required type codes lacking a verified DriverDocument.
 
 ## Routes
 

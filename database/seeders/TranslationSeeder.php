@@ -1977,6 +1977,14 @@ class TranslationSeeder extends Seeder
                 'cn' => '请先在个人资料中添加车辆，然后再申请货物。', // TODO: verify with native speaker
                 'description' => 'Driver tries to apply for cargo but has no cars registered',
             ],
+            [
+                'key' => 'applications.documents_required',
+                'group' => 'applications',
+                'ru' => 'Подайте все обязательные документы и дождитесь подтверждения администратора, чтобы откликаться на грузы.',
+                'kz' => 'Жүктерге өтінім беру үшін барлық міндетті құжаттарды тапсырыңыз және әкімшінің растауын күтіңіз.', // TODO: verify with native speaker
+                'cn' => '在申请货物之前，请上传所有必需的文件并等待管理员确认。', // TODO: verify with native speaker
+                'description' => 'Driver tries to apply but has missing/unverified required documents',
+            ],
 
             // Формы создания и редактирования грузов
             [

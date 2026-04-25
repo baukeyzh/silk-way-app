@@ -1098,6 +1098,31 @@
                     },
                     "409": {
                         "description": "Груз уже взят другим водителем или повторная заявка"
+                    },
+                    "422": {
+                        "description": "Не пройдены предусловия: нет автомобиля или не подтверждены обязательные документы. На случай missing-docs тело содержит missing_document_types: string[].",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "missing_document_types": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "driver_license",
+                                                "vehicle_passport"
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

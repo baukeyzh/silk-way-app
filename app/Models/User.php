@@ -87,6 +87,31 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\DriverDocument::class);
     }
 
+    /**
+     * Document type codes that are required for this driver but not yet
+     * admin-verified. Empty array means the driver is fully verified and
+     * eligible to apply for cargo.
+     *
+     * Used as a precondition gate in CargoApplicationController::apply().
+     *
+     * @return array<string>
+     */
+    public function unverifiedRequiredDocumentTypes(): array
+    {
+        $required = array_diff(
+            \App\Models\DriverDocument::DOCUMENT_TYPES,
+            \App\Models\DriverDocument::OPTIONAL_TYPES,
+        );
+
+        $verifiedTypes = $this->driverDocuments()
+            ->where('status', \App\Models\DriverDocument::STATUS_VERIFIED)
+            ->whereIn('document_type', $required)
+            ->pluck('document_type')
+            ->all();
+
+        return array_values(array_diff($required, $verifiedTypes));
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;

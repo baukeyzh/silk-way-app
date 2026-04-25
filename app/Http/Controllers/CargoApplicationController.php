@@ -104,6 +104,14 @@ class CargoApplicationController extends Controller
                 ->with('warning', translate('applications.no_car_first'));
         }
 
+        // Driver must have all REQUIRED documents admin-verified before applying.
+        // Pending / rejected / not_uploaded required slots block the apply.
+        if (!empty($user->unverifiedRequiredDocumentTypes())) {
+            return redirect()
+                ->route('documents.index')
+                ->with('warning', translate('applications.documents_required'));
+        }
+
         $validated = $request->validate([
             'driver_notes' => 'nullable|string|max:1000',
         ]);
