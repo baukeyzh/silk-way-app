@@ -61,7 +61,18 @@ class CargoController extends Controller
                 ->keyBy('cargo_id');
         }
 
-        return view('cargo.index', compact('cargo', 'myApplications'));
+        // For WE: eager-load cargo IDs that have a CMR pending review, to avoid N+1
+        // when rendering row highlights. Admins can also see this signal.
+        $cmrPendingCargoIds = collect();
+        if ($user->isWarehouseEmployee() || $user->isAdmin()) {
+            $cargoIds = $cargo->pluck('id');
+            $cmrPendingCargoIds = \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)
+                ->whereIn('cargo_id', $cargoIds)
+                ->pluck('cargo_id')
+                ->flip(); // use flip() so we can use isset() in Blade instead of in_array
+        }
+
+        return view('cargo.index', compact('cargo', 'myApplications', 'cmrPendingCargoIds'));
     }
 
     public function myCargo(): View

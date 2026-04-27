@@ -124,7 +124,7 @@ class CargoController extends Controller
             return response()->json(['message' => 'Нет доступа к этому грузу.'], 403);
         }
 
-        $cargo->load(['createdBy', 'pickedBy']);
+        $cargo->load(['createdBy', 'pickedBy', 'approvedApplication']);
 
         return response()->json(['data' => new CargoResource($cargo)]);
     }

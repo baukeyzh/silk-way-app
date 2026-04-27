@@ -12,6 +12,7 @@
     </div>
 
     {{-- Stats Cards --}}
+    @php $cmrPendingCount = \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)->count(); @endphp
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -43,6 +44,22 @@
             </div>
         </div>
     </div>
+
+    {{-- CMR pending card — only shown when count > 0 --}}
+    @if($cmrPendingCount > 0)
+    <div>
+        <a href="{{ route('applications.index', ['cmr_status' => 'pending_review']) }}"
+           class="inline-flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl shadow-sm p-5 hover:bg-amber-100 transition-colors">
+            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-file-check text-amber-700 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-amber-700 uppercase tracking-wider">{{ translate('cmr.dashboard_card_title') }}</p>
+                <p class="text-3xl font-bold text-amber-900 mt-0.5">{{ $cmrPendingCount }}</p>
+            </div>
+        </a>
+    </div>
+    @endif
 
     {{-- Quick Actions --}}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">

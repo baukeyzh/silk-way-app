@@ -14,7 +14,7 @@ class CargoApplication extends Model
     public const STATUS_PENDING   = 'pending';
     public const STATUS_APPROVED  = 'approved';
     public const STATUS_REJECTED  = 'rejected';
-    public const STATUS_DELIVERED = 'delivered'; // Set on the linked Cargo when CMR is confirmed
+    public const STATUS_DELIVERED = 'delivered';
 
     // ── CMR status constants ──────────────────────────────────────────────────
     public const CMR_STATUS_NOT_UPLOADED   = 'not_uploaded';
@@ -126,6 +126,11 @@ class CargoApplication extends Model
     public function isRejected(): bool
     {
         return $this->status === self::STATUS_REJECTED;
+    }
+
+    public function isDelivered(): bool
+    {
+        return $this->status === self::STATUS_DELIVERED;
     }
 
     // ── CMR state helpers ─────────────────────────────────────────────────────

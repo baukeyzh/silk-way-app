@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -161,5 +162,19 @@ class User extends Authenticatable
     public function getRejectedApplications()
     {
         return $this->cargoApplications()->rejected()->with('cargo')->get();
+    }
+
+    /**
+     * Returns true when the driver has an approved application whose linked cargo
+     * is still in_progress — meaning they are actively hauling a load and must not
+     * be allowed to bid on another cargo until CMR is confirmed (which transitions
+     * both the application to delivered and the cargo to delivered).
+     */
+    public function hasActiveCargo(): bool
+    {
+        return $this->cargoApplications()
+            ->approved()
+            ->whereHas('cargo', fn (Builder $q) => $q->where('status', Cargo::STATUS_IN_PROGRESS))
+            ->exists();
     }
 }

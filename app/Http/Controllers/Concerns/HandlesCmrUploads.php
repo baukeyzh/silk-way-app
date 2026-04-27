@@ -7,8 +7,10 @@ namespace App\Http\Controllers\Concerns;
 use App\Models\Cargo;
 use App\Models\CargoApplication;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -60,6 +62,51 @@ trait HandlesCmrUploads
             'cmr_rejection_reason'  => null,
             'cmr_rejected_at'       => null,
         ]);
+
+        // Notify the cargo owner (WE) via WhatsApp after the DB update succeeds.
+        // Fire-and-forget: a WAHA failure must never break the upload flow.
+        $this->notifyCmrUploaded($application);
+    }
+
+    /**
+     * Send a WhatsApp notification to the cargo owner when a CMR is uploaded.
+     *
+     * Skips silently if the cargo has no owner or the owner has no phone.
+     * Admin fallback omitted — `created_by` is always set on cargo rows
+     * created through this application (nullable only in legacy seeds).
+     */
+    private function notifyCmrUploaded(CargoApplication $application): void
+    {
+        // Reload with eager-loaded relations to avoid extra queries.
+        $application->loadMissing(['cargo.createdBy', 'driver']);
+
+        $owner = $application->cargo->createdBy ?? null;
+
+        if (! $owner || empty($owner->phone)) {
+            return;
+        }
+
+        try {
+            $cargo      = $application->cargo;
+            $cargoLabel = "{$cargo->from_location} → {$cargo->to_location}";
+            $driverName = $application->driver->name ?? '—';
+            $link       = rtrim((string) config('app.url'), '/') . '/applications/' . $application->id;
+
+            $template = translate('notifications.cmr_uploaded');
+            $message  = str_replace(
+                ['{cargo_title}', '{driver_name}', '{link}'],
+                [$cargoLabel,    $driverName,      $link],
+                $template
+            );
+
+            app(WhatsAppService::class)->sendNotification($owner->phone, $message);
+        } catch (\Throwable $e) {
+            Log::warning('CMR upload WhatsApp notification failed', [
+                'application_id' => $application->id,
+                'owner_id'       => $owner->id ?? null,
+                'error'          => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

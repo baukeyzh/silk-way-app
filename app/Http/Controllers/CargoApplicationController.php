@@ -41,6 +41,16 @@ class CargoApplicationController extends Controller
             ? $request->query('status')
             : null; // null means "all"
 
+        // ?cmr_status=pending_review activates the CMR tab.
+        // When active it overrides ?status= (the two filters are mutually exclusive).
+        $cmrStatusFilter = $request->query('cmr_status') === CargoApplication::CMR_STATUS_PENDING_REVIEW
+            ? CargoApplication::CMR_STATUS_PENDING_REVIEW
+            : null;
+
+        if ($cmrStatusFilter !== null) {
+            $status = null; // mutually exclusive — clear the application-status filter
+        }
+
         $search = trim((string) $request->query('search', ''));
 
         // Base query scoped by role
@@ -53,14 +63,17 @@ class CargoApplicationController extends Controller
 
         // Compute per-status counts on the role-scoped query before applying filters
         $counts = [
-            'all'      => (clone $baseQuery)->count(),
-            'pending'  => (clone $baseQuery)->where('status', CargoApplication::STATUS_PENDING)->count(),
-            'approved' => (clone $baseQuery)->where('status', CargoApplication::STATUS_APPROVED)->count(),
-            'rejected' => (clone $baseQuery)->where('status', CargoApplication::STATUS_REJECTED)->count(),
+            'all'         => (clone $baseQuery)->count(),
+            'pending'     => (clone $baseQuery)->where('status', CargoApplication::STATUS_PENDING)->count(),
+            'approved'    => (clone $baseQuery)->where('status', CargoApplication::STATUS_APPROVED)->count(),
+            'rejected'    => (clone $baseQuery)->where('status', CargoApplication::STATUS_REJECTED)->count(),
+            'cmr_pending' => (clone $baseQuery)->where('cmr_status', CargoApplication::CMR_STATUS_PENDING_REVIEW)->count(),
         ];
 
-        // Apply status filter
-        if ($status !== null) {
+        // Apply status filter (mutually exclusive with cmr_status filter)
+        if ($cmrStatusFilter !== null) {
+            $baseQuery->where('cmr_status', $cmrStatusFilter);
+        } elseif ($status !== null) {
             $baseQuery->where('status', $status);
         }
 
@@ -77,7 +90,7 @@ class CargoApplicationController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('applications.index', compact('applications', 'counts', 'status', 'search'));
+        return view('applications.index', compact('applications', 'counts', 'status', 'cmrStatusFilter', 'search'));
     }
 
     public function apply(Request $request, Cargo $cargo): RedirectResponse
@@ -133,6 +146,14 @@ class CargoApplicationController extends Controller
             // Проверяем, что водитель еще не подавал заявку на этот груз
             if ($cargo->applications()->where('driver_id', $user->id)->exists()) {
                 return back()->withErrors(['cargo' => translate('applications.already_applied')]);
+            }
+
+            // Водитель не может подавать новые заявки, пока у него есть активный груз
+            // (одобренная заявка, чей груз ещё в статусе in_progress).
+            // Проверяем ОБА статуса: application=approved И cargo=in_progress,
+            // чтобы старая одобренная заявка на уже доставленный груз не блокировала водителя.
+            if ($user->hasActiveCargo()) {
+                return back()->withErrors(['cargo' => translate('applications.has_active_cargo')]);
             }
 
             CargoApplication::create([
@@ -265,6 +286,13 @@ class CargoApplicationController extends Controller
                 ->where('id', '!=', $application->id)
                 ->where('status', CargoApplication::STATUS_PENDING)
                 ->update(['status' => CargoApplication::STATUS_REJECTED]);
+
+            // Водитель теперь занят активным грузом — удаляем все его прочие
+            // pending-заявки на другие грузы, чтобы он не мог быть одобрен дважды.
+            CargoApplication::where('driver_id', $application->driver_id)
+                ->where('id', '!=', $application->id)
+                ->where('status', CargoApplication::STATUS_PENDING)
+                ->delete();
 
             return redirect()->back()->with('success', 'Заявка водителя подтверждена!');
         });

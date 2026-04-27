@@ -70,6 +70,18 @@
                     </span>
                 </a>
 
+                {{-- CMR на проверке --}}
+                <a href="{{ route('applications.index', array_filter(['cmr_status' => 'pending_review', 'search' => $search ?: null])) }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap
+                          {{ ($cmrStatusFilter ?? null) === 'pending_review' ? 'border-amber-500 text-amber-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
+                    <i class="fas fa-file-check text-xs"></i>
+                    {{ translate('cmr.tab_pending') }}
+                    <span class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs rounded-full
+                                 {{ ($cmrStatusFilter ?? null) === 'pending_review' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500' }}">
+                        {{ $counts['cmr_pending'] }}
+                    </span>
+                </a>
+
             </div>
         </div>
 
@@ -78,6 +90,9 @@
             <form method="GET" action="{{ route('applications.index') }}" class="flex gap-3">
                 @if($status)
                     <input type="hidden" name="status" value="{{ $status }}">
+                @endif
+                @if(($cmrStatusFilter ?? null) === 'pending_review')
+                    <input type="hidden" name="cmr_status" value="pending_review">
                 @endif
                 <div class="relative flex-1">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -93,7 +108,7 @@
                     <i class="fas fa-search mr-1.5"></i>{{ translate('applications.search_button') }}
                 </button>
                 @if($search)
-                    <a href="{{ route('applications.index', array_filter(['status' => $status])) }}"
+                    <a href="{{ route('applications.index', array_filter(['status' => $status, 'cmr_status' => $cmrStatusFilter ?? null])) }}"
                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium rounded-lg transition-colors shrink-0">
                         <i class="fas fa-times mr-1"></i>{{ translate('applications.clear_search') }}
                     </a>
@@ -326,12 +341,12 @@
             {{-- Empty state — context-aware per active filter --}}
             <div class="py-16 text-center px-6">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4
-                            @if($status === 'pending') bg-amber-50
+                            @if($status === 'pending' || ($cmrStatusFilter ?? null) === 'pending_review') bg-amber-50
                             @elseif($status === 'approved') bg-emerald-50
                             @elseif($status === 'rejected') bg-rose-50
                             @else bg-slate-100
                             @endif">
-                    @if($status === 'pending')
+                    @if($status === 'pending' || ($cmrStatusFilter ?? null) === 'pending_review')
                         <i class="fas fa-clock text-amber-400 text-xl"></i>
                     @elseif($status === 'approved')
                         <i class="fas fa-check-circle text-emerald-400 text-xl"></i>
@@ -342,7 +357,9 @@
                     @endif
                 </div>
                 <h3 class="text-base font-semibold text-slate-700 mb-1">
-                    @if($status === 'pending')
+                    @if(($cmrStatusFilter ?? null) === 'pending_review')
+                        {{ translate('cmr.tab_pending') }}
+                    @elseif($status === 'pending')
                         {{ translate('applications.no_pending') }}
                     @elseif($status === 'approved')
                         {{ translate('applications.no_approved') }}
@@ -367,7 +384,7 @@
                         {{ translate('applications.no_applications_desc') }}
                     @endif
                 </p>
-                @if($status || $search)
+                @if($status || ($cmrStatusFilter ?? null) || $search)
                     <a href="{{ route('applications.index') }}"
                        class="inline-flex items-center gap-1.5 mt-4 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
                         <i class="fas fa-arrow-left text-xs"></i>{{ translate('applications.show_all_link') }}

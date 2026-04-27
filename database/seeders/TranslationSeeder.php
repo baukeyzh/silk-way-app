@@ -1217,6 +1217,13 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                'key' => 'applications.status_delivered',
+                'ru' => 'Доставлена',
+                'kz' => 'Жеткізілді',
+                'cn' => '已送达',
+
+            ],
+            [
                 'key' => 'applications.search_label',
                 'ru' => 'Поиск',
                 'kz' => 'Іздеу',
@@ -1291,6 +1298,13 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Отклонена',
                 'kz' => 'Бас тартылған',
                 'cn' => '已拒绝',
+
+            ],
+            [
+                'key' => 'applications.status_delivered_short',
+                'ru' => 'Доставлена',
+                'kz' => 'Жеткізілді',
+                'cn' => '已送达',
 
             ],
             [
@@ -1707,6 +1721,13 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                'key' => 'my_applications.status_delivered',
+                'ru' => 'Доставлено',
+                'kz' => 'Жеткізілді',
+                'cn' => '已送达',
+
+            ],
+            [
                 'key' => 'my_applications.view_details',
                 'ru' => 'Подробнее',
                 'kz' => 'Толығырақ',
@@ -1967,6 +1988,14 @@ class TranslationSeeder extends Seeder
                 'ru' => 'Вы уже подали заявку на этот груз.',
                 'kz' => 'Сіз бұл жүкке өтінім берген екенсіз.',
                 'cn' => '您已经为此货物提交了申请。',
+
+            ],
+            [
+                'key' => 'applications.has_active_cargo',
+                'group' => 'applications',
+                'ru' => 'У вас уже есть активный груз. Завершите текущую доставку, прежде чем подавать новые заявки.',
+                'kz' => 'Сізде белсенді жүк бар. Жаңа өтінімдерді бермес бұрын ағымдағы жеткізуді аяқтаңыз.',
+                'cn' => '您已有进行中的货运任务。请先完成当前配送再申请新货物。',
 
             ],
             [
@@ -5503,6 +5532,41 @@ class TranslationSeeder extends Seeder
                 'cn'          => 'Silk Way：您的账户已激活。现在可以接受订单了。', // TODO: verify with native speaker
                 'group'       => 'notifications',
                 'description' => 'WhatsApp text sent to a driver when admin approves their account',
+            ],
+            [
+                // Placeholders: {cargo_title}, {driver_name}, {link}
+                'key'         => 'notifications.cmr_uploaded',
+                'ru'          => "CMR загружен и ожидает вашей проверки.\nГруз: {cargo_title}\nВодитель: {driver_name}\nПроверить: {link}",
+                'kz'          => "CMR жүктелді және тексеруді күтуде.\nЖүк: {cargo_title}\nЖүргізуші: {driver_name}\nТексеру: {link}", // TODO: verify with native speaker
+                'cn'          => "CMR已上传，等待您的审核。\n货物：{cargo_title}\n司机：{driver_name}\n查看：{link}", // TODO: verify with native speaker
+                'group'       => 'notifications',
+                'description' => 'WhatsApp text sent to the cargo owner (WE) when a driver uploads a CMR',
+            ],
+
+            // ── CMR UI strings (dashboard card, filter tab, row pill) ───────────
+            [
+                'key'         => 'cmr.dashboard_card_title',
+                'ru'          => 'CMR на проверке',
+                'kz'          => 'CMR тексерілуде', // TODO: verify with native speaker
+                'cn'          => 'CMR待审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Label for the CMR-pending stat card on WE and admin dashboards',
+            ],
+            [
+                'key'         => 'cmr.tab_pending',
+                'ru'          => 'CMR на проверке',
+                'kz'          => 'CMR тексерілуде', // TODO: verify with native speaker
+                'cn'          => 'CMR待审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Label for the CMR-pending filter tab on the applications list',
+            ],
+            [
+                'key'         => 'cmr.row_pill_pending',
+                'ru'          => 'CMR ждёт проверки',
+                'kz'          => 'CMR тексеруді күтуде', // TODO: verify with native speaker
+                'cn'          => 'CMR待审核', // TODO: verify with native speaker
+                'group'       => 'cmr',
+                'description' => 'Inline pill shown next to cargo title when that cargo has a CMR pending review',
             ],
 
             // ── Navigation (user dropdown) ─────────────────────────────────────

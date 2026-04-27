@@ -81,10 +81,23 @@
                 <i class="fas fa-plus w-5 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('header.add_cargo') }}</span>
             </a>
+            @php
+                $cmrPendingCount = auth()->user()->isAdmin()
+                    ? \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)->count()
+                    : \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)
+                        ->whereHas('cargo', fn ($q) => $q->where('created_by', auth()->id()))
+                        ->count();
+            @endphp
             <a href="{{ route('applications.index') }}"
-               class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('applications.*') && !auth()->user()->isDriver() ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+               class="relative flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('applications.*') && !auth()->user()->isDriver() ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                 <i class="fas fa-clipboard-list w-5 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
+                @if($cmrPendingCount > 0)
+                <span x-show="sidebarOpen" class="ml-auto shrink-0 min-w-[20px] h-5 bg-amber-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
+                    {{ $cmrPendingCount > 9 ? '9+' : $cmrPendingCount }}
+                </span>
+                <span x-show="!sidebarOpen" x-cloak class="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full"></span>
+                @endif
             </a>
             @endif
 
@@ -212,8 +225,13 @@
                 <a href="{{ route('cargo.create') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors">
                     <i class="fas fa-plus mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.add_cargo') }}
                 </a>
-                <a href="{{ route('applications.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('applications.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
-                    <i class="fas fa-clipboard-list mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.applications') }}
+                <a href="{{ route('applications.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('applications.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
+                    <span class="flex items-center"><i class="fas fa-clipboard-list mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
+                    @if(isset($cmrPendingCount) && $cmrPendingCount > 0)
+                    <span class="min-w-[20px] h-5 bg-amber-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
+                        {{ $cmrPendingCount > 9 ? '9+' : $cmrPendingCount }}
+                    </span>
+                    @endif
                 </a>
                 @endif
                 @if(auth()->user()->isAdmin())
@@ -277,9 +295,14 @@
                 </a>
                 @if(auth()->user()->isAdmin() || auth()->user()->isWarehouseEmployee())
                 <a href="{{ route('applications.index') }}"
-                   class="flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('applications.*') ? 'text-indigo-600' : 'text-slate-400' }}">
+                   class="relative flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('applications.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                     <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
                     <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
+                    @if(isset($cmrPendingCount) && $cmrPendingCount > 0)
+                    <span class="absolute -top-0.5 right-0.5 min-w-[16px] h-4 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5">
+                        {{ $cmrPendingCount > 9 ? '9+' : $cmrPendingCount }}
+                    </span>
+                    @endif
                 </a>
                 @endif
                 @if(auth()->user()->isAdmin())

@@ -25,6 +25,12 @@
         $total = $cargo->total() ?? $cargo->count();
         $available = $cargo->where('status','available')->count();
         $pickedUp = $cargo->where('status','picked_up')->count();
+        // CMR pending count — only computed for WE (admin has their own dashboard)
+        $cmrPendingCountIndex = (auth()->user()->isWarehouseEmployee())
+            ? \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)
+                ->whereHas('cargo', fn ($q) => $q->where('created_by', auth()->id()))
+                ->count()
+            : 0;
     @endphp
     <div class="grid grid-cols-3 gap-4">
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
@@ -40,6 +46,22 @@
             <p class="text-2xl font-bold text-amber-600 mt-1">{{ $cargo->where('status','picked_up')->count() }}</p>
         </div>
     </div>
+
+    {{-- CMR pending card — WE only, disappears at 0 --}}
+    @if($cmrPendingCountIndex > 0)
+    <div>
+        <a href="{{ route('applications.index', ['cmr_status' => 'pending_review']) }}"
+           class="inline-flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl shadow-sm p-4 hover:bg-amber-100 transition-colors">
+            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-file-check text-amber-700"></i>
+            </div>
+            <div>
+                <p class="text-xs font-medium text-amber-700 uppercase tracking-wider">{{ translate('cmr.dashboard_card_title') }}</p>
+                <p class="text-2xl font-bold text-amber-900 mt-0.5">{{ $cmrPendingCountIndex }}</p>
+            </div>
+        </a>
+    </div>
+    @endif
 
     {{-- Search + filters --}}
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
@@ -102,10 +124,19 @@
                 </thead>
                 <tbody class="divide-y divide-slate-200">
                     @foreach($cargo as $item)
-                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer cargo-row"
+                    @php $hasCmrPending = isset($cmrPendingCargoIds[$item->id]); @endphp
+                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer cargo-row {{ $hasCmrPending ? 'border-l-4 border-amber-400' : '' }}"
                         onclick="handleCargoRowClick(event, '{{ route('cargo.show', $item) }}')">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-slate-900">{{ $item->localized_from_location }}</div>
+                            <div class="flex items-center gap-2">
+                                <div class="text-sm font-semibold text-slate-900">{{ $item->localized_from_location }}</div>
+                                @if($hasCmrPending)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                    <i class="fas fa-file-check text-xs"></i>
+                                    {{ translate('cmr.row_pill_pending') }}
+                                </span>
+                                @endif
+                            </div>
                             <div class="flex items-center text-xs text-slate-500 mt-0.5">
                                 <i class="fas fa-arrow-right mr-1 text-slate-400"></i>{{ $item->localized_to_location }}
                             </div>
@@ -190,13 +221,22 @@
         {{-- Mobile card grid --}}
         <div class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach($cargo as $item)
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden cursor-pointer cargo-card hover:shadow-md transition-shadow"
+            @php $hasCmrPending = isset($cmrPendingCargoIds[$item->id]); @endphp
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer cargo-card hover:shadow-md transition-shadow {{ $hasCmrPending ? 'border-l-4 border-amber-400 border border-slate-200' : 'border border-slate-200' }}"
                  onclick="handleCargoCardClick(event, '{{ route('cargo.show', $item) }}')">
                 {{-- Card header with status --}}
                 <div class="px-4 pt-4 pb-3 border-b border-slate-100">
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-slate-900 truncate">{{ $item->localized_from_location }}</p>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <p class="text-sm font-semibold text-slate-900 truncate">{{ $item->localized_from_location }}</p>
+                                @if($hasCmrPending)
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 shrink-0">
+                                    <i class="fas fa-file-check text-[10px]"></i>
+                                    {{ translate('cmr.row_pill_pending') }}
+                                </span>
+                                @endif
+                            </div>
                             <div class="flex items-center text-xs text-slate-500 mt-0.5">
                                 <i class="fas fa-arrow-right mr-1 text-slate-300"></i>
                                 <span class="truncate">{{ $item->localized_to_location }}</span>
