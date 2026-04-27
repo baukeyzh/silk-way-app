@@ -56,10 +56,6 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::put('/profile', [ProfileController::class, 'update']);
 
-        // /cargo/my must register before /cargo/{cargo} to avoid "my" being
-        // matched as a cargo ID by the wildcard route.
-        Route::get('/cargo/my', [CargoController::class, 'myCargo']);
-
         // === CARGO (read) ===
         Route::get('/cargo',         [CargoController::class, 'index']);
         Route::get('/cargo/{cargo}', [CargoController::class, 'show']);

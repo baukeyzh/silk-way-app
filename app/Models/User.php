@@ -164,6 +164,11 @@ class User extends Authenticatable
         return $this->cargoApplications()->rejected()->with('cargo')->get();
     }
 
+    public function getDeliveredApplications()
+    {
+        return $this->cargoApplications()->delivered()->with('cargo')->get();
+    }
+
     /**
      * Returns true when the driver has an approved application whose linked cargo
      * is still in_progress — meaning they are actively hauling a load and must not

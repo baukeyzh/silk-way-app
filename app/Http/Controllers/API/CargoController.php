@@ -73,34 +73,6 @@ class CargoController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/cargo/my",
-     *     tags={"Cargo"},
-     *     summary="Грузы водителя (в работе)",
-     *     description="Только для водителей. Возвращает грузы, которые взял водитель.",
-     *     security={{"sanctum":{}}},
-     *     @OA\Response(response=200, description="Список грузов водителя",
-     *         @OA\JsonContent(@OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Cargo")))
-     *     ),
-     *     @OA\Response(response=401, description="Не авторизован"),
-     *     @OA\Response(response=403, description="Доступ только для водителей"),
-     *     @OA\Response(response=429, description="Слишком много запросов (120/мин)")
-     * )
-     */
-    public function myCargo(Request $request): JsonResponse|ResourceCollection
-    {
-        $user = $request->user();
-
-        if (!$user->isDriver()) {
-            return response()->json(['message' => 'Доступ только для водителей.'], 403);
-        }
-
-        $cargo = $user->pickedCargo()->latest()->paginate(15);
-
-        return CargoResource::collection($cargo);
-    }
-
-    /**
-     * @OA\Get(
      *     path="/cargo/{id}",
      *     tags={"Cargo"},
      *     summary="Детали груза (авторизованный)",

@@ -56,9 +56,10 @@ class CargoApplicationController extends Controller
      *     security={{"sanctum":{}}},
      *     @OA\Response(response=200, description="Заявки водителя по статусам",
      *         @OA\JsonContent(
-     *             @OA\Property(property="pending",  type="array", @OA\Items(ref="#/components/schemas/CargoApplication")),
-     *             @OA\Property(property="approved", type="array", @OA\Items(ref="#/components/schemas/CargoApplication")),
-     *             @OA\Property(property="rejected", type="array", @OA\Items(ref="#/components/schemas/CargoApplication"))
+     *             @OA\Property(property="pending",   type="array", @OA\Items(ref="#/components/schemas/CargoApplication")),
+     *             @OA\Property(property="approved",  type="array", @OA\Items(ref="#/components/schemas/CargoApplication")),
+     *             @OA\Property(property="rejected",  type="array", @OA\Items(ref="#/components/schemas/CargoApplication")),
+     *             @OA\Property(property="delivered", type="array", @OA\Items(ref="#/components/schemas/CargoApplication"))
      *         )
      *     ),
      *     @OA\Response(response=403, description="Доступ только для водителей")
@@ -73,9 +74,10 @@ class CargoApplicationController extends Controller
         }
 
         return response()->json([
-            'pending'  => CargoApplicationResource::collection($user->getPendingApplications()),
-            'approved' => CargoApplicationResource::collection($user->getApprovedApplications()),
-            'rejected' => CargoApplicationResource::collection($user->getRejectedApplications()),
+            'pending'   => CargoApplicationResource::collection($user->getPendingApplications()),
+            'approved'  => CargoApplicationResource::collection($user->getApprovedApplications()),
+            'rejected'  => CargoApplicationResource::collection($user->getRejectedApplications()),
+            'delivered' => CargoApplicationResource::collection($user->getDeliveredApplications()),
         ]);
     }
 

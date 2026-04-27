@@ -99,6 +99,11 @@ class CargoApplication extends Model
         return $query->where('status', self::STATUS_REJECTED);
     }
 
+    public function scopeDelivered(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_DELIVERED);
+    }
+
     // ── CMR status scopes ─────────────────────────────────────────────────────
 
     public function scopeCmrPendingReview(Builder $query): Builder
