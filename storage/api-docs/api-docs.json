@@ -3386,6 +3386,111 @@
                     }
                 }
             }
+        },
+        "/push-tokens": {
+            "post": {
+                "tags": [
+                    "PushTokens"
+                ],
+                "summary": "Зарегистрировать FCM-токен устройства",
+                "description": "Сохраняет или обновляет FCM-токен для текущего пользователя. Безопасно вызывать при каждом запуске приложения.",
+                "operationId": "346b05a1106cbe68fd1e6615e0104ce5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "fGh3k...",
+                                        "maxLength": 512,
+                                        "minLength": 32
+                                    },
+                                    "platform": {
+                                        "type": "string",
+                                        "example": "android",
+                                        "nullable": true,
+                                        "enum": [
+                                            "android",
+                                            "ios",
+                                            "web"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Токен сохранён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 42
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "fGh3k..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/push-tokens/{token}": {
+            "delete": {
+                "tags": [
+                    "PushTokens"
+                ],
+                "summary": "Удалить FCM-токен устройства",
+                "description": "Удаляет FCM-токен для текущего пользователя. Идемпотентен — возвращает 204 даже если токен не найден.",
+                "operationId": "ef1437d5f7ea481b57fa2b0ed41be76d",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "FCM registration token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Токен удалён (или не существовал)"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -3940,6 +4045,10 @@
         {
             "name": "Profile",
             "description": "Профиль пользователя"
+        },
+        {
+            "name": "PushTokens",
+            "description": "FCM push-notification tokens"
         },
         {
             "name": "CMR",

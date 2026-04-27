@@ -42,6 +42,7 @@ use Illuminate\Validation\ValidationException;
  * @OA\Tag(name="DriverRegistration",  description="Регистрация водителя через WhatsApp OTP")
  * @OA\Tag(name="DriverLogin",         description="Вход водителя через WhatsApp OTP")
  * @OA\Tag(name="Profile",             description="Профиль пользователя")
+ * @OA\Tag(name="PushTokens",         description="FCM push-notification tokens")
  */
 class AuthController extends Controller
 {

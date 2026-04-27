@@ -10,6 +10,17 @@
       0 => 'L5Swagger\\L5SwaggerServiceProvider',
     ),
   ),
+  'kreait/laravel-firebase' => 
+  array (
+    'aliases' => 
+    array (
+      'Firebase' => 'Kreait\\Laravel\\Firebase\\Facades\\Firebase',
+    ),
+    'providers' => 
+    array (
+      0 => 'Kreait\\Laravel\\Firebase\\ServiceProvider',
+    ),
+  ),
   'laravel/mcp' => 
   array (
     'aliases' => 

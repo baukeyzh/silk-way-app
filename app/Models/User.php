@@ -88,6 +88,18 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\DriverDocument::class);
     }
 
+    public function fcmTokens(): HasMany
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
+    public function activeFcmTokens(): HasMany
+    {
+        // Firebase automatically invalidates stale tokens server-side;
+        // we don't filter locally to avoid masking token churn in logs.
+        return $this->hasMany(FcmToken::class);
+    }
+
     /**
      * Document type codes that are required for this driver but not yet
      * admin-verified. Empty array means the driver is fully verified and

@@ -13,6 +13,11 @@
 /storage/app/private/*
 !/storage/app/private/.gitkeep
 
+# Firebase service-account JSON — never commit credentials
+/storage/app/firebase/
+# GCP/Firebase service-account files that land at the project root (e.g. project-id-abc123.json)
+fruck-kz-*.json
+
 # База данных SQLite (чувствительные данные)
 /database/database.sqlite
 

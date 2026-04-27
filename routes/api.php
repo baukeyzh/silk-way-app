@@ -10,6 +10,7 @@ use App\Http\Controllers\API\DriverLoginController;
 use App\Http\Controllers\API\DriverRegistrationController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\PublicCargoController;
+use App\Http\Controllers\API\PushTokenController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -55,6 +56,11 @@ Route::prefix('v1')->group(function () {
         // Profile
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::put('/profile', [ProfileController::class, 'update']);
+
+        // === PUSH TOKENS ===
+        Route::post('/push-tokens',           [PushTokenController::class, 'store']);
+        Route::delete('/push-tokens/{token}', [PushTokenController::class, 'destroy'])
+            ->where('token', '[A-Za-z0-9_:\-]+');
 
         // === CARGO (read) ===
         Route::get('/cargo',         [CargoController::class, 'index']);
