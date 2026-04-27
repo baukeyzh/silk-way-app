@@ -978,6 +978,12 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/CargoApplication"
                                             }
+                                        },
+                                        "delivered": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CargoApplication"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -1788,50 +1794,6 @@
                     },
                     "422": {
                         "description": "Ошибка валидации"
-                    },
-                    "429": {
-                        "description": "Слишком много запросов (120/мин)"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/cargo/my": {
-            "get": {
-                "tags": [
-                    "Cargo"
-                ],
-                "summary": "Грузы водителя (в работе)",
-                "description": "Только для водителей. Возвращает грузы, которые взял водитель.",
-                "operationId": "ee0cc61916668a9ae184b779225ad258",
-                "responses": {
-                    "200": {
-                        "description": "Список грузов водителя",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Cargo"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Не авторизован"
-                    },
-                    "403": {
-                        "description": "Доступ только для водителей"
                     },
                     "429": {
                         "description": "Слишком много запросов (120/мин)"
@@ -3692,6 +3654,46 @@
                         ],
                         "nullable": true,
                         "description": "Только для авторизованных пользователей, когда загружено отношение"
+                    },
+                    "cmr": {
+                        "description": "CMR info; null when no approved application exists",
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "not_uploaded",
+                                    "pending_review",
+                                    "confirmed",
+                                    "rejected"
+                                ]
+                            },
+                            "uploaded_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                            },
+                            "confirmed_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                            },
+                            "rejected_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                            },
+                            "rejection_reason": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "file_url": {
+                                "description": "Download URL; only present when requester is the driver-owner, WE who owns the cargo, or admin",
+                                "type": "string",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
