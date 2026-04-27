@@ -28,6 +28,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         @OA\Property(property="rejection_reason", type="string", nullable=true),
  *         @OA\Property(property="file_url",         type="string", nullable=true, description="Download URL; only present when requester is the driver-owner, WE who owns the cargo, or admin")
  *     ),
+ *     @OA\Property(property="my_application", ref="#/components/schemas/CargoApplication", nullable=true, description="Заявка текущего авторизованного водителя на этот груз; null если пользователь не водитель или ещё не подавал заявку"),
  *     @OA\Property(property="created_at", type="string",  format="date-time")
  * )
  */
@@ -62,6 +63,10 @@ class CargoResource extends JsonResource
             'cmr'          => $this->when(
                 $isAuth && $this->relationLoaded('approvedApplication'),
                 fn () => $this->buildCmrPayload($request)
+            ),
+            'my_application' => $this->when(
+                $isAuth && $this->relationLoaded('myApplication'),
+                fn () => $this->myApplication ? new CargoApplicationResource($this->myApplication) : null
             ),
             'created_at'   => $this->created_at?->toISOString(),
         ];

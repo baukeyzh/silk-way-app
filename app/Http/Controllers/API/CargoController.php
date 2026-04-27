@@ -98,6 +98,11 @@ class CargoController extends Controller
 
         $cargo->load(['createdBy', 'pickedBy', 'approvedApplication']);
 
+        $myApplication = $user->isDriver()
+            ? $cargo->applications()->where('driver_id', $user->id)->with('car')->first()
+            : null;
+        $cargo->setRelation('myApplication', $myApplication);
+
         return response()->json(['data' => new CargoResource($cargo)]);
     }
 

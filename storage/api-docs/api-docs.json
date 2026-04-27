@@ -3695,6 +3695,15 @@
                         "type": "object",
                         "nullable": true
                     },
+                    "my_application": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CargoApplication"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Заявка текущего авторизованного водителя на этот груз; null если пользователь не водитель или ещё не подавал заявку"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
