@@ -37,6 +37,10 @@
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-700">
                     <i class="fas fa-check-circle mr-1.5"></i>Подтверждена
                 </span>
+            @elseif($application->isDelivered())
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-sky-100 text-sky-700">
+                    <i class="fas fa-truck mr-1.5"></i>Доставлена
+                </span>
             @else
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-rose-100 text-rose-700">
                     <i class="fas fa-times-circle mr-1.5"></i>Отклонена
@@ -65,11 +69,13 @@
                 <p class="text-xs text-slate-400 text-center">{{ $application->approved_at->format('d.m.Y') }}</p>
                 @endif
             </div>
-            <div class="flex-1 h-0.5 {{ $application->isApproved() && $application->cargo->status === 'delivered' ? 'bg-emerald-400' : 'bg-slate-200' }} mb-6"></div>
+            <div class="flex-1 h-0.5 {{ $application->isDelivered() ? 'bg-sky-400' : 'bg-slate-200' }} mb-6"></div>
             {{-- Step 3: Result --}}
             <div class="flex flex-col items-center gap-1 flex-1">
-                <div class="w-8 h-8 rounded-full {{ $application->isApproved() ? 'bg-emerald-500' : ($application->isRejected() ? 'bg-rose-400' : 'bg-slate-200') }} flex items-center justify-center">
-                    @if($application->isApproved())
+                <div class="w-8 h-8 rounded-full {{ $application->isDelivered() ? 'bg-sky-500' : ($application->isApproved() ? 'bg-emerald-500' : ($application->isRejected() ? 'bg-rose-400' : 'bg-slate-200')) }} flex items-center justify-center">
+                    @if($application->isDelivered())
+                        <i class="fas fa-truck text-white text-xs"></i>
+                    @elseif($application->isApproved())
                         <i class="fas fa-check-double text-white text-xs"></i>
                     @elseif($application->isRejected())
                         <i class="fas fa-times text-white text-xs"></i>
@@ -77,8 +83,8 @@
                         <i class="fas fa-hourglass-half text-slate-400 text-xs"></i>
                     @endif
                 </div>
-                <p class="text-xs font-medium {{ $application->isApproved() ? 'text-emerald-700' : ($application->isRejected() ? 'text-rose-700' : 'text-slate-400') }} text-center">
-                    {{ $application->isApproved() ? 'Одобрена' : ($application->isRejected() ? 'Отклонена' : 'Ожидание') }}
+                <p class="text-xs font-medium {{ $application->isDelivered() ? 'text-sky-700' : ($application->isApproved() ? 'text-emerald-700' : ($application->isRejected() ? 'text-rose-700' : 'text-slate-400')) }} text-center">
+                    {{ $application->isDelivered() ? 'Доставлена' : ($application->isApproved() ? 'Одобрена' : ($application->isRejected() ? 'Отклонена' : 'Ожидание')) }}
                 </p>
             </div>
         </div>
@@ -176,8 +182,8 @@
         </div>
     </div>
 
-    {{-- Contact info (approved only) --}}
-    @if($application->isApproved() && ($application->pickup_contact || $application->pickup_address || $application->delivery_contact || $application->delivery_address))
+    {{-- Contact info (visible once the application is approved; remains after delivery) --}}
+    @if(($application->isApproved() || $application->isDelivered()) && ($application->pickup_contact || $application->pickup_address || $application->delivery_contact || $application->delivery_address))
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <h2 class="text-sm font-semibold text-slate-900 mb-4">
             <i class="fas fa-phone mr-2 text-indigo-500"></i>Контактная информация

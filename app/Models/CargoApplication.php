@@ -62,6 +62,11 @@ class CargoApplication extends Model
         return $this->belongsTo(Cargo::class);
     }
 
+    public function car(): BelongsTo
+    {
+        return $this->belongsTo(Car::class);
+    }
+
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'driver_id');

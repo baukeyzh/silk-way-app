@@ -181,6 +181,10 @@
                                             </p>
                                         @endif
                                     </div>
+                                @elseif($application->isDelivered())
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-700">
+                                        <i class="fas fa-truck mr-1"></i>{{ translate('applications.status_delivered_short') }}
+                                    </span>
                                 @else
                                     <div>
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
@@ -256,6 +260,10 @@
                         @elseif($application->isApproved())
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 shrink-0">
                                 <i class="fas fa-check mr-1"></i>{{ translate('applications.status_approved_short') }}
+                            </span>
+                        @elseif($application->isDelivered())
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-700 shrink-0">
+                                <i class="fas fa-truck mr-1"></i>{{ translate('applications.status_delivered_short') }}
                             </span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700 shrink-0">
