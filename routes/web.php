@@ -18,8 +18,19 @@ Route::get('/', function () {
     return redirect()->route('cargo.index');
 });
 
-// Dev-страница для получения FCM-токена (web). Доступна только админам.
-Route::get('/push-test', fn () => view('push-test'))
+// Dev-страница для получения FCM-токена (web) и тестовой отправки пуша.
+// Доступна только админам. Серверно выдаёт короткоживущий Sanctum-токен,
+// чтобы скрипт страницы мог дёргать /api/v1/push-tokens и /api/v1/admin/push/test
+// без ручного логина.
+Route::get('/push-test', function () {
+    $user = auth()->user();
+    $apiToken = $user->createToken('push-test-debug', ['*'], now()->addHour())->plainTextToken;
+
+    return view('push-test', [
+        'apiToken' => $apiToken,
+        'userId'   => $user->id,
+    ]);
+})
     ->middleware(['auth', 'role:admin'])
     ->name('push-test');
 

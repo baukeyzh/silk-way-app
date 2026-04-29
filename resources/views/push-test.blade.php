@@ -6,38 +6,62 @@
 <div class="max-w-3xl mx-auto py-8 px-4 space-y-6">
 
     <div>
-        <h1 class="text-2xl font-bold text-slate-900">Получение FCM-токена (web)</h1>
+        <h1 class="text-2xl font-bold text-slate-900">Тест FCM (web)</h1>
         <p class="mt-1 text-sm text-slate-500">
-            Страница для разработчиков. Запрашивает у браузера разрешение на пуши,
-            получает FCM-токен и показывает его. Скопируй и зарегистрируй через
-            <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">POST /api/v1/push-tokens</code>.
+            Получает FCM-токен у браузера, регистрирует его на бэке и шлёт тестовый пуш.
+            Доступно только админам.
         </p>
     </div>
 
+    {{-- ── Step 1: get FCM token ──────────────────────────────────────── --}}
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-900">1. Получить FCM-токен и зарегистрировать</h2>
+
         <button id="getTokenBtn"
                 class="inline-flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors">
             <i class="fas fa-bell mr-2"></i>Запросить разрешение и получить токен
         </button>
 
-        <div id="status" class="text-sm text-slate-600"></div>
+        <div id="getStatus" class="text-sm text-slate-600"></div>
 
         <div id="tokenWrap" class="hidden space-y-2">
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">FCM token</p>
             <textarea id="tokenOut"
                       readonly
-                      rows="4"
+                      rows="3"
                       class="w-full px-3 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg break-all"></textarea>
-            <button id="copyBtn"
-                    class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors">
-                <i class="fas fa-copy mr-1.5"></i>Скопировать
-            </button>
         </div>
     </div>
 
+    {{-- ── Step 2: send test push ─────────────────────────────────────── --}}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-900">2. Отправить тестовый пуш</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="block">
+                <span class="text-xs font-medium text-slate-500">Заголовок</span>
+                <input id="pushTitle" type="text" value="Тест"
+                       class="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </label>
+            <label class="block">
+                <span class="text-xs font-medium text-slate-500">Тело</span>
+                <input id="pushBody" type="text" value="Привет от Silk Way"
+                       class="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </label>
+        </div>
+
+        <button id="sendPushBtn"
+                disabled
+                class="inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors">
+            <i class="fas fa-paper-plane mr-2"></i>Отправить себе пуш
+        </button>
+
+        <div id="sendStatus" class="text-sm text-slate-600"></div>
+    </div>
+
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-        <strong>Важно:</strong> на проде HTTPS обязателен (FCM работает только с https://, на http:// браузер откажет).
-        В localhost всё работает и без TLS.
+        <strong>Важно:</strong> на проде нужен HTTPS — без TLS браузер не разрешит push.
+        На localhost работает и без https.
     </div>
 </div>
 
@@ -55,59 +79,102 @@
         appId:             "1:1076024786935:web:0b3f398a1f1790242938f2",
     };
 
-    // VAPID public key — get it from Firebase Console:
-    // Project Settings → Cloud Messaging → Web configuration → Web Push certificates → Generate key pair (or copy existing).
     const VAPID_PUBLIC_KEY = "{{ config('services.firebase_web.vapid_key') }}";
+    const API_TOKEN        = @json($apiToken);
+    const ME_ID            = {{ (int) $userId }};
 
     const app       = initializeApp(firebaseConfig);
     const messaging = getMessaging(app);
 
-    const statusEl = document.getElementById('status');
-    const tokenOut = document.getElementById('tokenOut');
-    const tokenWrap = document.getElementById('tokenWrap');
+    const getStatus  = document.getElementById('getStatus');
+    const sendStatus = document.getElementById('sendStatus');
+    const tokenOut   = document.getElementById('tokenOut');
+    const tokenWrap  = document.getElementById('tokenWrap');
+    const sendBtn    = document.getElementById('sendPushBtn');
+
+    let fcmToken = null;
+
+    async function api(method, url, body = null) {
+        const res = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept':       'application/json',
+                'Authorization': 'Bearer ' + API_TOKEN,
+            },
+            body: body ? JSON.stringify(body) : null,
+        });
+        const text = await res.text();
+        let json;
+        try { json = text ? JSON.parse(text) : null; } catch { json = { raw: text }; }
+        return { ok: res.ok, status: res.status, body: json };
+    }
 
     document.getElementById('getTokenBtn').addEventListener('click', async () => {
-        statusEl.textContent = 'Запрашиваем разрешение…';
+        getStatus.textContent = 'Запрашиваем разрешение…';
 
         if (!VAPID_PUBLIC_KEY) {
-            statusEl.innerHTML = '<span class="text-rose-600">VAPID-ключ не настроен. Заполни <code>FIREBASE_WEB_VAPID_KEY</code> в <code>.env</code>.</span>';
+            getStatus.innerHTML = '<span class="text-rose-600">VAPID-ключ не настроен (FIREBASE_WEB_VAPID_KEY в .env).</span>';
             return;
         }
 
         try {
             const permission = await Notification.requestPermission();
             if (permission !== 'granted') {
-                statusEl.innerHTML = '<span class="text-rose-600">Разрешение не выдано: '+permission+'</span>';
+                getStatus.innerHTML = '<span class="text-rose-600">Разрешение не выдано: ' + permission + '</span>';
                 return;
             }
 
             const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
-            const token = await getToken(messaging, {
+            fcmToken = await getToken(messaging, {
                 vapidKey: VAPID_PUBLIC_KEY,
                 serviceWorkerRegistration: registration,
             });
 
-            if (!token) {
-                statusEl.innerHTML = '<span class="text-rose-600">Токен пустой — браузер не вернул значение.</span>';
+            if (!fcmToken) {
+                getStatus.innerHTML = '<span class="text-rose-600">Браузер вернул пустой токен.</span>';
                 return;
             }
 
-            tokenOut.value = token;
+            tokenOut.value = fcmToken;
             tokenWrap.classList.remove('hidden');
-            statusEl.innerHTML = '<span class="text-emerald-600">Токен получен.</span>';
+            getStatus.textContent = 'Регистрируем токен на сервере…';
+
+            const reg = await api('POST', '/api/v1/push-tokens', { token: fcmToken, platform: 'web' });
+            if (!reg.ok) {
+                getStatus.innerHTML = '<span class="text-rose-600">Регистрация не прошла: HTTP ' + reg.status + ' — ' + JSON.stringify(reg.body) + '</span>';
+                return;
+            }
+
+            getStatus.innerHTML = '<span class="text-emerald-600">Токен получен и зарегистрирован.</span>';
+            sendBtn.disabled = false;
         } catch (err) {
             console.error(err);
-            statusEl.innerHTML = '<span class="text-rose-600">Ошибка: '+(err.message || err)+'</span>';
+            getStatus.innerHTML = '<span class="text-rose-600">Ошибка: ' + (err.message || err) + '</span>';
         }
     });
 
-    document.getElementById('copyBtn').addEventListener('click', () => {
-        navigator.clipboard.writeText(tokenOut.value);
-        document.getElementById('copyBtn').innerHTML = '<i class="fas fa-check mr-1.5"></i>Скопировано';
+    sendBtn.addEventListener('click', async () => {
+        sendStatus.textContent = 'Отправляем…';
+        const title = document.getElementById('pushTitle').value.trim() || 'Тест';
+        const body  = document.getElementById('pushBody').value.trim()  || '';
+
+        const res = await api('POST', '/api/v1/admin/push/test', { user_id: ME_ID, title, body });
+        if (!res.ok) {
+            sendStatus.innerHTML = '<span class="text-rose-600">HTTP ' + res.status + ' — ' + JSON.stringify(res.body) + '</span>';
+            return;
+        }
+
+        const r = res.body;
+        if (r.delivered_to_devices > 0) {
+            sendStatus.innerHTML = '<span class="text-emerald-600">Отправлено на ' + r.delivered_to_devices + ' устройств(а). Жди уведомление.</span>';
+        } else {
+            sendStatus.innerHTML = '<span class="text-amber-700">Сервер не доставил ни на одно устройство (token_count=' + r.token_count + '). Возможно, токен невалиден и Firebase его удалил.</span>';
+        }
     });
 
-    // Foreground messages (когда вкладка открыта и активна).
+    // Foreground messages — показываем системную нотификацию когда вкладка активна.
     onMessage(messaging, (payload) => {
         console.log('FCM foreground:', payload);
         if (Notification.permission === 'granted' && payload.notification) {
