@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Exceptions\FirebaseServiceException;
 use App\Models\FcmToken;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Exception\Messaging\InvalidArgument;
 use Kreait\Firebase\Exception\Messaging\NotFound;
 use Kreait\Firebase\Exception\MessagingException;
@@ -36,15 +37,29 @@ class FirebaseService
 
         try {
             app('firebase.messaging')->send($message);
-        } catch (NotFound | InvalidArgument) {
+        } catch (NotFound | InvalidArgument $e) {
+            Log::info('FCM token discarded as invalid', [
+                'token_prefix' => substr($token, 0, 12),
+                'reason'       => $e::class,
+                'message'      => $e->getMessage(),
+            ]);
             // Token is no longer registered or was never valid — remove it.
             FcmToken::where('token', $token)->delete();
         } catch (MessagingException $e) {
+            Log::warning('FCM send failed', [
+                'token_prefix' => substr($token, 0, 12),
+                'message'      => $e->getMessage(),
+                'errors'       => $e->errors(),
+            ]);
             throw new FirebaseServiceException(
                 'FCM send failed: ' . $e->getMessage(),
                 (string) ($e->errors()[0] ?? ''),
             );
         } catch (Throwable $e) {
+            Log::warning('FCM transport error', [
+                'token_prefix' => substr($token, 0, 12),
+                'message'      => $e->getMessage(),
+            ]);
             throw new FirebaseServiceException('FCM transport error: ' . $e->getMessage());
         }
     }

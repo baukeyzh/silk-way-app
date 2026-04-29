@@ -170,7 +170,11 @@
         if (r.delivered_to_devices > 0) {
             sendStatus.innerHTML = '<span class="text-emerald-600">Отправлено на ' + r.delivered_to_devices + ' устройств(а). Жди уведомление.</span>';
         } else {
-            sendStatus.innerHTML = '<span class="text-amber-700">Сервер не доставил ни на одно устройство (token_count=' + r.token_count + '). Возможно, токен невалиден и Firebase его удалил.</span>';
+            const failed = (r.results || []).filter(x => x.status === 'failed');
+            const errs = failed.map(x => '<div class="mt-2"><b>token #' + x.token_id + ' (' + (x.platform || '?') + ')</b>: ' + (x.error || 'unknown') + (x.firebase_code ? ' <code class="bg-rose-100 px-1 rounded">' + x.firebase_code + '</code>' : '') + '</div>').join('');
+            sendStatus.innerHTML =
+                '<div class="text-amber-700">Не доставлено. <code>token_count_before</code>=' + r.token_count_before + ', <code>after</code>=' + r.token_count_after + '.</div>'
+                + errs;
         }
     });
 

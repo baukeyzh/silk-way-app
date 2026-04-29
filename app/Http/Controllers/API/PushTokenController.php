@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\FirebaseServiceException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePushTokenRequest;
 use App\Models\FcmToken;
@@ -45,12 +46,13 @@ class PushTokenController extends Controller
     {
         $user = $request->user();
 
+        // The token is unique on its own — a given device generates the same
+        // FCM token regardless of which user is logged in. Re-register transfers
+        // ownership to the current user (e.g. user A logged out, user B in).
         $fcmToken = FcmToken::updateOrCreate(
+            ['token' => $request->validated('token')],
             [
-                'user_id' => $user->id,
-                'token'   => $request->validated('token'),
-            ],
-            [
+                'user_id'      => $user->id,
                 'platform'     => $request->validated('platform'),
                 'last_used_at' => now(),
             ],
@@ -130,18 +132,42 @@ class PushTokenController extends Controller
         ]);
 
         $user = User::findOrFail($validated['user_id']);
+        $tokens = $user->fcmTokens()->get(['id', 'token', 'platform']);
 
-        $delivered = $firebase->sendToUser(
-            $user,
-            $validated['title'],
-            $validated['body'],
-            $validated['data'] ?? [],
-        );
+        $results = [];
+        $delivered = 0;
+
+        foreach ($tokens as $tokenRow) {
+            try {
+                $firebase->sendToToken(
+                    $tokenRow->token,
+                    $validated['title'],
+                    $validated['body'],
+                    $validated['data'] ?? [],
+                );
+                $delivered++;
+                $results[] = [
+                    'token_id' => $tokenRow->id,
+                    'platform' => $tokenRow->platform,
+                    'status'   => FcmToken::find($tokenRow->id) ? 'delivered' : 'pruned_invalid',
+                ];
+            } catch (FirebaseServiceException $e) {
+                $results[] = [
+                    'token_id'      => $tokenRow->id,
+                    'platform'      => $tokenRow->platform,
+                    'status'        => 'failed',
+                    'error'         => $e->getMessage(),
+                    'firebase_code' => $e->getFirebaseErrorCode() ?: null,
+                ];
+            }
+        }
 
         return response()->json([
             'user_id'              => $user->id,
-            'token_count'          => $user->fcmTokens()->count(),
+            'token_count_before'   => $tokens->count(),
+            'token_count_after'    => $user->fcmTokens()->count(),
             'delivered_to_devices' => $delivered,
+            'results'              => $results,
         ]);
     }
 }
