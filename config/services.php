@@ -43,4 +43,11 @@ return [
         'session' => env('WA_SESSION', 'default'),
     ],
 
+    // Firebase web client config — values are intentionally public (Firebase web SDK
+    // ships them in the JS bundle). vapid_key comes from Firebase Console →
+    // Project Settings → Cloud Messaging → Web Push certificates.
+    'firebase_web' => [
+        'vapid_key' => env('FIREBASE_WEB_VAPID_KEY'),
+    ],
+
 ];

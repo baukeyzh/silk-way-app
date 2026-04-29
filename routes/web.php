@@ -18,6 +18,11 @@ Route::get('/', function () {
     return redirect()->route('cargo.index');
 });
 
+// Dev-страница для получения FCM-токена (web). Доступна только админам.
+Route::get('/push-test', fn () => view('push-test'))
+    ->middleware(['auth', 'role:admin'])
+    ->name('push-test');
+
 // Публичный каталог грузов (доступен без аутентификации)
 // Авторизованные пользователи также обслуживаются здесь — контроллер
 // определяет нужный вид в зависимости от auth()->check().
