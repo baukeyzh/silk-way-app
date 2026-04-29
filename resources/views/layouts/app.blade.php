@@ -605,6 +605,7 @@ document.addEventListener('click', function(event) {
     // When the tab is active the SW does not show a notification automatically;
     // we create one here using the Web Notifications API directly.
     onMessage(messaging, (payload) => {
+        console.log('[FCM] foreground message received:', payload);
         if (Notification.permission !== 'granted') return;
 
         const title = payload.notification?.title
@@ -614,8 +615,15 @@ document.addEventListener('click', function(event) {
             ?? payload.data?.body
             ?? '';
 
-        new Notification(title, { body, icon: '/favicon.ico' });
+        try {
+            const n = new Notification(title, { body, icon: '/favicon.ico' });
+            n.onerror = (e) => console.warn('[FCM] Notification error:', e);
+        } catch (err) {
+            console.warn('[FCM] Notification ctor failed:', err);
+        }
     });
+
+    console.log('[FCM] global receiver active. Token in localStorage:', localStorage.getItem(lsKey)?.slice(0, 16) + '...');
 })();
 </script>
 @endauth
