@@ -67,7 +67,7 @@
 
 <script type="module">
     import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-    import { getMessaging, getToken, onMessage }
+    import { getMessaging, getToken }
         from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
 
     const firebaseConfig = {
@@ -178,15 +178,9 @@
         }
     });
 
-    // Foreground messages — показываем системную нотификацию когда вкладка активна.
-    onMessage(messaging, (payload) => {
-        console.log('FCM foreground:', payload);
-        if (Notification.permission === 'granted' && payload.notification) {
-            new Notification(payload.notification.title || 'Silk Way', {
-                body: payload.notification.body || '',
-                icon: '/favicon.ico',
-            });
-        }
-    });
+    // Foreground message handling is now done by the global subscriber in
+    // layouts/app.blade.php. Keeping a second onMessage here would fire two
+    // OS notifications for every foreground push. The opt-in flow (permission
+    // request + token registration) remains here as the canonical entry point.
 </script>
 @endsection

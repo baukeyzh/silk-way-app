@@ -12,6 +12,7 @@ use App\Http\Controllers\DriverDocumentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\DriverLoginController;
 use App\Http\Controllers\Auth\DriverRegistrationController;
+use App\Http\Controllers\FcmTokenController;
 
 // Главная страница
 Route::get('/', function () {
@@ -74,6 +75,12 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // FCM token registration/unregistration for the web app.
+    // These are plain web routes — CSRF is applied automatically.
+    // The global layout script calls these silently when permission is already granted.
+    Route::post('/fcm/register',     [FcmTokenController::class, 'register'])->name('fcm.register');
+    Route::delete('/fcm/unregister', [FcmTokenController::class, 'unregister'])->name('fcm.unregister');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');

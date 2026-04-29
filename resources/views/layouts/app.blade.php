@@ -506,5 +506,119 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
+
+@auth
+<script>
+/**
+ * Global FCM web receiver.
+ *
+ * Runs silently on every authenticated page load — NEVER calls requestPermission().
+ * Permission must be granted via /push-test (or a future opt-in UI). Once granted,
+ * this block registers the SW, fetches the FCM token, persists it to the server
+ * (scoped per-user via localStorage key), and subscribes to foreground messages.
+ *
+ * Dynamic import keeps the Firebase SDK (~180 kB) out of the critical path for
+ * users who have not yet granted permission.
+ */
+(async () => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+    if (Notification.permission !== 'granted') return;
+
+    const VAPID  = @json(config('services.firebase_web.vapid_key'));
+    if (!VAPID) return;
+
+    const userId = @json(auth()->id());
+    const csrf   = document.querySelector('meta[name="csrf-token"]')?.content;
+    const lsKey  = 'fcm_token_' + userId;
+
+    // --- load Firebase SDK lazily ------------------------------------------
+    const { initializeApp } = await import(
+        "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"
+    );
+    const { getMessaging, getToken, onMessage } = await import(
+        "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js"
+    );
+
+    // Same config as push-test.blade.php and firebase-messaging-sw.js.
+    // IMPORTANT: if you rotate the Firebase project, update all three places.
+    const firebaseConfig = {
+        apiKey:            "AIzaSyA8IOqEZ6w_1tX3pvLf_REY-i7mnOVcOpk",
+        authDomain:        "fruck-kz.firebaseapp.com",
+        projectId:         "fruck-kz",
+        storageBucket:     "fruck-kz.firebasestorage.app",
+        messagingSenderId: "1076024786935",
+        appId:             "1:1076024786935:web:0b3f398a1f1790242938f2",
+    };
+
+    const app       = initializeApp(firebaseConfig, 'silk-way-global');
+    const messaging = getMessaging(app);
+
+    // --- service worker registration ----------------------------------------
+    let swReg;
+    try {
+        swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    } catch (err) {
+        console.warn('[FCM] SW registration failed:', err);
+        return;
+    }
+
+    // --- get FCM token -------------------------------------------------------
+    let token;
+    try {
+        token = await getToken(messaging, {
+            vapidKey: VAPID,
+            serviceWorkerRegistration: swReg,
+        });
+    } catch (err) {
+        console.warn('[FCM] getToken failed:', err);
+        return;
+    }
+
+    if (!token) return;
+
+    // --- persist token to server only when it changes -----------------------
+    // The localStorage key is user-scoped so a different user on the same
+    // browser correctly re-registers instead of reusing the previous user's
+    // cached token reference.
+    if (localStorage.getItem(lsKey) !== token) {
+        try {
+            const res = await fetch('/fcm/register', {
+                method:  'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'Accept':        'application/json',
+                    'X-CSRF-TOKEN':  csrf,
+                },
+                body: JSON.stringify({ token, platform: 'web' }),
+            });
+            if (res.ok) {
+                localStorage.setItem(lsKey, token);
+            } else {
+                console.warn('[FCM] register failed:', res.status);
+            }
+        } catch (err) {
+            console.warn('[FCM] register error:', err);
+        }
+    }
+
+    // --- foreground message handler -----------------------------------------
+    // When the tab is active the SW does not show a notification automatically;
+    // we create one here using the Web Notifications API directly.
+    onMessage(messaging, (payload) => {
+        if (Notification.permission !== 'granted') return;
+
+        const title = payload.notification?.title
+            ?? payload.data?.title
+            ?? 'Silk Way';
+        const body  = payload.notification?.body
+            ?? payload.data?.body
+            ?? '';
+
+        new Notification(title, { body, icon: '/favicon.ico' });
+    });
+})();
+</script>
+@endauth
+
 </body>
 </html>
