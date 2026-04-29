@@ -116,6 +116,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/users/{user}/approve', [AdminController::class, 'approveUser']);
             Route::post('/users/{user}/toggle',  [AdminController::class, 'toggleApproval']);
             Route::delete('/users/{user}',       [AdminController::class, 'deleteUser']);
+            Route::post('/push/test',            [PushTokenController::class, 'sendTest']);
         });
 
         // === DOCUMENTS ===

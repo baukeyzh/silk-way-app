@@ -3491,6 +3491,92 @@
                     }
                 ]
             }
+        },
+        "/admin/push/test": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Отправить тестовый пуш указанному пользователю",
+                "description": "Только для администраторов. Шлёт пуш на все FCM-токены пользователя через FirebaseService::sendToUser. Возвращает количество устройств, до которых сообщение реально дошло.",
+                "operationId": "25f4686fb0fca3df0806436202b4098c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "title",
+                                    "body"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Тест"
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "example": "Привет от Silk Way"
+                                    },
+                                    "data": {
+                                        "description": "Доп. payload (значения приводятся к строкам)",
+                                        "type": "object",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Отправлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "token_count": {
+                                            "description": "Сколько токенов было у юзера на момент отправки",
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "delivered_to_devices": {
+                                            "description": "Сколько устройств приняли пуш",
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Пользователь не найден"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
