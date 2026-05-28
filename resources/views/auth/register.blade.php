@@ -256,6 +256,11 @@
                     <span x-show="!submitting">{{ \App\Helpers\LocalizationHelper::t('driver_reg.request_button') }}</span>
                     <span x-show="submitting" x-cloak>{{ \App\Helpers\LocalizationHelper::t('auth.sending_code') }}</span>
                 </button>
+
+                {{-- Privacy policy consent — surfaced on step 1 too. --}}
+                <p class="text-xs text-slate-500 mt-3 text-center">
+                    {!! str_replace(':link', '<a href="'.route('legal.privacy').'" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">'.\App\Helpers\LocalizationHelper::t('legal.privacy_consent_link').'</a>', e(\App\Helpers\LocalizationHelper::t('legal.privacy_consent'))) !!}
+                </p>
             </form>
 
             @else
