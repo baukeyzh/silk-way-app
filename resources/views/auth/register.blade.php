@@ -319,6 +319,11 @@
                     <span x-show="!submitting">{{ \App\Helpers\LocalizationHelper::t('driver_reg.verify_button') }}</span>
                     <span x-show="submitting" x-cloak>{{ \App\Helpers\LocalizationHelper::t('auth.verifying') }}</span>
                 </button>
+
+                {{-- Privacy policy consent — shown on the final step where the account is created --}}
+                <p class="text-xs text-slate-500 mt-3 text-center">
+                    {!! str_replace(':link', '<a href="'.route('legal.privacy').'" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">'.\App\Helpers\LocalizationHelper::t('legal.privacy_consent_link').'</a>', e(\App\Helpers\LocalizationHelper::t('legal.privacy_consent'))) !!}
+                </p>
             </form>
 
             {{-- Resend block --}}
@@ -468,6 +473,11 @@
                     <span x-show="!submitting">{{ \App\Helpers\LocalizationHelper::t('auth.register_button') }}</span>
                     <span x-show="submitting" x-cloak>{{ \App\Helpers\LocalizationHelper::t('auth.submitting') }}</span>
                 </button>
+
+                {{-- Privacy policy consent --}}
+                <p class="text-xs text-slate-500 mt-3 text-center">
+                    {!! str_replace(':link', '<a href="'.route('legal.privacy').'" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">'.\App\Helpers\LocalizationHelper::t('legal.privacy_consent_link').'</a>', e(\App\Helpers\LocalizationHelper::t('legal.privacy_consent'))) !!}
+                </p>
             </form>
 
             @endif {{-- isDriver --}}

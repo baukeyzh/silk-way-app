@@ -5543,6 +5543,127 @@ class TranslationSeeder extends Seeder
                 'description' => 'WhatsApp text sent to the cargo owner (WE) when a driver uploads a CMR',
             ],
 
+            // ── FCM push notifications ────────────────────────────────────────────
+            // Placeholders use Laravel-style :name syntax (str_replace in call site).
+
+            [
+                'key'         => 'push.application_approved.title',
+                'ru'          => 'Заявка подтверждена',
+                'kz'          => 'Өтінім расталды', // TODO: verify with native speaker
+                'cn'          => '申请已批准', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when their cargo application is approved',
+            ],
+            [
+                // Placeholder: :cargo_route (e.g. "Алматы → Пекин")
+                'key'         => 'push.application_approved.body',
+                'ru'          => 'Ваша заявка на груз :cargo_route подтверждена. Можете выезжать!',
+                'kz'          => ':cargo_route жүкіне өтініміңіз расталды. Жолға шығуға болады!', // TODO: verify with native speaker
+                'cn'          => '您对货物 :cargo_route 的申请已批准。可以出发了！', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when their cargo application is approved',
+            ],
+            [
+                'key'         => 'push.application_rejected.title',
+                'ru'          => 'Заявка отклонена',
+                'kz'          => 'Өтінім қабылданбады', // TODO: verify with native speaker
+                'cn'          => '申请被拒绝', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when their cargo application is rejected',
+            ],
+            [
+                // Placeholder: :cargo_route
+                'key'         => 'push.application_rejected.body',
+                'ru'          => 'Ваша заявка на груз :cargo_route была отклонена. Вы можете подать заявку на другой груз.',
+                'kz'          => ':cargo_route жүкіне өтініміңіз қабылданбады. Басқа жүкке өтінім бере аласыз.', // TODO: verify with native speaker
+                'cn'          => '您对货物 :cargo_route 的申请已被拒绝。您可以申请其他货物。', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when their cargo application is rejected',
+            ],
+            [
+                'key'         => 'push.document_verified.title',
+                'ru'          => 'Документ проверен',
+                'kz'          => 'Құжат тексерілді', // TODO: verify with native speaker
+                'cn'          => '文件已审核', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when admin approves one of their documents',
+            ],
+            [
+                'key'         => 'push.document_verified.body',
+                'ru'          => 'Один из ваших документов успешно проверен администратором.',
+                'kz'          => 'Сіздің құжатыңыздың бірін әкімші тексерді.', // TODO: verify with native speaker
+                'cn'          => '您的一份文件已经管理员审核通过。', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when admin approves one of their documents',
+            ],
+            [
+                'key'         => 'push.document_rejected.title',
+                'ru'          => 'Документ отклонён',
+                'kz'          => 'Құжат қабылданбады', // TODO: verify with native speaker
+                'cn'          => '文件被拒绝', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when admin rejects one of their documents',
+            ],
+            [
+                'key'         => 'push.document_rejected.body',
+                'ru'          => 'Один из ваших документов был отклонён. Проверьте причину и загрузите исправленный файл.',
+                'kz'          => 'Сіздің құжатыңыздың бірі қабылданбады. Себебін тексеріп, түзетілген файлды жүктеңіз.', // TODO: verify with native speaker
+                'cn'          => '您的一份文件被拒绝。请查看原因并上传修正后的文件。', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when admin rejects one of their documents',
+            ],
+            [
+                'key'         => 'push.cmr_uploaded.title',
+                'ru'          => 'Новый CMR на проверке',
+                'kz'          => 'Жаңа CMR тексерілуде', // TODO: verify with native speaker
+                'cn'          => '新CMR待审核', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to cargo owner (WE) when driver uploads a CMR',
+            ],
+            [
+                // Placeholder: :cargo_route
+                'key'         => 'push.cmr_uploaded.body',
+                'ru'          => 'Водитель загрузил CMR по маршруту :cargo_route. Требуется ваша проверка.',
+                'kz'          => 'Жүргізуші :cargo_route бағыты бойынша CMR жүктеді. Тексеруіңіз қажет.', // TODO: verify with native speaker
+                'cn'          => '司机已上传 :cargo_route 路线的CMR。需要您审核。', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to cargo owner (WE) when driver uploads a CMR',
+            ],
+            [
+                'key'         => 'push.cmr_confirmed.title',
+                'ru'          => 'CMR подтверждён',
+                'kz'          => 'CMR расталды', // TODO: verify with native speaker
+                'cn'          => 'CMR已确认', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when reviewer confirms their CMR',
+            ],
+            [
+                // Placeholder: :cargo_route
+                'key'         => 'push.cmr_confirmed.body',
+                'ru'          => 'Ваш CMR по маршруту :cargo_route подтверждён. Груз доставлен, спасибо!',
+                'kz'          => ':cargo_route бағыты бойынша CMR-ыңыз расталды. Жүк жеткізілді, рахмет!', // TODO: verify with native speaker
+                'cn'          => '您在 :cargo_route 路线的CMR已确认。货物已送达，谢谢！', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when reviewer confirms their CMR',
+            ],
+            [
+                'key'         => 'push.cmr_rejected.title',
+                'ru'          => 'CMR отклонён',
+                'kz'          => 'CMR қабылданбады', // TODO: verify with native speaker
+                'cn'          => 'CMR被拒绝', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push title sent to driver when reviewer rejects their CMR',
+            ],
+            [
+                // Placeholder: :cargo_route
+                'key'         => 'push.cmr_rejected.body',
+                'ru'          => 'Ваш CMR по маршруту :cargo_route был отклонён. Загрузите исправленный документ.',
+                'kz'          => ':cargo_route бағыты бойынша CMR-ыңыз қабылданбады. Түзетілген құжатты жүктеңіз.', // TODO: verify with native speaker
+                'cn'          => '您在 :cargo_route 路线的CMR已被拒绝。请上传更正后的文件。', // TODO: verify with native speaker
+                'group'       => 'push',
+                'description' => 'FCM push body sent to driver when reviewer rejects their CMR',
+            ],
+
             // ── CMR UI strings (dashboard card, filter tab, row pill) ───────────
             [
                 'key'         => 'cmr.dashboard_card_title',
@@ -5577,6 +5698,212 @@ class TranslationSeeder extends Seeder
                 'cn'          => '个人资料', // TODO: verify with native speaker
                 'group'       => 'nav',
                 'description' => 'User-dropdown link label pointing to the profile page',
+            ],
+
+            // ── Warehouses ──────────────────────────────────────────────────────
+            [
+                'key'         => 'warehouse.title',
+                'ru'          => 'Склады',
+                'kz'          => 'Қоймалар', // TODO: verify with native speaker
+                'cn'          => '仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Warehouse section heading in nav and page titles',
+            ],
+            [
+                'key'         => 'warehouse.create',
+                'ru'          => 'Добавить склад',
+                'kz'          => 'Қойма қосу', // TODO: verify with native speaker
+                'cn'          => '添加仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Button/link label to open the warehouse creation form',
+            ],
+            [
+                'key'         => 'warehouse.edit',
+                'ru'          => 'Редактировать склад',
+                'kz'          => 'Қойманы өңдеу', // TODO: verify with native speaker
+                'cn'          => '编辑仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Page title on warehouse edit form',
+            ],
+            [
+                'key'         => 'warehouse.name_ru',
+                'ru'          => 'Название (рус.)',
+                'kz'          => 'Атауы (орысша)', // TODO: verify with native speaker
+                'cn'          => '名称（俄语）', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the Russian warehouse name field',
+            ],
+            [
+                'key'         => 'warehouse.name_kz',
+                'ru'          => 'Название (каз.)',
+                'kz'          => 'Атауы (қазақша)', // TODO: verify with native speaker
+                'cn'          => '名称（哈萨克语）', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the Kazakh warehouse name field',
+            ],
+            [
+                'key'         => 'warehouse.name_cn',
+                'ru'          => 'Название (кит.)',
+                'kz'          => 'Атауы (қытайша)', // TODO: verify with native speaker
+                'cn'          => '名称（中文）', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the Chinese warehouse name field',
+            ],
+            [
+                'key'         => 'warehouse.address',
+                'ru'          => 'Адрес',
+                'kz'          => 'Мекенжай', // TODO: verify with native speaker
+                'cn'          => '地址', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the warehouse address field',
+            ],
+            [
+                'key'         => 'warehouse.phone',
+                'ru'          => 'Телефон',
+                'kz'          => 'Телефон', // TODO: verify with native speaker
+                'cn'          => '电话', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the warehouse phone field',
+            ],
+            [
+                'key'         => 'warehouse.city',
+                'ru'          => 'Город',
+                'kz'          => 'Қала', // TODO: verify with native speaker
+                'cn'          => '城市', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Label for the city select on warehouse forms',
+            ],
+            [
+                'key'         => 'warehouse.save',
+                'ru'          => 'Сохранить склад',
+                'kz'          => 'Қойманы сақтау', // TODO: verify with native speaker
+                'cn'          => '保存仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Submit button label on warehouse create/edit forms',
+            ],
+            [
+                'key'         => 'warehouse.no_warehouses_city',
+                'ru'          => 'В этом городе нет складов',
+                'kz'          => 'Бұл қалада қойма жоқ', // TODO: verify with native speaker
+                'cn'          => '该城市没有仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Header of the amber banner shown when selected city has no warehouses',
+            ],
+            [
+                'key'         => 'warehouse.create_prompt',
+                'ru'          => 'Создайте склад, чтобы продолжить',
+                'kz'          => 'Жалғастыру үшін қойма жасаңыз', // TODO: verify with native speaker
+                'cn'          => '创建仓库以继续', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Sub-text in the amber no-warehouse banner on cargo create/edit',
+            ],
+            [
+                'key'         => 'warehouse.create_link',
+                'ru'          => 'Создать склад',
+                'kz'          => 'Қойма жасау', // TODO: verify with native speaker
+                'cn'          => '创建仓库', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Link text inside the no-warehouse amber banner',
+            ],
+            [
+                'key'         => 'warehouse.autocreate_note',
+                'ru'          => 'Вернитесь на эту страницу и выберите город снова',
+                'kz'          => 'Осы бетке оралып, қаланы қайта таңдаңыз', // TODO: verify with native speaker
+                'cn'          => '返回此页面并重新选择城市', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Instructional note below the create-warehouse link in the amber banner',
+            ],
+            [
+                'key'         => 'warehouse.delete_confirm',
+                'ru'          => 'Удалить склад «:name»? Это действие нельзя отменить.',
+                'kz'          => '«:name» қоймасын жою керек пе? Бұл әрекетті қайтару мүмкін емес.', // TODO: verify with native speaker
+                'cn'          => '删除仓库「:name」？此操作无法撤销。', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Inline delete confirmation text shown per row in the warehouse list',
+            ],
+            [
+                'key'         => 'warehouse.delete_blocked',
+                'ru'          => 'Этот склад используется в :count грузах. Удаление невозможно.',
+                'kz'          => 'Бұл қойма :count жүкте пайдаланылуда. Жою мүмкін емес.', // TODO: verify with native speaker
+                'cn'          => '该仓库在 :count 个货物中被使用，无法删除。', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Error shown when trying to delete a warehouse referenced by cargo',
+            ],
+            [
+                'key'         => 'warehouse.access_denied',
+                'ru'          => 'Доступ запрещён. Этот склад не принадлежит вашей учётной записи.',
+                'kz'          => 'Қол жеткізу тыйым салынды. Бұл қойма сіздің есептік жазбаңызға тиесілі емес.', // TODO: verify with native speaker
+                'cn'          => '访问被拒绝。该仓库不属于您的账户。', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Authorization error shown when WE tries to access another user\'s warehouse',
+            ],
+            [
+                'key'         => 'warehouse.empty_own',
+                'ru'          => 'У вас пока нет складов.',
+                'kz'          => 'Сізде әлі қойма жоқ.', // TODO: verify with native speaker
+                'cn'          => '您目前没有仓库。', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Empty-state message shown to WE who has no warehouses',
+            ],
+            [
+                'key'         => 'warehouse.empty_filtered',
+                'ru'          => 'Склады не найдены. Попробуйте изменить фильтры.',
+                'kz'          => 'Қоймалар табылмады. Сүзгілерді өзгертіп көріңіз.', // TODO: verify with native speaker
+                'cn'          => '未找到仓库。请尝试更改筛选条件。', // TODO: verify with native speaker
+                'group'       => 'warehouse',
+                'description' => 'Empty-state message shown to admin when filters yield no results',
+            ],
+
+            // ── Cargo — warehouse fields ──────────────────────────────────────
+            [
+                'key'         => 'cargo.from_warehouse',
+                'ru'          => 'Склад отправки',
+                'kz'          => 'Жіберу қоймасы', // TODO: verify with native speaker
+                'cn'          => '发货仓库', // TODO: verify with native speaker
+                'group'       => 'cargo',
+                'description' => 'Label for the from-warehouse select on cargo create/edit forms',
+            ],
+            [
+                'key'         => 'cargo.to_warehouse',
+                'ru'          => 'Склад назначения',
+                'kz'          => 'Тағайындалған қойма', // TODO: verify with native speaker
+                'cn'          => '目的地仓库', // TODO: verify with native speaker
+                'group'       => 'cargo',
+                'description' => 'Label for the to-warehouse select on cargo create/edit forms',
+            ],
+            [
+                'key'         => 'cargo.warehouse_label',
+                'ru'          => 'Склад: :name',
+                'kz'          => 'Қойма: :name', // TODO: verify with native speaker
+                'cn'          => '仓库：:name', // TODO: verify with native speaker
+                'group'       => 'cargo',
+                'description' => 'Readonly badge label shown when a city has exactly one warehouse',
+            ],
+
+            // ─── Legal ────────────────────────────────────────────────────────
+            [
+                'key'         => 'legal.privacy_link',
+                'ru'          => 'Политика конфиденциальности',
+                'kz'          => 'Құпиялылық саясаты', // TODO: verify with native speaker
+                'cn'          => '隐私政策', // TODO: verify with native speaker
+                'group'       => 'legal',
+                'description' => 'Privacy policy page link label — footer and registration pages',
+            ],
+            [
+                'key'         => 'legal.privacy_consent',
+                'ru'          => 'Нажимая «Зарегистрироваться», вы соглашаетесь с нашей :link.',
+                'kz'          => '«Тіркелу» батырмасын басу арқылы сіз біздің :link келісесіз.', // TODO: verify with native speaker
+                'cn'          => '点击"注册"即表示您同意我们的:link。', // TODO: verify with native speaker
+                'group'       => 'legal',
+                'description' => 'Consent line below registration submit button — :link is replaced with an <a> tag in the view',
+            ],
+            [
+                'key'         => 'legal.privacy_consent_link',
+                'ru'          => 'Политикой конфиденциальности',
+                'kz'          => 'Құпиялылық саясатымен', // TODO: verify with native speaker
+                'cn'          => '隐私政策', // TODO: verify with native speaker
+                'group'       => 'legal',
+                'description' => 'Linked text within the registration consent line (instrumental case for RU grammar)',
             ],
         ];
 

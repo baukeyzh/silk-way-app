@@ -81,6 +81,11 @@
                 <i class="fas fa-plus w-5 text-center shrink-0"></i>
                 <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('header.add_cargo') }}</span>
             </a>
+            <a href="{{ route('warehouses.index') }}"
+               class="flex items-center px-4 py-2.5 mx-2 rounded-lg transition-colors group {{ request()->routeIs('warehouses.*') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                <i class="fas fa-warehouse w-5 text-center shrink-0"></i>
+                <span x-show="sidebarOpen" class="ml-3 text-sm font-medium whitespace-nowrap">{{ \App\Helpers\LocalizationHelper::t('warehouse.title') }}</span>
+            </a>
             @php
                 $cmrPendingCount = auth()->user()->isAdmin()
                     ? \App\Models\CargoApplication::where('cmr_status', \App\Models\CargoApplication::CMR_STATUS_PENDING_REVIEW)->count()
@@ -225,6 +230,9 @@
                 <a href="{{ route('cargo.create') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition-colors">
                     <i class="fas fa-plus mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.add_cargo') }}
                 </a>
+                <a href="{{ route('warehouses.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('warehouses.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
+                    <i class="fas fa-warehouse mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('warehouse.title') }}
+                </a>
                 <a href="{{ route('applications.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('applications.*') ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800' }} transition-colors">
                     <span class="flex items-center"><i class="fas fa-clipboard-list mr-3 w-4 text-center"></i>{{ \App\Helpers\LocalizationHelper::t('header.applications') }}</span>
                     @if(isset($cmrPendingCount) && $cmrPendingCount > 0)
@@ -294,6 +302,11 @@
                     <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('header.cargo') }}</span>
                 </a>
                 @if(auth()->user()->isAdmin() || auth()->user()->isWarehouseEmployee())
+                <a href="{{ route('warehouses.index') }}"
+                   class="flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('warehouses.*') ? 'text-indigo-600' : 'text-slate-400' }}">
+                    <i class="fas fa-warehouse text-lg mb-0.5"></i>
+                    <span class="text-xs font-medium">{{ \App\Helpers\LocalizationHelper::t('warehouse.title') }}</span>
+                </a>
                 <a href="{{ route('applications.index') }}"
                    class="relative flex flex-col items-center py-1 px-3 rounded-xl transition-colors {{ request()->routeIs('applications.*') ? 'text-indigo-600' : 'text-slate-400' }}">
                     <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
@@ -320,6 +333,13 @@
             </div>
         </div>
         <div class="h-16 lg:hidden"></div>
+
+        {{-- Site-wide courtesy footer --}}
+        <footer class="border-t border-slate-200 py-4 text-center">
+            <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener"
+               aria-label="Политика конфиденциальности — открыть в новой вкладке"
+               class="text-xs text-slate-400 hover:text-slate-600 transition-colors">{{ translate('legal.privacy_link') }}</a>
+        </footer>
     </div>
 </div>
 
@@ -463,6 +483,13 @@
         </div>
     </div>
     <div class="h-16 md:hidden"></div>
+
+    {{-- Site-wide courtesy footer --}}
+    <footer class="border-t border-slate-200 py-4 text-center">
+        <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener"
+           aria-label="Политика конфиденциальности — открыть в новой вкладке"
+           class="text-xs text-slate-400 hover:text-slate-600 transition-colors">{{ translate('legal.privacy_link') }}</a>
+    </footer>
 </div>
 
 @else
@@ -482,6 +509,13 @@
     <main class="flex-1 p-6">
         @yield('content')
     </main>
+
+    {{-- Site-wide courtesy footer --}}
+    <footer class="border-t border-slate-200 py-4 text-center">
+        <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener"
+           aria-label="Политика конфиденциальности — открыть в новой вкладке"
+           class="text-xs text-slate-400 hover:text-slate-600 transition-colors">{{ translate('legal.privacy_link') }}</a>
+    </footer>
 </div>
 @endif
 

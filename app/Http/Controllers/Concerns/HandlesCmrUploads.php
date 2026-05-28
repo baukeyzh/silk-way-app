@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Concerns;
 use App\Models\Cargo;
 use App\Models\CargoApplication;
 use App\Models\User;
+use App\Services\FirebaseService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -63,8 +64,8 @@ trait HandlesCmrUploads
             'cmr_rejected_at'       => null,
         ]);
 
-        // Notify the cargo owner (WE) via WhatsApp after the DB update succeeds.
-        // Fire-and-forget: a WAHA failure must never break the upload flow.
+        // Notify the cargo owner (WE) via WhatsApp and FCM after the DB update succeeds.
+        // Fire-and-forget: a transport failure must never break the upload flow.
         $this->notifyCmrUploaded($application);
     }
 
@@ -82,16 +83,17 @@ trait HandlesCmrUploads
 
         $owner = $application->cargo->createdBy ?? null;
 
-        if (! $owner || empty($owner->phone)) {
+        if (! $owner) {
             return;
         }
 
-        try {
-            $cargo      = $application->cargo;
-            $cargoLabel = "{$cargo->from_location} → {$cargo->to_location}";
-            $driverName = $application->driver->name ?? '—';
-            $link       = rtrim((string) config('app.url'), '/') . '/applications/' . $application->id;
+        $cargo      = $application->cargo;
+        $cargoLabel = "{$cargo->from_location} → {$cargo->to_location}";
+        $driverName = $application->driver->name ?? '—';
+        $link       = rtrim((string) config('app.url'), '/') . '/applications/' . $application->id;
 
+        // WhatsApp requires a phone — skip silently if owner has none.
+        if (! empty($owner->phone)) {
             $template = translate('notifications.cmr_uploaded');
             $message  = str_replace(
                 ['{cargo_title}', '{driver_name}', '{link}'],
@@ -99,9 +101,27 @@ trait HandlesCmrUploads
                 $template
             );
 
-            app(WhatsAppService::class)->sendNotification($owner->phone, $message);
+            try {
+                app(WhatsAppService::class)->sendNotification($owner->phone, $message);
+            } catch (\Throwable $e) {
+                Log::warning('CMR upload WhatsApp notification failed', [
+                    'application_id' => $application->id,
+                    'owner_id'       => $owner->id ?? null,
+                    'error'          => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // FCM: fire regardless of phone — recipient just needs registered tokens.
+        try {
+            app(FirebaseService::class)->sendToUser(
+                $owner,
+                translate('push.cmr_uploaded.title'),
+                str_replace(':cargo_route', $cargoLabel, translate('push.cmr_uploaded.body')),
+                ['type' => 'cmr_uploaded', 'cargo_id' => (string) $application->cargo_id],
+            );
         } catch (\Throwable $e) {
-            Log::warning('CMR upload WhatsApp notification failed', [
+            Log::warning('FCM cmr_uploaded notification failed', [
                 'application_id' => $application->id,
                 'owner_id'       => $owner->id ?? null,
                 'error'          => $e->getMessage(),
@@ -114,9 +134,14 @@ trait HandlesCmrUploads
      *
      * Wraps in a transaction. The cargo row is locked for update so that
      * concurrent confirm attempts on the same application are serialised.
+     * FCM is fired AFTER the transaction commits to avoid notifying on rollback.
      */
     protected function performCmrConfirm(CargoApplication $application, User $reviewer): void
     {
+        // Capture the application ID before entering the transaction so we can
+        // reload the fresh model for notification after the transaction commits.
+        $applicationId = $application->id;
+
         DB::transaction(function () use ($application, $reviewer): void {
             // Lock the application row to prevent race conditions.
             $application = CargoApplication::where('id', $application->id)
@@ -134,6 +159,12 @@ trait HandlesCmrUploads
                 'status' => Cargo::STATUS_DELIVERED,
             ]);
         });
+
+        // Transaction is committed — safe to send notifications now.
+        $fresh = CargoApplication::with(['cargo', 'driver'])->find($applicationId);
+        if ($fresh) {
+            $this->notifyCmrConfirmed($fresh);
+        }
     }
 
     /**
@@ -151,6 +182,72 @@ trait HandlesCmrUploads
             'cmr_rejection_reason' => $reason,
             'cmr_rejected_at'      => now(),
         ]);
+
+        // Notify driver after the DB write.
+        $application->loadMissing(['cargo', 'driver']);
+        $this->notifyCmrRejected($application);
+    }
+
+    /**
+     * Notify the driver (via FCM) when a reviewer confirms their CMR.
+     * WhatsApp is not sent here — the confirmation is a positive event surfaced
+     * through the push channel only; add a WA call here if product changes that.
+     */
+    private function notifyCmrConfirmed(CargoApplication $application): void
+    {
+        $driver = $application->driver ?? null;
+
+        if (! $driver) {
+            return;
+        }
+
+        $cargo      = $application->cargo;
+        $cargoLabel = $cargo ? "{$cargo->from_location} → {$cargo->to_location}" : '—';
+
+        try {
+            app(FirebaseService::class)->sendToUser(
+                $driver,
+                translate('push.cmr_confirmed.title'),
+                str_replace(':cargo_route', $cargoLabel, translate('push.cmr_confirmed.body')),
+                ['type' => 'cmr_confirmed', 'cargo_id' => (string) $application->cargo_id],
+            );
+        } catch (\Throwable $e) {
+            Log::warning('FCM cmr_confirmed notification failed', [
+                'application_id' => $application->id,
+                'driver_id'      => $driver->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Notify the driver (via FCM) when a reviewer rejects their CMR.
+     */
+    private function notifyCmrRejected(CargoApplication $application): void
+    {
+        $driver = $application->driver ?? null;
+
+        if (! $driver) {
+            return;
+        }
+
+        $cargo      = $application->cargo;
+        $cargoLabel = $cargo ? "{$cargo->from_location} → {$cargo->to_location}" : '—';
+
+        try {
+            app(FirebaseService::class)->sendToUser(
+                $driver,
+                translate('push.cmr_rejected.title'),
+                str_replace(':cargo_route', $cargoLabel, translate('push.cmr_rejected.body')),
+                ['type' => 'cmr_rejected', 'cargo_id' => (string) $application->cargo_id],
+            );
+        } catch (\Throwable $e) {
+            Log::warning('FCM cmr_rejected notification failed', [
+                'application_id' => $application->id,
+                'driver_id'      => $driver->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

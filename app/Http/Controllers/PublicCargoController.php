@@ -159,6 +159,10 @@ class PublicCargoController extends Controller
             abort(403);
         }
 
+        // Eager-load warehouse relations so the show view can display warehouse name
+        // and address beneath each city pill without additional queries.
+        $cargo->load(['fromWarehouse', 'toWarehouse']);
+
         return view('cargo.show', compact('cargo'));
     }
 }

@@ -11,6 +11,7 @@ use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Validation\Rule;
 
 class CargoController extends Controller
 {
@@ -117,14 +118,16 @@ class CargoController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"from_city_id","to_city_id","cargo_type","volume","weight","ready_date"},
-     *             @OA\Property(property="from_city_id", type="integer", example=1),
-     *             @OA\Property(property="to_city_id",   type="integer", example=2),
-     *             @OA\Property(property="cargo_type",   type="string",  example="Электроника"),
-     *             @OA\Property(property="volume",       type="number",  example=20.5),
-     *             @OA\Property(property="weight",       type="number",  example=5.0),
-     *             @OA\Property(property="price_usd",    type="number",  nullable=true, example=1500),
-     *             @OA\Property(property="ready_date",   type="string",  format="date", example="2026-05-01"),
-     *             @OA\Property(property="comment",      type="string",  nullable=true, example="Хрупкий груз")
+     *             @OA\Property(property="from_city_id",      type="integer", example=1),
+     *             @OA\Property(property="to_city_id",        type="integer", example=2),
+     *             @OA\Property(property="from_warehouse_id", type="integer", example=1, description="Must belong to from_city_id"),
+     *             @OA\Property(property="to_warehouse_id",   type="integer", example=2, description="Must belong to to_city_id"),
+     *             @OA\Property(property="cargo_type",        type="string",  example="Электроника"),
+     *             @OA\Property(property="volume",            type="number",  example=20.5),
+     *             @OA\Property(property="weight",            type="number",  example=5.0),
+     *             @OA\Property(property="price_usd",         type="number",  nullable=true, example=1500),
+     *             @OA\Property(property="ready_date",        type="string",  format="date", example="2026-05-01"),
+     *             @OA\Property(property="comment",           type="string",  nullable=true, example="Хрупкий груз")
      *         )
      *     ),
      *     @OA\Response(response=201, description="Груз создан",
@@ -139,14 +142,22 @@ class CargoController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'from_city_id' => 'required|exists:cities,id',
-            'to_city_id'   => 'required|exists:cities,id',
-            'cargo_type'   => 'required|string|max:255',
-            'volume'       => 'required|numeric|min:0|max:99999999.99',
-            'weight'       => 'required|numeric|min:0|max:99999999.99',
-            'price_usd'    => 'nullable|numeric|min:0',
-            'ready_date'   => 'required|date',
-            'comment'      => 'nullable|string',
+            'from_city_id'      => 'required|exists:cities,id',
+            'to_city_id'        => 'required|exists:cities,id',
+            'from_warehouse_id' => [
+                'required',
+                Rule::exists('warehouses', 'id')->where('city_id', $request->input('from_city_id')),
+            ],
+            'to_warehouse_id'   => [
+                'required',
+                Rule::exists('warehouses', 'id')->where('city_id', $request->input('to_city_id')),
+            ],
+            'cargo_type'        => 'required|string|max:255',
+            'volume'            => 'required|numeric|min:0|max:99999999.99',
+            'weight'            => 'required|numeric|min:0|max:99999999.99',
+            'price_usd'         => 'nullable|numeric|min:0',
+            'ready_date'        => 'required|date',
+            'comment'           => 'nullable|string',
         ]);
 
         $fromCity = City::findOrFail($validated['from_city_id']);
@@ -167,6 +178,8 @@ class CargoController extends Controller
             'price_usd'         => $validated['price_usd'] ?? null,
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
+            'from_warehouse_id' => $validated['from_warehouse_id'],
+            'to_warehouse_id'   => $validated['to_warehouse_id'],
             'created_by'        => $request->user()->id,
             'status'            => Cargo::STATUS_AVAILABLE,
         ]);
@@ -213,14 +226,22 @@ class CargoController extends Controller
         }
 
         $validated = $request->validate([
-            'from_city_id' => 'required|exists:cities,id',
-            'to_city_id'   => 'required|exists:cities,id',
-            'cargo_type'   => 'required|string|max:255',
-            'volume'       => 'required|numeric|min:0',
-            'weight'       => 'required|numeric|min:0',
-            'price_usd'    => 'nullable|numeric|min:0',
-            'ready_date'   => 'required|date',
-            'comment'      => 'nullable|string',
+            'from_city_id'      => 'required|exists:cities,id',
+            'to_city_id'        => 'required|exists:cities,id',
+            'from_warehouse_id' => [
+                'required',
+                Rule::exists('warehouses', 'id')->where('city_id', $request->input('from_city_id')),
+            ],
+            'to_warehouse_id'   => [
+                'required',
+                Rule::exists('warehouses', 'id')->where('city_id', $request->input('to_city_id')),
+            ],
+            'cargo_type'        => 'required|string|max:255',
+            'volume'            => 'required|numeric|min:0',
+            'weight'            => 'required|numeric|min:0',
+            'price_usd'         => 'nullable|numeric|min:0',
+            'ready_date'        => 'required|date',
+            'comment'           => 'nullable|string',
         ]);
 
         $fromCity = City::findOrFail($validated['from_city_id']);
@@ -241,6 +262,8 @@ class CargoController extends Controller
             'price_usd'         => $validated['price_usd'] ?? null,
             'ready_date'        => $validated['ready_date'],
             'comment'           => $validated['comment'] ?? null,
+            'from_warehouse_id' => $validated['from_warehouse_id'],
+            'to_warehouse_id'   => $validated['to_warehouse_id'],
         ]);
 
         return response()->json(['data' => new CargoResource($cargo)]);

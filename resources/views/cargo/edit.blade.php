@@ -39,29 +39,195 @@
 
         <div class="space-y-5">
 
-            {{-- Route section --}}
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            {{-- Route section with warehouse picker --}}
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+                 x-data="{
+                     warehousesByCity: {{ $warehousesByCity }},
+                     fromCityId: '{{ old('from_city_id', $fromCity?->id ?? '') }}',
+                     toCityId: '{{ old('to_city_id', $toCity?->id ?? '') }}',
+                     fromWarehouseId: '{{ old('from_warehouse_id', $cargo->from_warehouse_id ?? '') }}',
+                     toWarehouseId: '{{ old('to_warehouse_id', $cargo->to_warehouse_id ?? '') }}',
+                     get fromWarehouses() {
+                         return this.fromCityId ? (this.warehousesByCity[this.fromCityId] || []) : [];
+                     },
+                     get toWarehouses() {
+                         return this.toCityId ? (this.warehousesByCity[this.toCityId] || []) : [];
+                     },
+                 }">
                 <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">
                     <i class="fas fa-route mr-2 text-indigo-500"></i>Маршрут
                 </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-end">
-                    @include('partials.city-select', [
-                        'name'     => 'from_city_id',
-                        'label'    => translate('cargo.from_location'),
-                        'cities'   => $cities,
-                        'selected' => $fromCity?->id,
-                    ])
-                    <div class="hidden sm:flex items-center justify-center pb-2">
+                <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-start">
+
+                    {{-- FROM side --}}
+                    <div class="space-y-3">
+                        <div>
+                            <label for="from_city_id" class="block text-sm font-medium text-slate-700 mb-1.5">
+                                {{ translate('cargo.from_location') }} <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select name="from_city_id" id="from_city_id"
+                                        x-model="fromCityId"
+                                        @change="fromWarehouseId = ''"
+                                        class="w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 @error('from_city_id') border-rose-400 @enderror appearance-none pr-8"
+                                        required>
+                                    <option value="">{{ translate('cargo.select_city') }}</option>
+                                    @php
+                                        $countryLabels = [
+                                            'kz' => '🇰🇿 ' . translate('country.kz'),
+                                            'ru' => '🇷🇺 ' . translate('country.ru'),
+                                            'cn' => '🇨🇳 ' . translate('country.cn'),
+                                        ];
+                                    @endphp
+                                    @foreach($countryLabels as $code => $countryLabel)
+                                        @if($cities->has($code))
+                                            <optgroup label="{{ $countryLabel }}">
+                                                @foreach($cities[$code] as $city)
+                                                    <option value="{{ $city->id }}"
+                                                        {{ (string) old('from_city_id', $fromCity?->id) === (string) $city->id ? 'selected' : '' }}>
+                                                        {{ $city->localized_name }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                            </div>
+                            @error('from_city_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div x-show="fromCityId !== ''" x-cloak>
+                            <template x-if="fromWarehouses.length > 1">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                                        {{ translate('cargo.from_warehouse') }} <span class="text-rose-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select name="from_warehouse_id"
+                                                x-model="fromWarehouseId"
+                                                class="w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 @error('from_warehouse_id') border-rose-400 @enderror appearance-none pr-8"
+                                                required>
+                                            <option value="" disabled>Выберите склад</option>
+                                            <template x-for="wh in fromWarehouses" :key="wh.id">
+                                                <option :value="wh.id"
+                                                        :selected="String(wh.id) === String(fromWarehouseId)"
+                                                        x-text="wh.name_rus.length > 30 ? wh.name_rus.substring(0, 27) + '...' : wh.name_rus + ' (' + (wh.address.length > 30 ? wh.address.substring(0, 27) + '...' : wh.address) + ')'">
+                                                </option>
+                                            </template>
+                                        </select>
+                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                    </div>
+                                    @error('from_warehouse_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                                </div>
+                            </template>
+                            <template x-if="fromWarehouses.length === 1">
+                                <div>
+                                    <input type="hidden" name="from_warehouse_id" :value="fromWarehouses[0].id">
+                                    <div class="bg-slate-100 text-slate-700 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                                        <i class="fas fa-warehouse text-slate-400"></i>
+                                        <span>Склад: </span>
+                                        <span class="font-medium" x-text="fromWarehouses[0].name_rus"></span>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="fromWarehouses.length === 0">
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                                    <p class="font-medium">{{ translate('warehouse.no_warehouses_city') }}. {{ translate('warehouse.create_prompt') }}.</p>
+                                    <a :href="'/warehouses/create?city_id=' + fromCityId" target="_blank"
+                                       class="inline-flex items-center mt-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-800 text-xs font-medium rounded-lg transition-colors">
+                                        <i class="fas fa-plus mr-1.5"></i>{{ translate('warehouse.create_link') }}
+                                    </a>
+                                    <p class="mt-2 text-xs text-amber-700">{{ translate('warehouse.autocreate_note') }}</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="hidden sm:flex items-center justify-center pt-7">
                         <div class="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center">
                             <i class="fas fa-arrow-right text-indigo-500 text-sm"></i>
                         </div>
                     </div>
-                    @include('partials.city-select', [
-                        'name'     => 'to_city_id',
-                        'label'    => translate('cargo.to_location'),
-                        'cities'   => $cities,
-                        'selected' => $toCity?->id,
-                    ])
+
+                    {{-- TO side --}}
+                    <div class="space-y-3">
+                        <div>
+                            <label for="to_city_id" class="block text-sm font-medium text-slate-700 mb-1.5">
+                                {{ translate('cargo.to_location') }} <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select name="to_city_id" id="to_city_id"
+                                        x-model="toCityId"
+                                        @change="toWarehouseId = ''"
+                                        class="w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 @error('to_city_id') border-rose-400 @enderror appearance-none pr-8"
+                                        required>
+                                    <option value="">{{ translate('cargo.select_city') }}</option>
+                                    @foreach($countryLabels as $code => $countryLabel)
+                                        @if($cities->has($code))
+                                            <optgroup label="{{ $countryLabel }}">
+                                                @foreach($cities[$code] as $city)
+                                                    <option value="{{ $city->id }}"
+                                                        {{ (string) old('to_city_id', $toCity?->id) === (string) $city->id ? 'selected' : '' }}>
+                                                        {{ $city->localized_name }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                            </div>
+                            @error('to_city_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div x-show="toCityId !== ''" x-cloak>
+                            <template x-if="toWarehouses.length > 1">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                                        {{ translate('cargo.to_warehouse') }} <span class="text-rose-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select name="to_warehouse_id"
+                                                x-model="toWarehouseId"
+                                                class="w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-indigo-500 focus:ring-indigo-500 @error('to_warehouse_id') border-rose-400 @enderror appearance-none pr-8"
+                                                required>
+                                            <option value="" disabled>Выберите склад</option>
+                                            <template x-for="wh in toWarehouses" :key="wh.id">
+                                                <option :value="wh.id"
+                                                        :selected="String(wh.id) === String(toWarehouseId)"
+                                                        x-text="wh.name_rus.length > 30 ? wh.name_rus.substring(0, 27) + '...' : wh.name_rus + ' (' + (wh.address.length > 30 ? wh.address.substring(0, 27) + '...' : wh.address) + ')'">
+                                                </option>
+                                            </template>
+                                        </select>
+                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                                    </div>
+                                    @error('to_warehouse_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                                </div>
+                            </template>
+                            <template x-if="toWarehouses.length === 1">
+                                <div>
+                                    <input type="hidden" name="to_warehouse_id" :value="toWarehouses[0].id">
+                                    <div class="bg-slate-100 text-slate-700 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                                        <i class="fas fa-warehouse text-slate-400"></i>
+                                        <span>Склад: </span>
+                                        <span class="font-medium" x-text="toWarehouses[0].name_rus"></span>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="toWarehouses.length === 0">
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                                    <p class="font-medium">{{ translate('warehouse.no_warehouses_city') }}. {{ translate('warehouse.create_prompt') }}.</p>
+                                    <a :href="'/warehouses/create?city_id=' + toCityId" target="_blank"
+                                       class="inline-flex items-center mt-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-800 text-xs font-medium rounded-lg transition-colors">
+                                        <i class="fas fa-plus mr-1.5"></i>{{ translate('warehouse.create_link') }}
+                                    </a>
+                                    <p class="mt-2 text-xs text-amber-700">{{ translate('warehouse.autocreate_note') }}</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

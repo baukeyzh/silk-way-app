@@ -9,10 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CargoApplicationResource;
 use App\Models\Cargo;
 use App\Models\CargoApplication;
+use App\Services\FirebaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -248,7 +250,11 @@ class CargoApplicationController extends Controller
             'delivery_address' => 'nullable|string|max:500',
         ]);
 
-        return DB::transaction(function () use ($application, $validated, $user): JsonResponse {
+        $approvedDriver    = null;
+        $approvedCargoRoute = null;
+        $approvedAppId     = null;
+
+        $response = DB::transaction(function () use ($application, $validated, $user, &$approvedDriver, &$approvedCargoRoute, &$approvedAppId): JsonResponse {
             // Re-fetch with a row-level lock to prevent two concurrent approvals
             // from landing on the same cargo (e.g. two admins acting simultaneously).
             $application = CargoApplication::where('id', $application->id)->lockForUpdate()->firstOrFail();
@@ -286,8 +292,33 @@ class CargoApplicationController extends Controller
 
             $application->load(['cargo', 'driver']);
 
+            // Capture for post-transaction FCM (never fire inside the transaction).
+            $approvedDriver     = $application->driver;
+            $approvedCargoRoute = "{$cargo->from_location} → {$cargo->to_location}";
+            $approvedAppId      = $application->id;
+
             return response()->json(['data' => new CargoApplicationResource($application)]);
         });
+
+        // Transaction committed — send FCM push to the driver.
+        if ($approvedDriver !== null) {
+            try {
+                app(FirebaseService::class)->sendToUser(
+                    $approvedDriver,
+                    translate('push.application_approved.title'),
+                    str_replace(':cargo_route', $approvedCargoRoute, translate('push.application_approved.body')),
+                    ['type' => 'application_approved', 'application_id' => (string) $approvedAppId],
+                );
+            } catch (\Throwable $e) {
+                Log::warning('FCM application_approved notification failed', [
+                    'application_id' => $approvedAppId,
+                    'driver_id'      => $approvedDriver->id,
+                    'error'          => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -318,6 +349,31 @@ class CargoApplicationController extends Controller
         }
 
         $application->update(['status' => CargoApplication::STATUS_REJECTED]);
+
+        // Notify the driver their application was rejected.
+        $application->loadMissing(['driver', 'cargo']);
+        $driver = $application->driver;
+
+        if ($driver !== null) {
+            $cargoRoute = $application->cargo
+                ? "{$application->cargo->from_location} → {$application->cargo->to_location}"
+                : '—';
+
+            try {
+                app(FirebaseService::class)->sendToUser(
+                    $driver,
+                    translate('push.application_rejected.title'),
+                    str_replace(':cargo_route', $cargoRoute, translate('push.application_rejected.body')),
+                    ['type' => 'application_rejected', 'application_id' => (string) $application->id],
+                );
+            } catch (\Throwable $e) {
+                Log::warning('FCM application_rejected notification failed', [
+                    'application_id' => $application->id,
+                    'driver_id'      => $driver->id,
+                    'error'          => $e->getMessage(),
+                ]);
+            }
+        }
 
         return response()->json(['message' => 'Заявка отклонена.']);
     }

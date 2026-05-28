@@ -13,10 +13,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\DriverLoginController;
 use App\Http\Controllers\Auth\DriverRegistrationController;
 use App\Http\Controllers\FcmTokenController;
+use App\Http\Controllers\WarehouseController;
 
 // Главная страница
 Route::get('/', function () {
     return redirect()->route('cargo.index');
+});
+
+// Legal documents — publicly accessible, no auth required.
+Route::prefix('legal')->group(function () {
+    // Currently RU-only. When KZ/CN versions land, branch on app()->getLocale()
+    // and serve `public/legal/privacy.{locale}.html`.
+    Route::get('/privacy', fn () => response()->file(public_path('legal/privacy.html')))
+        ->name('legal.privacy');
 });
 
 // Dev-страница для получения FCM-токена (web) и тестовой отправки пуша.
@@ -176,6 +185,11 @@ Route::middleware('auth')->group(function () {
     
     // Ресурсный маршрут cargo — index и show исключены (они зарегистрированы как публичные выше)
     Route::resource('cargo', CargoController::class)->except(['index', 'show']);
+
+    // Склады (доступны администраторам и сотрудникам склада)
+    Route::resource('warehouses', WarehouseController::class)
+        ->except(['show'])
+        ->middleware('role:admin|warehouse_employee');
 
     // Города (только для администраторов)
     Route::resource('cities', CityController::class)->except(['show'])->middleware('role:admin');

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Warehouse;
 
 class Cargo extends Model
 {
@@ -40,6 +41,8 @@ class Cargo extends Model
         'created_by',
         'picked_by',
         'picked_at',
+        'from_warehouse_id',
+        'to_warehouse_id',
     ];
 
     protected $casts = [
@@ -49,6 +52,16 @@ class Cargo extends Model
         'weight' => 'decimal:2',
         'price_usd' => 'decimal:2',
     ];
+
+    public function fromWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'from_warehouse_id');
+    }
+
+    public function toWarehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'to_warehouse_id');
+    }
 
     public function createdBy(): BelongsTo
     {

@@ -9,8 +9,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DriverDocumentResource;
 use App\Models\DriverDocument;
 use App\Models\User;
+use App\Services\FirebaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DriverDocumentController extends Controller
@@ -577,6 +579,25 @@ class DriverDocumentController extends Controller
                 'verified_at'      => now(),
                 'verified_by'      => $admin->id,
             ]);
+
+            // Notify the driver their document was verified.
+            $driver = $document->user;
+            if ($driver !== null) {
+                try {
+                    app(FirebaseService::class)->sendToUser(
+                        $driver,
+                        translate('push.document_verified.title'),
+                        translate('push.document_verified.body'),
+                        ['type' => 'document_verified', 'document_id' => (string) $document->id],
+                    );
+                } catch (\Throwable $e) {
+                    Log::warning('FCM document_verified notification failed', [
+                        'document_id' => $document->id,
+                        'driver_id'   => $driver->id,
+                        'error'       => $e->getMessage(),
+                    ]);
+                }
+            }
         } else {
             // On rejection: do NOT write verified_by — that column is semantically
             // "who approved this document". Leaving it null on rejection preserves
@@ -587,6 +608,25 @@ class DriverDocumentController extends Controller
                 'verified_at'      => null,
                 'verified_by'      => null,
             ]);
+
+            // Notify the driver their document was rejected.
+            $driver = $document->user;
+            if ($driver !== null) {
+                try {
+                    app(FirebaseService::class)->sendToUser(
+                        $driver,
+                        translate('push.document_rejected.title'),
+                        translate('push.document_rejected.body'),
+                        ['type' => 'document_rejected', 'document_id' => (string) $document->id],
+                    );
+                } catch (\Throwable $e) {
+                    Log::warning('FCM document_rejected notification failed', [
+                        'document_id' => $document->id,
+                        'driver_id'   => $driver->id,
+                        'error'       => $e->getMessage(),
+                    ]);
+                }
+            }
         }
 
         return response()->json(['data' => DriverDocumentResource::make($document->fresh())->resolve()]);

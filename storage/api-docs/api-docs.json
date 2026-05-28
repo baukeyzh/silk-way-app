@@ -1737,6 +1737,16 @@
                                         "type": "integer",
                                         "example": 2
                                     },
+                                    "from_warehouse_id": {
+                                        "description": "Must belong to from_city_id",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "to_warehouse_id": {
+                                        "description": "Must belong to to_city_id",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
                                     "cargo_type": {
                                         "type": "string",
                                         "example": "Электроника"
@@ -3895,6 +3905,24 @@
                         "nullable": true,
                         "description": "Заявка текущего авторизованного водителя на этот груз; null если пользователь не водитель или ещё не подавал заявку"
                     },
+                    "from_warehouse": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Warehouse"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Only returned to authenticated users"
+                    },
+                    "to_warehouse": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Warehouse"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Only returned to authenticated users"
+                    },
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
@@ -4081,6 +4109,32 @@
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Warehouse": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Склад Алматы-Север"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "ул. Панфилова, 14"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+7 727 000 00 00",
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1
                     }
                 },
                 "type": "object"

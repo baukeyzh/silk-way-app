@@ -43,6 +43,12 @@
                 <div class="text-center">
                     <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.from_label') }}</p>
                     <p class="text-2xl font-bold text-slate-900">{{ $cargo->localized_from_location }}</p>
+                    @auth
+                    @if($cargo->fromWarehouse)
+                    <p class="text-xs font-medium text-slate-700 mt-1">{{ $cargo->fromWarehouse->localized_name }}</p>
+                    <p class="text-xs text-slate-500">{{ $cargo->fromWarehouse->address }}</p>
+                    @endif
+                    @endauth
                 </div>
                 <div class="flex items-center gap-2 text-slate-300">
                     <div class="h-px w-8 bg-slate-200"></div>
@@ -54,6 +60,12 @@
                 <div class="text-center">
                     <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{{ translate('cargo.to_label') }}</p>
                     <p class="text-2xl font-bold text-slate-900">{{ $cargo->localized_to_location }}</p>
+                    @auth
+                    @if($cargo->toWarehouse)
+                    <p class="text-xs font-medium text-slate-700 mt-1">{{ $cargo->toWarehouse->localized_name }}</p>
+                    <p class="text-xs text-slate-500">{{ $cargo->toWarehouse->address }}</p>
+                    @endif
+                    @endauth
                 </div>
             </div>
             <div>
