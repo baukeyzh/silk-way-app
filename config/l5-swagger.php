@@ -126,10 +126,10 @@ return [
              *
              * @see \OpenApi\scan
              */
-            'analyser' => new \OpenApi\Analysers\ReflectionAnalyser([
-                new \OpenApi\Analysers\AttributeAnnotationFactory(),
-                new \OpenApi\Analysers\DocBlockAnnotationFactory(),
-            ]),
+            // Default (null) lets swagger-php instantiate its own analyser at runtime.
+            // Inlining `new ReflectionAnalyser(...)` here would break `config:cache`
+            // because var_export cannot serialize objects.
+            'analyser' => null,
 
             /**
              * analysis: defaults to a new \OpenApi\Analysis .
