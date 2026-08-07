@@ -25,6 +25,14 @@ class DriverLoginService
 {
     use HandlesPhoneOtp;
 
+    /**
+     * Fixed QA/review test account — bypasses WhatsApp delivery and always
+     * uses a static code so app-store reviewers / QA can log in without a
+     * live WAHA session. Normalized (digits-only) form of +7 700 12 000 13.
+     */
+    private const TEST_PHONE = '77001200013';
+    private const TEST_PHONE_CODE = '123456';
+
     public function __construct(
         private readonly WhatsAppService $whatsApp,
     ) {}
@@ -42,6 +50,7 @@ class DriverLoginService
     public function requestCode(string $phone): array
     {
         $phone = $this->normalizePhone($phone);
+        $isTestPhone = $phone === self::TEST_PHONE;
 
         // 1. Look up driver by phone. If none exists, auto-register a new
         //    unapproved account so the user can verify ownership in the same
@@ -59,15 +68,21 @@ class DriverLoginService
                 abort(409, translate('driver_login.error_phone_conflict'));
             }
 
-            $user = $this->autoRegisterDriver($phone);
+            $user = $this->autoRegisterDriver($phone, approved: $isTestPhone);
+        } elseif ($isTestPhone && !$user->approved) {
+            // Fixed QA/review test account — always auto-approved so it can
+            // complete the login flow end-to-end without manual admin action.
+            $user->update(['approved' => true]);
         }
 
         // 2. Approval gate moved to verifyCode so newly-created users can still
         //    verify their phone in this same flow. After verification they get
         //    a friendly "pending approval" message.
 
-        // 3. WAHA session must be ready
-        $this->requireSessionReady(translate('driver_login.error_service_unavailable'));
+        // 3. WAHA session must be ready (skipped for the fixed QA test number)
+        if (!$isTestPhone) {
+            $this->requireSessionReady(translate('driver_login.error_service_unavailable'));
+        }
 
         // 4. Per-phone resend throttle enforced at DB level
         $existing = PhoneVerification::where('phone', $phone)
@@ -78,15 +93,15 @@ class DriverLoginService
             abort(429, translate('driver_login.error_rate_limit'));
         }
 
-        // 5. Generate code, upsert row, send
-        $waMessage = str_replace(':code', '__CODE__', (string) translate('driver_login.wa_message'));
-        // upsertAndSend generates its own code internally and substitutes it;
-        // we pass the pre-rendered template with a placeholder so sendOtp can inject.
-        // Actually we generate the code here to have it for the message, then persist.
-        $code = $this->generateCode();
-        $renderedMessage = str_replace(':code', $code, (string) translate('driver_login.wa_message'));
+        // 5. Generate code, upsert row, send (test number gets a static code, no WhatsApp send)
+        if ($isTestPhone) {
+            $this->upsertVerification($phone, self::TEST_PHONE_CODE, $existing);
+        } else {
+            $code = $this->generateCode();
+            $renderedMessage = str_replace(':code', $code, (string) translate('driver_login.wa_message'));
 
-        $this->persistAndSend($phone, $code, $renderedMessage);
+            $this->persistAndSend($phone, $code, $renderedMessage, $existing);
+        }
 
         return [
             'phone'                       => $phone,
@@ -185,12 +200,16 @@ class DriverLoginService
             abort(429, translate('driver_login.error_rate_limit'));
         }
 
-        $this->requireSessionReady(translate('driver_login.error_service_unavailable'));
+        if ($phone === self::TEST_PHONE) {
+            $this->upsertVerification($phone, self::TEST_PHONE_CODE, $verification);
+        } else {
+            $this->requireSessionReady(translate('driver_login.error_service_unavailable'));
 
-        $code            = $this->generateCode();
-        $renderedMessage = str_replace(':code', $code, (string) translate('driver_login.wa_message'));
+            $code            = $this->generateCode();
+            $renderedMessage = str_replace(':code', $code, (string) translate('driver_login.wa_message'));
 
-        $this->persistAndSend($phone, $code, $renderedMessage, $verification);
+            $this->persistAndSend($phone, $code, $renderedMessage, $verification);
+        }
 
         return [
             'phone_masked'                => $this->maskPhone($phone),
@@ -204,10 +223,10 @@ class DriverLoginService
     /**
      * Auto-register a driver whose phone is not yet in the system.
      * Placeholder name is "Водитель {last 4 digits}" — the driver can update it
-     * later in their profile. Account is created unapproved; admin must verify
-     * before they can pick up cargo.
+     * later in their profile. Account is created unapproved (except the fixed
+     * QA test number); admin must verify before they can pick up cargo.
      */
-    private function autoRegisterDriver(string $phone): User
+    private function autoRegisterDriver(string $phone, bool $approved = false): User
     {
         return User::create([
             'name'     => 'Водитель ' . substr($phone, -4),
@@ -215,7 +234,7 @@ class DriverLoginService
             'email'    => null,
             'password' => null,
             'role'     => User::ROLE_DRIVER,
-            'approved' => false,
+            'approved' => $approved,
         ]);
     }
 
@@ -229,10 +248,31 @@ class DriverLoginService
         string $renderedMessage,
         ?PhoneVerification $existing = null,
     ): void {
+        $this->upsertVerification($phone, $code, $existing);
+
+        try {
+            $this->whatsApp->sendOtp($phone, $code, $renderedMessage);
+        } catch (\App\Exceptions\WhatsAppServiceException $e) {
+            Log::warning('WAHA sendOtp failed during driver login', [
+                'waha_status' => $e->getWahaStatusCode(),
+            ]);
+            abort(503, translate('driver_login.error_service_unavailable'));
+        }
+    }
+
+    /**
+     * Upsert the PhoneVerification row with a freshly hashed code, without sending anything.
+     * Accepts an optional existing model to avoid a redundant query on resend.
+     */
+    private function upsertVerification(
+        string $phone,
+        string $code,
+        ?PhoneVerification $existing = null,
+    ): void {
         $now = now();
 
         $attributes = [
-            'code_hash'    => \Illuminate\Support\Facades\Hash::make($code),
+            'code_hash'    => Hash::make($code),
             'attempts'     => 0,
             'expires_at'   => $now->copy()->addSeconds(PhoneVerification::CODE_TTL_SECONDS),
             'last_sent_at' => $now,
@@ -245,15 +285,6 @@ class DriverLoginService
                 ['phone' => $phone, 'purpose' => PhoneVerification::PURPOSE_DRIVER_LOGIN],
                 $attributes
             );
-        }
-
-        try {
-            $this->whatsApp->sendOtp($phone, $code, $renderedMessage);
-        } catch (\App\Exceptions\WhatsAppServiceException $e) {
-            Log::warning('WAHA sendOtp failed during driver login', [
-                'waha_status' => $e->getWahaStatusCode(),
-            ]);
-            abort(503, translate('driver_login.error_service_unavailable'));
         }
     }
 }
